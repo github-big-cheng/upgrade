@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				   value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%t:%p] %c - %m%n"/>
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="DEBUG"/>
+			<param name="levelMax" value="ERROR"/>
+			<param name="AcceptOnMatch" value="true"/>
+		</filter>
+	</appender>
+
+
+	<logger name="com.dounion.server.dao">
+		<level value="DEBUG"/>
+	</logger>
+
+
+	<root>
+		<level value="INFO"/>
+	</root>
+	<category name="com.dounion.server">
+		<level value="DEBUG"/>
+		<appender-ref ref="CONSOLE"/>
+	</category>
+
+</log4j:configuration>

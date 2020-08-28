@@ -1,0 +1,37 @@
+{
+  // 库点代码
+  "code": "nnlk118",
+  // 是否是master
+  "isMaster": "1",
+  // 上级服务器
+  "masterService" : "",
+  // 当前主机IP
+  "localIp": "127.0.0.1",
+  // 服务端口
+  "port": 8001,
+  // 操作系统
+  "osType": "40300-20",
+  // 是否提供分发下载服务
+  "isStandBy": "1",
+  // 发布回调地址 未配置则默认 http://local_ip:port/publish/callback
+  "publishPath": "",
+  // 本地注册的服务
+  "localServices": [
+    {
+      // 服务类型
+      "serviceType": "40100-140",
+      // 版本号
+      "versionNo" : "1.0.0",
+      // 工作目录
+      "workPath" : "E:\\upgrade\\nnlk118\\app"
+    },
+    {
+      // 服务类型
+      "serviceType": "40100-60",
+      // 版本号
+      "versionNo" : "1.0.0",
+      // 工作目录
+      "workPath" : "E:\\upgrade\\nnlk118\\dosmart-controller"
+    }
+  ]
+}

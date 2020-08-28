@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/css/upgrade.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <title>首页</title>
+</head>
+<body>
+
+	<h1>当前主机： <span id="localIp"></span>:<span id="port"></span></h1>
+	<hr/>
+	<ul class="my-list">
+		<li>库点代码：<span id="code"></span></li>
+		<li>是否master：<span id="master"></span></li>
+		<li>对接服务器： <span id="masterService"></span></li>
+		<li>操作系统： <span id="osType"></span></li>
+		<li>是否提供分发下载服务： <span id="standBy"></span></li>
+		<li>发布地址回调： <span id="publishPath"></span></li>
+	</ul>
+
+	<hr/>
+	<h3>本地服务列表</h3>
+	<div>
+		<table class="pure-table">
+			<colgroup>
+				<col width="5%">
+				<col width="20%">
+				<col width="20%">
+				<col width="55%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th style="text-align: center;">序号</th>
+					<th>服务类型</th>
+					<th>版本号</th>
+					<th>工作目录</th>
+				</tr>
+			</thead>
+			<tbody id="service_list_body"></tbody>
+		</table>
+	</div>
+</body>
+
+<script id="service_list_tmpl" type="jquery/template">
+	{%= $item.addIndex() %}
+	<tr>
+		<td style="text-align: center;">${ $item.getIndex()}</td>
+		<td>${serviceType}</td>
+		<td>${versionNo}</td>
+		<td>${workPath}</td>
+	</tr>
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: '/index.json',
+            success: function (rdata) {
+                console.log(rdata);
+                if(rdata && rdata.code=='0'){
+					fillInfo(rdata.data);
+					fillTable(rdata.data.localServiceList)
+				}
+            }
+        });
+    });
+
+    const ids = ["code", "localIp", "port", "master", "masterService", "osType", "standBy", "publishPath"];
+    function fillInfo(data){
+    	if(!data){
+    		return;
+		}
+
+    	for(let s in ids){
+    		let key = ids[s];
+    		console.log(key + ":" + data[key]);
+    		let val = data[key];
+    		if(!val){
+				val = "";
+			}
+			$("#"+key).html("" + val);
+		}
+	}
+
+	function fillTable(serviceList){
+    	if(!serviceList || serviceList.length==0){
+    		return;
+		}
+
+    	let index = 0;
+		$("#service_list_tmpl").tmpl(serviceList, {
+			addIndex : function(){
+				index ++;
+				return "";
+			},
+			getIndex : function () {
+				return index;
+			}
+		}).appendTo($("#service_list_body"));
+	}
+</script>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/css/upgrade.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+
+    <title>版本列表</title>
+</head>
+<body>
+<h1>版本列表</h1>
+    <div style="width: 100%;">
+        <form id="form">
+        <ul class="bar-ul">
+            <li>应用类型：<select name="appType" ></select></li>
+<!--            <li>-->
+<!--                版本状态：-->
+<!--                <select name="status" >-->
+<!--                    <option value="">全部</option>-->
+<!--                    <option value="1">正常</option>-->
+<!--                    <option value="2">已过期</option>-->
+<!--                </select>-->
+<!--            </li>-->
+            <li><button id="query">查询</button></li>
+        </ul>
+        </form>
+    </div>
+    <div style="clear: both;height: 20px;"></div>
+<hr/>
+<div style="margin-top: 20px;">
+    <table class="pure-table">
+        <colgroup>
+            <col width="5%">
+            <col width="15%">
+            <col width="12.5%">
+            <col width="15%">
+            <col width="25%">
+            <col width="12.5%">
+            <col width="15%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th style="text-align: center;">序号</th>
+                <th>应用类型</th>
+                <th>版本号</th>
+                <th>是否强制更新</th>
+                <th>文件路径</th>
+                <th>版本状态</th>
+                <th>发布时间</th>
+            </tr>
+        </thead>
+        <tbody id="version_list_tbody"></tbody>
+    </table>
+</div>
+</body>
+
+
+
+<script id="app_type_select_tmpl" type="jquery/template">
+    <option value="{%= value%}">{%= text %}</option>
+</script>
+
+<script id="version_list_tmpl" type="jquery/template">
+    {%= $item.addIndex() %}
+	<tr>
+        <td style="text-align: center;">{%= $item.getIndex() %}</td>
+        <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
+        <td title="{%= versionNo %}">{%= versionNo %}</td>
+        <td title="{%= isForceUpdate=='1'?'是':'否' %}">{%= isForceUpdate=='1'?'是':'否' %}</td>
+        <td title="{%= filePath %}">{%= filePath %}</td>
+        <td title="{%= status=='1'?'已发布':'已取消' %}">{%= status=='1'?'已发布':'已取消' %}</td>
+        <td title="{%= publishDate %}">{%= publishDate %}</td>
+    </tr>
+</script>
+
+<script>
+    let dict = {};
+
+	$(function(){
+
+	    // 初始化字典
+        $.ajax({
+            type:'post',
+            dataType:'json',
+            url:'/common/dictList.json',
+            success:function(rdata) {
+                if(rdata && rdata.code=='0'){
+                    dict = rdata.data;
+                    let arr = [];
+                    arr.push({text:'全部', value: ''});
+                    for(let k in dict['serviceType']){
+                        arr.push({text:dict['serviceType'][k], value:k});
+                    }
+                    // console.log(arr);
+                    $("#app_type_select_tmpl").tmpl(arr).appendTo($("select[name=appType]"));
+                }
+            }
+        });
+
+        query({status:'1'});
+	});
+
+
+	$("#query").on('click', function (e) {
+       e.preventDefault();
+       let p = $("#form").serialize();
+       query(p);
+    });
+
+
+	function query(param){
+
+	    $("#version_list_tbody").html("");
+
+        $.ajax({
+            type:'post',
+            data : param,
+            dataType:'json',
+            url:'/version/list.json',
+            success:function(rdata) {
+                // console.log(rdata);
+                if(rdata && rdata.code=='0'){
+                    let data = rdata.data;
+                    let arr = [];
+                    for(let k in data){
+                        console.log(data[k]);
+                        arr.push(data[k]);
+                    }
+                    let index = 0;
+                    $("#version_list_tmpl").tmpl(arr, {
+                        addIndex : function(){
+                            index ++;
+                            return "";
+                        },
+                        getIndex : function () {
+                            return index;
+                        },
+                        format : function (mapKey, val) {
+                            let r = dict[mapKey]==null ? "" : dict[mapKey][val];
+                            return r ? r : "";
+                        }
+                    }).appendTo($("#version_list_tbody"));
+                }
+            }
+        });
+    }
+</script>
+
+</html>

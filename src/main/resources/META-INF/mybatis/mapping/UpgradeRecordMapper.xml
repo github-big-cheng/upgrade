@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dounion.server.dao.UpgradeRecordMapper" >
+
+  <resultMap id="BaseResultMap" type="com.dounion.server.entity.UpgradeRecord" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="SUBSCRIBE_ID" property="subscribeId" jdbcType="INTEGER" />
+    <result column="VERSION_ID" property="versionId" jdbcType="INTEGER" />
+    <result column="NOTIFY_STATUS" property="notifyStatus" jdbcType="VARCHAR" />
+    <result column="NOTIFY_COUNT" property="notifyCount" jdbcType="INTEGER" />
+    <result column="UPGRADE_STATUS" property="upgradeStatus" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID, SUBSCRIBE_ID, VERSION_ID, NOTIFY_STATUS, NOTIFY_COUNT, UPGRADE_STATUS
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_UPGRADE_RECORD
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from T_UPGRADE_RECORD
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.dounion.server.entity.UpgradeRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into T_UPGRADE_RECORD (
+        <include refid="Base_Column_List"/>
+    ) values (
+        #{id,jdbcType=INTEGER},
+        #{subscribeId,jdbcType=INTEGER},
+        #{versionId,jdbcType=INTEGER},
+        #{notifyStatus,jdbcType=VARCHAR},
+        #{notifyCount,jdbcType=INTEGER},
+        #{upgradeStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.dounion.server.entity.UpgradeRecord"
+            useGeneratedKeys="true" keyProperty="id">
+    insert into T_UPGRADE_RECORD
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="subscribeId != null" >
+        SUBSCRIBE_ID,
+      </if>
+      <if test="versionId != null" >
+        VERSION_ID,
+      </if>
+      <if test="notifyStatus != null" >
+        NOTIFY_STATUS,
+      </if>
+      <if test="notifyCount != null" >
+        NOTIFY_COUNT,
+      </if>
+      <if test="upgradeStatus != null" >
+        UPGRADE_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="subscribeId != null" >
+        #{subscribeId,jdbcType=INTEGER},
+      </if>
+      <if test="versionId != null" >
+        #{versionId,jdbcType=INTEGER},
+      </if>
+      <if test="notifyStatus != null" >
+        #{notifyStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyCount != null" >
+        #{notifyCount,jdbcType=INTEGER},
+      </if>
+      <if test="upgradeStatus != null" >
+        #{upgradeStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.dounion.server.entity.UpgradeRecord" >
+    update T_UPGRADE_RECORD
+    <set >
+      <if test="subscribeId != null" >
+        SUBSCRIBE_ID = #{subscribeId,jdbcType=INTEGER},
+      </if>
+      <if test="versionId != null" >
+        VERSION_ID = #{versionId,jdbcType=INTEGER},
+      </if>
+      <if test="notifyStatus != null" >
+        NOTIFY_STATUS = #{notifyStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyCount != null" >
+        NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER},
+      </if>
+      <if test="upgradeStatus != null" >
+        UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.dounion.server.entity.UpgradeRecord" >
+    update T_UPGRADE_RECORD
+    set SUBSCRIBE_ID = #{subscribeId,jdbcType=INTEGER},
+      VERSION_ID = #{versionId,jdbcType=INTEGER},
+      NOTIFY_STATUS = #{notifyStatus,jdbcType=VARCHAR},
+      NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER},
+      UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectListBySelective" parameterType="com.dounion.server.entity.UpgradeRecord"
+          resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM T_UPGRADE_RECORD
+    <trim prefix="where " prefixOverrides="AND | OR" >
+      <if test="subscribeId != null" >
+        AND SUBSCRIBE_ID = #{subscribeId,jdbcType=INTEGER}
+      </if>
+      <if test="versionId != null" >
+        AND VERSION_ID = #{versionId,jdbcType=INTEGER}
+      </if>
+      <if test="notifyStatus != null" >
+        AND NOTIFY_STATUS = #{notifyStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="notifyCount != null" >
+        AND NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER}
+      </if>
+      <if test="upgradeStatus != null" >
+        AND UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+</mapper>

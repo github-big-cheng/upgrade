@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/css/upgrade.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+
+    <title>订阅列表</title>
+</head>
+<body>
+<h1>订阅列表</h1>
+    <div style="width: 100%;">
+        <form id="form">
+        <ul class="bar-ul">
+            <li>
+                库点代码：<input type="text" name="code" />
+            </li>
+            <li>
+                <button id="query">查询</button>
+            </li>
+        </ul>
+        </form>
+    </div>
+    <div style="clear: both;height: 20px;"></div>
+<hr/>
+<div style="margin-top: 20px;">
+    <table class="pure-table">
+        <colgroup>
+            <col width="5%">
+            <col width="10%">
+            <col width="15%">
+            <col width="12.5%">
+            <col width="10%">
+            <col width="25%">
+            <col width="10%">
+            <col width="12.5%">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>库点代码</th>
+                <th>应用类型</th>
+                <th>操作系统类型</th>
+                <th>是否备用分发</th>
+                <th>发布回调地址</th>
+                <th>订阅状态</th>
+                <th>订阅时间</th>
+            </tr>
+        </thead>
+        <tbody id="subscribe_list_tbody"></tbody>
+    </table>
+</div>
+</body>
+
+<script id="subscribe_list_tmpl" type="jquery/template">
+    {%= $item.addIndex() %}
+	<tr>
+        <td>{%= $item.getIndex() %}</td>
+        <td title="{%= code %}">{%= code %}</td>
+        <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
+        <td title="{%= $item.format('osType', $data.osType) %}">{%= $item.format('osType', $data.osType) %}</td>
+        <td title="{%= isStandBy=='1'?'是':'否' %}">{%= isStandBy=='1'?'是':'否' %}</td>
+        <td title="{%= publishUrl %}">{%= publishUrl %}</td>
+        <td title="{%= status=='1'?'已订阅':'已取消' %}">{%= status=='1'?'已订阅':'已取消' %}</td>
+        <td title="{%= subscribeTime %}">{%= subscribeTime %}</td>
+    </tr>
+</script>
+
+<script>
+    let dict = {};
+
+	$(function(){
+
+	    // 初始化字典
+        $.ajax({
+            type:'post',
+            dataType:'json',
+            url:'/common/dictList.json',
+            success:function(rdata) {
+                if(rdata && rdata.code=='0'){
+                    dict = rdata.data;
+                }
+            }
+        });
+
+        query({});
+	});
+
+
+	$("#query").on('click', function (e) {
+       e.preventDefault();
+       let p = $("#form").serialize();
+       query(p);
+    });
+
+
+	function query(param){
+
+	    $("#subscribe_list_tbody").html("");
+
+        $.ajax({
+            type:'post',
+            data : param,
+            dataType:'json',
+            url:'/subscribe/list.json',
+            success:function(rdata) {
+                // console.log(rdata);
+                if(rdata && rdata.code=='0'){
+                    let data = rdata.data;
+                    let arr = [];
+                    for(let k in data){
+                        console.log(data[k]);
+                        arr.push(data[k]);
+                    }
+                    let index = 0;
+                    $("#subscribe_list_tmpl").tmpl(arr, {
+                        addIndex : function(){
+                            index ++;
+                            return "";
+                        },
+                        getIndex : function () {
+                            return index;
+                        },
+                        format : function (mapKey, val) {
+                            let r = dict[mapKey]==null ? "" : dict[mapKey][val];
+                            return r ? r : "";
+                        }
+                    }).appendTo($("#subscribe_list_tbody"));
+                }
+            }
+        });
+    }
+</script>
+
+</html>

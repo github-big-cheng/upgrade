@@ -1,0 +1,14 @@
+package com.dounion.server.core.request.annotation;
+
+import java.lang.annotation.*;
+
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface RequestMapping {
+
+    String name() default "";
+
+    String value();
+
+}

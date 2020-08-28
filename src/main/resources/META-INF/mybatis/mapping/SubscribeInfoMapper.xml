@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dounion.server.dao.SubscribeInfoMapper">
+
+  <resultMap id="BaseResultMap" type="com.dounion.server.entity.SubscribeInfo">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="APP_TYPE" jdbcType="VARCHAR" property="appType" />
+    <result column="OS_TYPE" jdbcType="VARCHAR" property="osType" />
+    <result column="IS_STAND_BY" jdbcType="VARCHAR" property="isStandBy" />
+    <result column="PUBLISH_URL" jdbcType="VARCHAR" property="publishUrl" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="SUBSCRIBE_TIME" jdbcType="VARCHAR" property="subscribeTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    ID, CODE, APP_TYPE, OS_TYPE, IS_STAND_BY, PUBLISH_URL, STATUS, SUBSCRIBE_TIME
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_UPGRADE_SUBSCRIBE_INFO
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from T_UPGRADE_SUBSCRIBE_INFO
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.dounion.server.entity.SubscribeInfo"
+              useGeneratedKeys="true" keyProperty="id">
+    insert into T_UPGRADE_SUBSCRIBE_INFO (
+        <include refid="Base_Column_List" />
+    ) values (
+      #{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{appType,jdbcType=VARCHAR},
+      #{osType,jdbcType=VARCHAR}, #{isStandBy,jdbcType=VARCHAR}, #{publishUrl,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.dounion.server.entity.SubscribeInfo"
+            useGeneratedKeys="true" keyProperty="id">
+    insert into T_UPGRADE_SUBSCRIBE_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="code != null">
+        CODE,
+      </if>
+      <if test="appType != null">
+        APP_TYPE,
+      </if>
+      <if test="osType != null">
+        OS_TYPE,
+      </if>
+      <if test="isStandBy != null">
+        IS_STAND_BY,
+      </if>
+      <if test="publishUrl != null">
+        PUBLISH_URL,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="subscribeTime != null">
+        SUBSCRIBE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null">
+        #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="osType != null">
+        #{osType,jdbcType=VARCHAR},
+      </if>
+      <if test="isStandBy != null">
+        #{isStandBy,jdbcType=VARCHAR},
+      </if>
+      <if test="publishUrl != null">
+        #{publishUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="subscribeTime != null">
+        #{subscribeTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.dounion.server.entity.SubscribeInfo">
+    update T_UPGRADE_SUBSCRIBE_INFO
+    <set>
+      <if test="code != null">
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null">
+        APP_TYPE = #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="osType != null">
+        OS_TYPE = #{osType,jdbcType=VARCHAR},
+      </if>
+      <if test="isStandBy != null">
+        IS_STAND_BY = #{isStandBy,jdbcType=VARCHAR},
+      </if>
+      <if test="publishUrl != null">
+        PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="subscribeTime != null">
+        SUBSCRIBE_TIME = #{subscribeTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.dounion.server.entity.SubscribeInfo">
+    update T_UPGRADE_SUBSCRIBE_INFO
+    set CODE = #{code,jdbcType=VARCHAR},
+      APP_TYPE = #{appType,jdbcType=VARCHAR},
+      OS_TYPE = #{osType,jdbcType=VARCHAR},
+      IS_STAND_BY = #{isStandBy,jdbcType=VARCHAR},
+      PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      SUBSCRIBE_TIME = #{subscribeTime,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectListBySelective" parameterType="com.dounion.server.entity.SubscribeInfo"
+          resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM T_UPGRADE_SUBSCRIBE_INFO
+    <trim prefix="where " prefixOverrides="AND |OR" >
+      <if test="code != null" >
+        AND CODE = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="appType != null">
+        AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="osType != null">
+        AND OS_TYPE = #{osType,jdbcType=VARCHAR}
+      </if>
+      <if test="isStandBy != null">
+        AND IS_STAND_BY = #{isStandBy,jdbcType=VARCHAR}
+      </if>
+      <if test="publishUrl != null">
+        AND PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null">
+        AND STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="subscribeTime != null">
+        AND SUBSCRIBE_TIME = #{subscribeTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  <select id="deleteBySelective" parameterType="com.dounion.server.entity.SubscribeInfo"
+          resultMap="BaseResultMap">
+    DELETE FROM T_UPGRADE_SUBSCRIBE_INFO
+    <trim prefix="where " prefixOverrides="AND |OR" >
+      <if test="code != null" >
+        AND CODE = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="appType != null">
+        AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="osType != null">
+        AND OS_TYPE = #{osType,jdbcType=VARCHAR}
+      </if>
+      <if test="isStandBy != null">
+        AND IS_STAND_BY = #{isStandBy,jdbcType=VARCHAR}
+      </if>
+      <if test="publishUrl != null">
+        AND PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null">
+        AND STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="subscribeTime != null">
+        AND SUBSCRIBE_TIME = #{subscribeTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+</mapper>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dounion.server.dao.VersionInfoMapper" >
+
+  <resultMap id="BaseResultMap" type="com.dounion.server.entity.VersionInfo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="APP_TYPE" property="appType" jdbcType="VARCHAR" />
+    <result column="VERSION_NO" property="versionNo" jdbcType="VARCHAR" />
+    <result column="IS_FORCE_UPDATE" property="isForceUpdate" jdbcType="VARCHAR" />
+    <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="PUBLISH_DATE" property="publishDate" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE, FILE_PATH, STATUS, PUBLISH_DATE
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_UPGRADE_VERSION_INFO
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from T_UPGRADE_VERSION_INFO
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.dounion.server.entity.VersionInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into T_UPGRADE_VERSION_INFO (
+        <include refid="Base_Column_List"/>
+    ) values (
+        #{id,jdbcType=INTEGER},
+        #{appType,jdbcType=VARCHAR},
+        #{versionNo,jdbcType=VARCHAR},
+        #{isForceUpdate,jdbcType=VARCHAR},
+        #{filePath,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},
+        #{publishDate,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.dounion.server.entity.VersionInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into T_UPGRADE_VERSION_INFO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="appType != null" >
+        APP_TYPE,
+      </if>
+      <if test="versionNo != null" >
+        VERSION_NO,
+      </if>
+      <if test="isForceUpdate != null" >
+        IS_FORCE_UPDATE,
+      </if>
+      <if test="filePath != null" >
+        FILE_PATH,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="publishDate != null" >
+        PUBLISH_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="appType != null" >
+        #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="isForceUpdate != null" >
+        #{isForceUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="publishDate != null" >
+        #{publishDate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.dounion.server.entity.VersionInfo" >
+    update T_UPGRADE_VERSION_INFO
+    <set >
+      <if test="appType != null" >
+        APP_TYPE = #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNo != null" >
+        VERSION_NO = #{versionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="isForceUpdate != null" >
+        IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        FILE_PATH = #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="publishDate != null" >
+        PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.dounion.server.entity.VersionInfo" >
+    update T_UPGRADE_VERSION_INFO
+    set APP_TYPE = #{appType,jdbcType=VARCHAR},
+      VERSION_NO = #{versionNo,jdbcType=VARCHAR},
+      IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR},
+      FILE_PATH = #{filePath,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectListBySelective" parameterType="com.dounion.server.entity.VersionInfo"
+          resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM T_UPGRADE_VERSION_INFO
+    <trim prefix="where " prefixOverrides="AND | OR" >
+      <if test="appType != null" >
+        AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="versionNo != null" >
+        AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="isForceUpdate != null" >
+        AND IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR}
+      </if>
+      <if test="filePath != null" >
+        AND FILE_PATH = #{filePath,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null" >
+        AND STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="publishDate != null" >
+        AND PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+
+  <delete id="deleteBySelective" parameterType="com.dounion.server.entity.VersionInfo" >
+    DELETE FROM T_UPGRADE_VERSION_INFO
+    <trim prefix="where " prefixOverrides="AND | OR" >
+      <if test="appType != null" >
+        AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="versionNo != null" >
+        AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="isForceUpdate != null" >
+        AND IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR}
+      </if>
+      <if test="filePath != null" >
+        AND FILE_PATH = #{filePath,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null" >
+        AND STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="publishDate != null" >
+        AND PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </delete>
+
+</mapper>
