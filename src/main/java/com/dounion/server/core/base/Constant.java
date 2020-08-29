@@ -6,6 +6,9 @@ import java.io.File;
 
 public interface Constant {
 
+    // 服务配置文件名称
+    String JSON_CONFIG_FILE_NAME = "serviceInfo.json";
+
     // 临时文件夹
     String TEMP_PATH = System.getProperty("java.io.tmpdir");
     // 工作目录

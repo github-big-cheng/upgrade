@@ -5,6 +5,7 @@
     <link href="/css/upgrade.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
     <title>版本发布</title>
 
 	<style>
@@ -89,8 +90,8 @@
 		// $("#right-div").find('a').addClass('unfold-btn');
 
 		// 初始化字典
-		dictQuery('serviceType', function(rdata){
-			callback(rdata, 'appType', 'option_tmpl', 'appType');
+		CommonJS.dictQuery('serviceType', function(rdata){
+			CommonJS.callback(rdata, 'appType', 'option_tmpl', 'appType');
 		});
 	});
 
@@ -150,40 +151,7 @@
 	});
 
 
-	function dictQuery(type, _cb){
-		$.ajax({
-			type: 'post',
-			dataType: 'json',
-			data : {'type' : type},
-			url: '/common/dictList.json',
-			success: function (rdata) {
-				// console.log(rdata);
-				if(rdata && rdata.code=='0'){
-					_cb(rdata.data);
-				}
-			}
-		});
-	}
 
-
-	function callback(rdata, target, tmpl, name){
-
-		if(!rdata){
-			return;
-		}
-
-		let arr = [];
-		for(let i in rdata){
-			arr.push({value:i,text:rdata[i]});
-		}
-		// console.log(arr);
-
-		$("#"+tmpl).tmpl(arr, {
-			getName : function(){
-				return name;
-			}
-		}).appendTo($("#"+target));
-	}
 </script>
 
 </html>

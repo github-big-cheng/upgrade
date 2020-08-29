@@ -3,6 +3,7 @@ package com.dounion.server.core.base;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.eum.OsTypeEnum;
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ServiceInfo {
 
@@ -22,7 +24,7 @@ public class ServiceInfo {
     private String code;
 
     // 是否主服务
-    private String isMaster;
+    private String master;
 
     // 本地IP
     private String localIp;
@@ -37,12 +39,13 @@ public class ServiceInfo {
     private String localServices;
 
     // 是否提供分发下载服务
-    private String isStandBy;
+    private String standBy;
 
     // 通知地址
     private String publishPath;
 
     // 本地注册服务列表
+    @JSONField(serialize = false)
     private List<AppInfo> localServiceList;
 
 
@@ -56,8 +59,9 @@ public class ServiceInfo {
         sb.append("code:").append(this.code).append(", \t")
             .append("localIp:").append(this.localIp).append(", \t")
             .append("port:").append(this.port).append(", \t")
+            .append("master:").append(this.getMaster()).append(", \t")
             .append("osType:").append(this.getOsType()).append(", \t")
-            .append("isStandBy:").append(this.isStandBy()).append(", \t")
+            .append("isStandBy:").append(this.getStandBy()).append(", \t")
             .append("publishPath:").append(this.getPublishPath()).append(", \t")
         ;
 
@@ -78,17 +82,18 @@ public class ServiceInfo {
      * 是否主服务
      * @return
      */
-    public boolean isMaster() {
-        return StringUtils.equals(isMaster, "1");
+    public boolean getMasterBlur() {
+        return StringUtils.equals(master, "1");
     }
 
     /**
-     * 操作系统
+     * 是否备用下载
      * @return
      */
-    public OsTypeEnum getOsType(){
-        return OsTypeEnum.getMap().get(this.osType);
+    public boolean getStandByBlur() {
+        return StringUtils.equals(standBy, "1");
     }
+
 
     /**
      * 获取本地服务列表
@@ -105,9 +110,16 @@ public class ServiceInfo {
         return localServiceList;
     }
 
+    /**
+     * 重新加载本地服务列表
+     */
+    public void reloadLocalService(){
+        this.localServiceList = null;
+    }
+
     public void toFile(){
         try {
-            FileHelper.writeFile(Constant.CONG_PATH, JSONObject.toJSONString(this));
+            FileHelper.writeFile(Constant.CONG_PATH + Constant.JSON_CONFIG_FILE_NAME, JSONObject.toJSONString(this));
         } catch (IOException e) {
             logger.error("ServiceInfo write to file error: {}", e);
         }
@@ -123,12 +135,12 @@ public class ServiceInfo {
         this.code = code;
     }
 
-    public String getIsMaster() {
-        return isMaster;
+    public String getMaster() {
+        return master;
     }
 
-    public void setIsMaster(String isMaster) {
-        this.isMaster = isMaster;
+    public void setMaster(String master) {
+        this.master = master;
     }
 
     public String getLocalIp() {
@@ -151,12 +163,16 @@ public class ServiceInfo {
         this.osType = osType;
     }
 
-    public Boolean isStandBy() {
-        return StringUtils.equals(isStandBy, "1");
+    public String getOsType(){
+        return this.osType;
     }
 
-    public void setIsStandBy(String isStandBy) {
-        this.isStandBy = isStandBy;
+    public String getStandBy() {
+        return standBy;
+    }
+
+    public void setStandBy(String standBy) {
+        this.standBy = standBy;
     }
 
     public String getPublishPath() {
@@ -171,6 +187,7 @@ public class ServiceInfo {
     }
 
     public String getLocalServices() {
+        this.getLocalServiceList();
         return localServices;
     }
 

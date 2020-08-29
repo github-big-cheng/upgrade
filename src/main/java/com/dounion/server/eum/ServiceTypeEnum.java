@@ -52,9 +52,25 @@ public enum ServiceTypeEnum {
     private String desc;
     private static Map<String, ServiceTypeEnum> map;
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
     @Override
     public String toString() {
-        return this.code;
+        return this.code + "-" + this.desc;
     }
 
     public boolean equals(ServiceTypeEnum enu){

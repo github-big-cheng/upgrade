@@ -5,6 +5,7 @@
     <link href="/css/upgrade.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
 
     <title>版本列表</title>
 </head>
@@ -86,23 +87,16 @@
 	$(function(){
 
 	    // 初始化字典
-        $.ajax({
-            type:'post',
-            dataType:'json',
-            url:'/common/dictList.json',
-            success:function(rdata) {
-                if(rdata && rdata.code=='0'){
-                    dict = rdata.data;
-                    let arr = [];
-                    arr.push({text:'全部', value: ''});
-                    for(let k in dict['serviceType']){
-                        arr.push({text:dict['serviceType'][k], value:k});
-                    }
-                    // console.log(arr);
-                    $("#app_type_select_tmpl").tmpl(arr).appendTo($("select[name=appType]"));
-                }
+        CommonJS.dictQuery('', function (data) {
+            dict = data;
+            let arr = [];
+            arr.push({text:'全部', value: ''});
+            for(let k in dict['serviceType']){
+                arr.push({text:dict['serviceType'][k], value:k});
             }
-        });
+            // console.log(arr);
+            $("#app_type_select_tmpl").tmpl(arr).appendTo($("select[name=appType]"));
+        })
 
         query({});
 	});

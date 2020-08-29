@@ -14,14 +14,6 @@ public class AppInfo {
 
     // ============================= extended method  ==============================
 
-    /**
-     * 获取服务类型
-     * @return
-     */
-    public ServiceTypeEnum getServiceType(){
-        return ServiceTypeEnum.getMap().get(this.serviceType);
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -47,6 +39,10 @@ public class AppInfo {
 
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    public String getServiceType() {
+        return serviceType;
     }
 
     public String getVersionNo() {

@@ -2,7 +2,7 @@
   // 库点代码
   "code": "nnlk118",
   // 是否是master
-  "isMaster": "1",
+  "master": "1",
   // 上级服务器
   "masterService" : "",
   // 当前主机IP
@@ -12,7 +12,7 @@
   // 操作系统
   "osType": "40300-20",
   // 是否提供分发下载服务
-  "isStandBy": "1",
+  "standBy": "1",
   // 发布回调地址 未配置则默认 http://local_ip:port/publish/callback
   "publishPath": "",
   // 本地注册的服务

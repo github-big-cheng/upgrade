@@ -3,8 +3,6 @@ package com.dounion.server.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
-import com.dounion.server.core.helper.BeanHelper;
-import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.request.HandlerMappingConfig;
 import com.dounion.server.core.request.ResponseBuilder;
@@ -12,17 +10,15 @@ import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
 import com.dounion.server.eum.ResponseTypeEnum;
 import com.dounion.server.task.SubscribeTask;
-import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Controller
 public class IndexController {
@@ -91,23 +87,31 @@ public class IndexController {
 
         ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
 
+        String message = ResponseBuilder.SUCCESS_MESSAGE;
         try {
-            // 刷新服务信息
+            // 获取上传文件信息
             ServiceInfo newInfo = JSONObject.parseObject(Files.readAllBytes(file.toPath()), ServiceInfo.class);
+
+            if(!StringUtils.equals(serviceInfo.getLocalIp(), newInfo.getLocalIp()) ||
+                    serviceInfo.getPort() != newInfo.getPort()){
+                message = "警告：文件已更新，修改IP或PORT需要重启服务";
+            }
+
+            // 生成文件
             newInfo.toFile();
+            // 刷新服务信息
+            BeanUtils.copyProperties(newInfo, serviceInfo);
+            serviceInfo.setMaster(newInfo.getMaster());
+            serviceInfo.setStandBy(newInfo.getStandBy());
+            serviceInfo.reloadLocalService();
 
             // 向主机刷新服务订阅信息
             new SubscribeTask().start();
 
-            if(!StringUtils.equals(serviceInfo.getLocalIp(), newInfo.getLocalIp()) ||
-                    serviceInfo.getPort() != serviceInfo.getPort()){
-                return ResponseBuilder.buildSuccess("警告：文件已更新，修改IP或PORT需要重启服务");
-            }
-
         } catch (IOException e) {
             return ResponseBuilder.buildError("文件解析失败");
         }
-        return ResponseBuilder.buildSuccess();
+        return ResponseBuilder.buildSuccess(message);
     }
 
 }

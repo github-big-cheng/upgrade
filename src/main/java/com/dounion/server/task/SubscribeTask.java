@@ -21,7 +21,7 @@ public class SubscribeTask extends Thread{
         try {
             // 获取当前服务信息
             ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
-            if(serviceInfo.isMaster()){
+            if(serviceInfo.getMasterBlur()){
                 logger.info("current service is master, service subscribe end");
             }
 

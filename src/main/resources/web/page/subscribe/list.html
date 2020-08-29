@@ -5,6 +5,7 @@
     <link href="/css/upgrade.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
 
     <title>订阅列表</title>
 </head>
@@ -73,15 +74,8 @@
 	$(function(){
 
 	    // 初始化字典
-        $.ajax({
-            type:'post',
-            dataType:'json',
-            url:'/common/dictList.json',
-            success:function(rdata) {
-                if(rdata && rdata.code=='0'){
-                    dict = rdata.data;
-                }
-            }
+        CommonJS.dictQuery(null, function(data){
+            dict = data.data;
         });
 
         query({});

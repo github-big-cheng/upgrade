@@ -8,10 +8,10 @@ import java.util.Map;
  */
 public class ResponseBuilder {
 
-    private final static int SUCCESS_CODE = 0;
-    private final static String SUCCESS_MESSAGE = "成功";
-    private final static int FAIL_CODE = -1;
-    private final static String FAIL_MESSAGE = "失败";
+    public final static int SUCCESS_CODE = 0;
+    public final static String SUCCESS_MESSAGE = "成功";
+    public final static int FAIL_CODE = -1;
+    public final static String FAIL_MESSAGE = "失败";
 
     /**
      * 构建返回结果

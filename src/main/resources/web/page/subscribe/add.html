@@ -5,6 +5,7 @@
     <link href="/css/upgrade.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
     <title>订阅</title>
 
 	<style>
@@ -99,11 +100,11 @@
 		// $("#right-div").find('a').addClass('unfold-btn');
 
 		// 初始化字典
-		dictQuery('osType', function(rdata){
-			callback(rdata, 'os_type_td', 'radio_tmpl', 'osType');
+		CommonJS.dictQuery('osType', function(rdata){
+			CommonJS.callback(rdata, 'os_type_td', 'radio_tmpl', 'osType');
 		});
-		dictQuery('serviceType', function(rdata){
-			callback(rdata, 'service_type_td', 'checkbox_tmpl', 'appType');
+		CommonJS.dictQuery('serviceType', function(rdata){
+			CommonJS.callback(rdata, 'service_type_td', 'checkbox_tmpl', 'appType');
 		});
 	});
 
@@ -153,41 +154,6 @@
 		$("#form").form('clear');
 	});
 
-
-	function dictQuery(type, _cb){
-		$.ajax({
-			type: 'post',
-			dataType: 'json',
-			data : {'type' : type},
-			url: '/common/dictList.json',
-			success: function (rdata) {
-				// console.log(rdata);
-				if(rdata && rdata.code=='0'){
-					_cb(rdata.data);
-				}
-			}
-		});
-	}
-
-
-	function callback(rdata, target, tmpl, name){
-
-		if(!rdata){
-			return;
-		}
-
-		let arr = [];
-		for(let i in rdata){
-			arr.push({value:i,text:rdata[i]});
-		}
-		// console.log(arr);
-
-		$("#"+tmpl).tmpl(arr, {
-			getName : function(){
-				return name;
-			}
-		}).appendTo($("#"+target));
-	}
 </script>
 
 </html>
