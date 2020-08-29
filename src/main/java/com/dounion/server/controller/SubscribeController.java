@@ -27,7 +27,7 @@ public class SubscribeController {
      */
     @RequestMapping(name = "订阅列表", value = "/list")
     public String list(){
-        return "page/subscribe/list.html";
+        return "subscribe/list.html";
     }
 
 
@@ -44,7 +44,7 @@ public class SubscribeController {
      */
     @RequestMapping(name = "订阅", value = "/add")
     public String add(){
-        return "page/subscribe/add.html";
+        return "subscribe/add.html";
     }
 
 

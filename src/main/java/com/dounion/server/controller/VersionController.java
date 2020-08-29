@@ -28,7 +28,7 @@ public class VersionController {
      */
     @RequestMapping(name = "版本列表", value = "/list")
     public String list(){
-        return "page/version/list.html";
+        return "version/list.html";
     }
 
 
@@ -49,7 +49,7 @@ public class VersionController {
      */
     @RequestMapping(name = "版本新增", value = "/add")
     public String add(){
-        return "page/version/add.html";
+        return "version/add.html";
     }
 
 

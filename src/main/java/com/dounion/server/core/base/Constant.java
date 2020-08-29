@@ -15,6 +15,8 @@ public interface Constant {
     String CONG_PATH = WORK_PATH + "conf" + File.separator;
     // 静态文件路径
     String WEB_PATH = WORK_PATH + "web" + File.separator;
+    // html文件路径
+    String PAGE_PATH = WEB_PATH + "page" + File.separator;
     // 下载路径
     String DOWNLOAD_PATH = ConfigurationHelper.getString("download_path") + File.separator;
 

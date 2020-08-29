@@ -55,7 +55,7 @@ public class IndexController {
      */
     @RequestMapping(name="首页", value = "/index")
     public String index(){
-        return "page/index.html";
+        return "index.html";
     }
 
 
