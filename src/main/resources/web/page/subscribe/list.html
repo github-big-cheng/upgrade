@@ -31,11 +31,11 @@
             <col width="5%">
             <col width="10%">
             <col width="15%">
-            <col width="12.5%">
             <col width="10%">
-            <col width="25%">
+            <col width="7.5%">
+            <col width="27.5%">
             <col width="10%">
-            <col width="12.5%">
+            <col width="15%">
         </colgroup>
         <thead>
             <tr>
@@ -43,7 +43,7 @@
                 <th>库点代码</th>
                 <th>应用类型</th>
                 <th>操作系统类型</th>
-                <th>是否备用分发</th>
+                <th>备用分发</th>
                 <th>发布回调地址</th>
                 <th>订阅状态</th>
                 <th>订阅时间</th>
@@ -69,13 +69,13 @@
 </script>
 
 <script>
-    let dict = {};
 
+    let dict = {};
 	$(function(){
 
 	    // 初始化字典
         CommonJS.dictQuery(null, function(data){
-            dict = data.data;
+            dict = data;
         });
 
         query({});
@@ -104,7 +104,7 @@
                     let data = rdata.data;
                     let arr = [];
                     for(let k in data){
-                        console.log(data[k]);
+                        // console.log(data[k]);
                         arr.push(data[k]);
                     }
                     let index = 0;

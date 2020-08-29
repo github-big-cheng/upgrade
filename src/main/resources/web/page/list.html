@@ -5,6 +5,7 @@
     <link href="/css/upgrade.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
 
     <title>功能列表</title>
 </head>
@@ -58,6 +59,11 @@
                             arr.push(data[k]);
                         }
                     }
+
+                    CommonJS.sort(arr, function(o1, o2){
+                        return o1['path'] > o2['path'];
+                    })
+
                     let index = 0;
                     $("#service_list_tmpl").tmpl(arr, {
                         format : function(str){
