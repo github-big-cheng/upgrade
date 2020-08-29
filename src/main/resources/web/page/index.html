@@ -6,10 +6,23 @@
     <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
     <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
     <title>首页</title>
+
+	<style>
+		a{
+			text-decoration:underline;
+		}
+		a:link {color: blue} /* 未被访问的链接 蓝色 */
+		a:visited {color: blue} /* 已被访问过的链接 蓝色 */
+		a:hover {color: blue} /* 鼠标悬浮在上的链接 蓝色 */
+		a:active {color: blue} /* 鼠标点中激活链接 蓝色 */
+	</style>
 </head>
 <body>
 
 	<h1>当前主机： <span id="localIp"></span>:<span id="port"></span></h1>
+	<a href="/index/download.file">下载</a> &nbsp;&nbsp;
+	<a class="update-btn">更新</a>
+	<input type="file" name="file"/>
 	<hr/>
 	<ul class="my-list">
 		<li>库点代码：<span id="code"></span></li>
@@ -68,6 +81,41 @@
             }
         });
     });
+
+
+    $("a.update-btn").on('click', function (e) {
+		e.preventDefault();
+
+		let file = $('input[name=file]')[0].files[0];
+		if(!file || file.name!='serviceInfo.json'){
+			alert("请上传名称为[serviceInfo.json]的文件");
+			return;
+		}
+
+		let formData = new FormData();
+		formData.append("file", $('input[name=file]')[0].files[0]);
+		console.log();
+
+		$.ajax({
+			url: '/index/update.json',
+			dataType:'json',
+			type:'POST',
+			async: false,
+			data: formData,
+			processData : false, // 使数据不做处理
+			contentType : false, // 不要设置Content-Type请求头
+			success: function (rdata) {
+				console.log(rdata);
+				if(rdata){
+					alert(rdata.message);
+					if(rdata.code=='0'){
+						window.location.href = "/index";
+					}
+				}
+			}
+		});
+	})
+
 
     const ids = ["code", "localIp", "port", "master", "masterService", "osType", "standBy", "publishPath"];
     function fillInfo(data){

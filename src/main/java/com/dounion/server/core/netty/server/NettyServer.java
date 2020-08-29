@@ -1,7 +1,6 @@
-package com.dounion.server.core.netty;
+package com.dounion.server.core.netty.server;
 
 import com.dounion.server.core.base.ServiceInfo;
-import com.dounion.server.core.netty.handlers.NettyServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -13,6 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+
+/**
+ * Netty服务端
+ *      提供web/upload/download服务
+ */
 public class NettyServer {
 
     private Logger logger = LoggerFactory.getLogger(NettyServer.class);

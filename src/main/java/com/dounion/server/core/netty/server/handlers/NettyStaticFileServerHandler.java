@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package com.dounion.server.core.netty.handlers;
+package com.dounion.server.core.netty.server.handlers;
 
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.helper.StringHelper;
@@ -21,9 +21,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.ssl.SslHandler;
-import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -87,6 +87,8 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 @ChannelHandler.Sharable
 public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<HttpRequest> {
+
+    private static final Logger logger = LoggerFactory.getLogger(NettyStaticFileServerHandler.class);
 
     public static final String HTTP_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";

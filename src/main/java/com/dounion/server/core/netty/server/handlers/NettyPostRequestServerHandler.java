@@ -1,11 +1,12 @@
-package com.dounion.server.core.netty.handlers;
+package com.dounion.server.core.netty.server.handlers;
 
 import com.dounion.server.core.base.Constant;
-import com.dounion.server.core.helper.StringHelper;
+import com.dounion.server.core.request.HandlerMappingConfig;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,10 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
             }
         }
         return this.request!=null &&
+                    // 仅限post请求
                     this.request.method().equals(HttpMethod.POST) &&
-                    !StringHelper.isStaticRequest(request.uri());
+                    // 是否是已注册的服务
+                    HandlerMappingConfig.isMapping(this.request.uri());
     }
 
 
@@ -70,7 +73,6 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
     public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
 
         if(!this.isMatch(msg)){
-//            logger.debug("NettyPostRequestServerHandler not match..");
             ctx.fireChannelRead(msg);
             return;
         }
@@ -117,14 +119,18 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
                     if (InterfaceHttpData.HttpDataType.FileUpload == data.getHttpDataType()) {
                         FileUpload fileUpload = (FileUpload) data;
                         if (fileUpload.isCompleted()) {
-                            final File file = new File(Constant.DOWNLOAD_PATH + fileUpload.getFilename());
+                            String fileName = fileUpload.getFilename();
+                            if(StringUtils.contains(fileName, File.separator)){
+                                fileName = StringUtils.substring(fileName, fileName.lastIndexOf(File.separator)+1);
+                            }
+                            final File file = new File(Constant.DOWNLOAD_PATH + fileName);
                             if(file.exists()){
                                 file.delete();
                             }
                             fileUpload.renameTo(file); // enable to move into another
                             decoder.removeHttpDataFromClean(fileUpload); //remove
-                            logger.debug("upload file: {}", fileUpload.getFile());
-                            params.put(fileUpload.getName(), fileUpload.getFile());
+                            logger.debug("upload file: {}", file);
+                            params.put(fileUpload.getName(), file);
                         }
                     }
                 }

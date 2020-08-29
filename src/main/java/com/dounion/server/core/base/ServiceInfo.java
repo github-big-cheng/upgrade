@@ -105,7 +105,7 @@ public class ServiceInfo {
         return localServiceList;
     }
 
-    public void writeFile(){
+    public void toFile(){
         try {
             FileHelper.writeFile(Constant.CONG_PATH, JSONObject.toJSONString(this));
         } catch (IOException e) {

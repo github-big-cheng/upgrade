@@ -1,6 +1,7 @@
 package com.dounion.server.core.request;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.BaseException;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.exception.SystemException;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Controller;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,19 +67,20 @@ public class HandlerMappingConfig {
             this.responseType = responseAnnotation.value();
             switch (this.responseType) {
                 case FILE:
-                    if(!method.getReturnType().equals(byte[].class)){
-                        this.responseType = null;
+                    if(!method.getReturnType().equals(File.class)){
+                        throw new SystemException("Illegal class config of @ResponseType,it must be java.io.File");
                     }
                     break;
                 case HTML:
                     if(!method.getReturnType().equals(String.class)){
-                        this.responseType = null;
+                        throw new SystemException("Illegal class config of @ResponseType,it must be java.lang.String");
                     }
                     break;
                 case JSON:
+                    // it's all ok
                     break;
                 default:
-                    this.responseType = null;
+                    throw new SystemException("this exception should be never throw...");
             }
         }
     }
@@ -218,6 +222,21 @@ public class HandlerMappingConfig {
 
     /**
      * 是否是已注册的请求地址
+     * @param url
+     * @return
+     */
+    public static Boolean isMapping(String url){
+        URI request;
+        try {
+            request = new URI(url);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        return isMapping(request);
+    }
+
+    /**
+     * 是否是已注册的请求地址
      * @param request
      * @return
      */
@@ -289,8 +308,9 @@ public class HandlerMappingConfig {
                     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
                     break;
                 case FILE: // 文件下载
-                    byte[] bytes = (byte[]) result;
-                    buf = Unpooled.copiedBuffer(bytes);
+                    File file = (File) result;
+                    buf = Unpooled.copiedBuffer(Files.readAllBytes(file.toPath()));
+                    response.headers().set(HttpHeaderNames.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
                     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/octet-stream; charset=UTF-8");
                     break;
                 default:
@@ -298,9 +318,12 @@ public class HandlerMappingConfig {
             }
 
         } catch (BaseException e) {
+            String message = JSON.toJSONString(ResponseBuilder.buildError(e.getCode(), e.getMsg()));
+            buf = Unpooled.copiedBuffer(message, CharsetUtil.UTF_8);
             logger.error("{} fail,{}", config, e);
         } catch (Exception e) {
             logger.error("{} error,{}", config, e);
+            error = e;
         }
 
         if(error != null){
