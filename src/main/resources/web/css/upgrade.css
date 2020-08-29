@@ -60,6 +60,11 @@ td,th {
     border-bottom-width: 0;
 }
 
+.pure-table .operation-btn{
+    color: crimson;
+    cursor: pointer;
+}
+
 
 
 .my-list>li:not(:first-child) {
@@ -75,3 +80,4 @@ td,th {
     float: left;
     width: 15%;
 }
+

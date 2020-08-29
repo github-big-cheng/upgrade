@@ -105,6 +105,11 @@ public class HandlerMappingConfig {
                     args[i] = params.get(parameter.getParameterName());
                     continue;
                 }
+                // int 类型
+                if(parameter.getParameterType().equals(int.class)){
+                    args[i] = Integer.parseInt(String.valueOf(params.get(parameter.getParameterName())));
+                    continue;
+                }
                 args[i] = BeanHelper.mapToObject(params, parameter.getParameterType());
             }
         }

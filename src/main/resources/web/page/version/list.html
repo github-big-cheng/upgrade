@@ -14,14 +14,14 @@
         <form id="form">
         <ul class="bar-ul">
             <li>应用类型：<select name="appType" ></select></li>
-<!--            <li>-->
-<!--                版本状态：-->
-<!--                <select name="status" >-->
-<!--                    <option value="">全部</option>-->
-<!--                    <option value="1">正常</option>-->
-<!--                    <option value="2">已过期</option>-->
-<!--                </select>-->
-<!--            </li>-->
+            <li>
+                版本状态：
+                <select name="status" >
+                    <option value="">全部</option>
+                    <option value="1">已发布</option>
+                    <option value="2">已注销</option>
+                </select>
+            </li>
             <li><button id="query">查询</button></li>
         </ul>
         </form>
@@ -32,12 +32,13 @@
     <table class="pure-table">
         <colgroup>
             <col width="5%">
-            <col width="15%">
             <col width="12.5%">
-            <col width="15%">
+            <col width="12.5%">
+            <col width="12.5%">
             <col width="25%">
             <col width="12.5%">
             <col width="15%">
+            <col width="5%">
         </colgroup>
         <thead>
             <tr>
@@ -48,6 +49,7 @@
                 <th>文件路径</th>
                 <th>版本状态</th>
                 <th>发布时间</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody id="version_list_tbody"></tbody>
@@ -67,10 +69,14 @@
         <td style="text-align: center;">{%= $item.getIndex() %}</td>
         <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
         <td title="{%= versionNo %}">{%= versionNo %}</td>
-        <td title="{%= isForceUpdate=='1'?'是':'否' %}">{%= isForceUpdate=='1'?'是':'否' %}</td>
+        <td title="{%= $data.isForceUpdate=='1'?'是':'否' %}">{%= $data.isForceUpdate=='1'?'是':'否' %}</td>
         <td title="{%= filePath %}">{%= filePath %}</td>
-        <td title="{%= status=='1'?'已发布':'已取消' %}">{%= status=='1'?'已发布':'已取消' %}</td>
+        <td title="{%= $data.status=='1'?'已发布':'已注销' %}">{%= $data.status=='1'?'已发布':'已注销' %}</td>
         <td title="{%= publishDate %}">{%= publishDate %}</td>
+        <td>
+            {%if $data.status=='1'%}<a class="operation-btn" data-id="{%= id%}" data-status="0">注销</a>{%/if%}
+            {%if $data.status=='0'%}<a class="operation-btn" data-id="{%= id%}" data-status="1">激活</a>{%/if%}
+        </td>
     </tr>
 </script>
 
@@ -98,7 +104,7 @@
             }
         });
 
-        query({status:'1'});
+        query({});
 	});
 
 
@@ -106,6 +112,23 @@
        e.preventDefault();
        let p = $("#form").serialize();
        query(p);
+    });
+	$("#version_list_tbody").on('click', 'a.operation-btn', function(e){
+	    e.preventDefault();
+        $.ajax({
+            type:'post',
+            data : {"id" : $(this).data("id"), "status":$(this).data("status")},
+            dataType:'json',
+            url:'/version/updateStatus.json',
+            success:function(rdata) {
+                // console.log(rdata);
+                if(rdata && rdata.code=='0'){
+                    $("#query").click();
+                } else {
+                    alert(rdata.message);
+                }
+            }
+        });
     });
 
 

@@ -62,6 +62,22 @@ public class VersionController {
     public Object addJson(VersionInfo record, File file){
         record.setFilePath(file.getPath());
         // 更新版本信息
+        versionInfoService.updateVersion(record);
+        return ResponseBuilder.buildSuccess();
+    }
+
+
+    /**
+     * 版本状态变更
+     * @return
+     */
+    @RequestMapping("/updateStatus.json")
+    @ResponseType(ResponseTypeEnum.JSON)
+    public Object updateStatus(int id, String status){
+        // 更新版本信息
+        VersionInfo record = new VersionInfo();
+        record.setId(id);
+        record.setStatus(status);
         versionInfoService.update(record);
         return ResponseBuilder.buildSuccess();
     }

@@ -22,9 +22,15 @@ public class VersionInfoServiceImpl implements VersionInfoService {
         return versionInfoMapper.selectListBySelective(query);
     }
 
-    @Transactional
+
     @Override
     public void update(VersionInfo record) {
+        versionInfoMapper.updateByPrimaryKeySelective(record);
+    }
+
+    @Transactional
+    @Override
+    public void updateVersion(VersionInfo record) {
         // 删除已有版本信息
         VersionInfo delete = new VersionInfo();
         delete.setAppType(record.getAppType());
