@@ -242,71 +242,65 @@ public class HandlerMappingConfig {
         // 默认返回 response
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.EMPTY_BUFFER);
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
-        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
 
         // 未找到匹配的urlMapping
         if(!isMapping(requestUri)){
             response.setStatus(HttpResponseStatus.NOT_FOUND);
+            response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
             return response;
         }
 
         HandlerMappingConfig config = null;
+        ByteBuf buf = Unpooled.EMPTY_BUFFER;
         Exception error = null;
-        ResponseTypeEnum responseType = null;
-        Object result = null;
+        Object result;
         try {
             config = mapping.get(requestUri);
-            if(config.responseType == null){
-                throw new SystemException(config.method + " : @ResponseType config error");
+            if(config==null || config.responseType == null){
+                response.setStatus(HttpResponseStatus.NOT_FOUND);
+                response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
+                return response;
             }
 
-            responseType = config.responseType;
             result = config.invoke(params);
+            if(result == null){
+                return response;
+            }
+
+            switch (config.responseType){
+                case JSON: // json
+                    buf = Unpooled.copiedBuffer(JSON.toJSONString(result), CharsetUtil.UTF_8);
+                    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
+                    break;
+                case HTML: // html
+                    String filePath = Constant.WEB_PATH + result;
+                    if(!new File(filePath).exists()){
+                        response.setStatus(HttpResponseStatus.NOT_FOUND);
+                        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
+                        return response;
+                    }
+                    byte[] fileBytes = FileHelper.getFile(filePath);
+                    buf = Unpooled.copiedBuffer(fileBytes);
+                    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+                    break;
+                case FILE: // 文件下载
+                    byte[] bytes = (byte[]) result;
+                    buf = Unpooled.copiedBuffer(bytes);
+                    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/octet-stream; charset=UTF-8");
+                    break;
+                default:
+                    break;
+            }
+
         } catch (BaseException e) {
-            result = ResponseBuilder.buildError(e.getCode(), e.getMsg());
             logger.error("{} fail,{}", config, e);
         } catch (Exception e) {
-            if(ResponseTypeEnum.JSON.equals(responseType)) {
-                result = ResponseBuilder.buildError();
-            } else {
-                error = e;
-            }
             logger.error("{} error,{}", config, e);
         }
 
         if(error != null){
             response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
-            ByteBuf buf;
             buf = Unpooled.copiedBuffer(error.getMessage(), CharsetUtil.UTF_8);
-            response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, buf.readableBytes());
-            return response.replace(buf);
-        }
-
-        if(result == null){
-            return response;
-        }
-
-        ByteBuf buf;
-        switch (responseType){
-            case JSON: // json
-                buf = Unpooled.copiedBuffer(JSON.toJSONString(result), CharsetUtil.UTF_8);
-                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
-                break;
-            case HTML: // html
-                String filePath = Constant.WEB_PATH + result;
-                byte[] fileBytes = FileHelper.getFile(filePath);
-                buf = Unpooled.copiedBuffer(fileBytes);
-                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
-                break;
-            case FILE: // 文件下载
-                byte[] bytes = (byte[]) result;
-                buf = Unpooled.copiedBuffer(bytes);
-                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/octet-stream; charset=UTF-8");
-                break;
-            default:
-                buf = Unpooled.EMPTY_BUFFER;
-                break;
-
         }
 
         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, buf.readableBytes());

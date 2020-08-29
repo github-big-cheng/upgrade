@@ -60,14 +60,7 @@ public class VersionController {
     @RequestMapping("/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(VersionInfo record, File file){
-        // 保存文件
-        String filePath;
-        try {
-            filePath = FileHelper.createFile(Constant.DOWNLOAD_PATH, file, true);
-        } catch (IOException e) {
-            throw new SystemException("file upload error");
-        }
-        record.setFilePath(filePath);
+        record.setFilePath(file.getPath());
         // 更新版本信息
         versionInfoService.update(record);
         return ResponseBuilder.buildSuccess();

@@ -15,6 +15,7 @@ public class NettyGetRequestServerHandler extends NettyHttpRequestServerHandler 
 
     private Logger logger = LoggerFactory.getLogger(NettyGetRequestServerHandler.class);
 
+
     @Override
     protected Boolean isMatch(Object msg) {
         if(msg instanceof HttpRequest){
@@ -29,7 +30,7 @@ public class NettyGetRequestServerHandler extends NettyHttpRequestServerHandler 
     public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
 
         if(!this.isMatch(msg)){
-            logger.debug("NettyGetRequestServerHandler not match..{}", msg);
+//            logger.debug("NettyGetRequestServerHandler not match..");
             ctx.fireChannelRead(msg);
             return;
         }

@@ -46,7 +46,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * <a href="http://tools.ietf.org/html/rfc2616#section-14.25">RFC 2616</a>.
  *
  * <h3>How Browser Caching Works</h3>
- *
+ * <p>
  * Web browser caching works with HTTP headers as illustrated by the following
  * sample:
  * <ol>
@@ -86,7 +86,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * </pre>
  */
 @ChannelHandler.Sharable
-public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<HttpRequest>  {
+public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
     public static final String HTTP_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
@@ -99,7 +99,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
 
         this.request = msg;
 
-        if(!StringHelper.isStaticRequest(this.request.uri())){
+        if (!StringHelper.isStaticRequest(this.request.uri())) {
             ctx.fireChannelRead(msg);
             return;
         }
@@ -172,11 +172,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
         setContentTypeHeader(response, file);
         setDateAndCacheHeaders(response, file);
 
-        if (!keepAlive) {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
-        } else if (request.protocolVersion().equals(HTTP_1_0)) {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        }
+        response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
 
         // Write the initial line and the header.
         ctx.write(response);
@@ -184,18 +180,10 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
         // Write the content.
         ChannelFuture sendFileFuture;
         ChannelFuture lastContentFuture;
-        if (ctx.pipeline().get(SslHandler.class) == null) {
-            sendFileFuture =
-                    ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
-            // Write the end marker.
-            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-        } else {
-            sendFileFuture =
-                    ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
-                            ctx.newProgressivePromise());
-            // HttpChunkedInput will write the end marker (LastHttpContent) for us.
-            lastContentFuture = sendFileFuture;
-        }
+        sendFileFuture =
+                ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
+        // Write the end marker.
+        lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
 
         sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
             @Override
@@ -213,11 +201,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
             }
         });
 
-        // Decide whether to close the connection or not.
-        if (!keepAlive) {
-            // Close the connection when the whole content is written out.
-            lastContentFuture.addListener(ChannelFutureListener.CLOSE);
-        }
+        lastContentFuture.addListener(ChannelFutureListener.CLOSE);
     }
 
     @Override
@@ -248,9 +232,9 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
         // Simplistic dumb security check.
         // You will have to do something serious in the production environment.
         if (uri.contains(File.separator + '.') ||
-            uri.contains('.' + File.separator) ||
-            uri.charAt(0) == '.' || uri.charAt(uri.length() - 1) == '.' ||
-            INSECURE_URI.matcher(uri).matches()) {
+                uri.contains('.' + File.separator) ||
+                uri.charAt(0) == '.' || uri.charAt(uri.length() - 1) == '.' ||
+                INSECURE_URI.matcher(uri).matches()) {
             return null;
         }
 
@@ -260,22 +244,22 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
 
     private void sendListing(ChannelHandlerContext ctx, File dir, String dirPath) {
         StringBuilder buf = new StringBuilder()
-            .append("<!DOCTYPE html>\r\n")
-            .append("<html><head><meta charset='utf-8' /><title>")
-            .append("Listing of: ")
-            .append(dirPath)
-            .append("</title></head><body>\r\n")
+                .append("<!DOCTYPE html>\r\n")
+                .append("<html><head><meta charset='utf-8' /><title>")
+                .append("Listing of: ")
+                .append(dirPath)
+                .append("</title></head><body>\r\n")
 
-            .append("<h3>Listing of: ")
-            .append(dirPath)
-            .append("</h3>\r\n")
+                .append("<h3>Listing of: ")
+                .append(dirPath)
+                .append("</h3>\r\n")
 
-            .append("<ul>")
-            .append("<li><a href=\"../\">..</a></li>\r\n");
+                .append("<ul>")
+                .append("<li><a href=\"../\">..</a></li>\r\n");
 
         File[] files = dir.listFiles();
         if (files != null) {
-            for (File f: files) {
+            for (File f : files) {
                 if (f.isHidden() || !f.canRead()) {
                     continue;
                 }
@@ -286,10 +270,10 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
                 }
 
                 buf.append("<li><a href=\"")
-                .append(name)
-                .append("\">")
-                .append(name)
-                .append("</a></li>\r\n");
+                        .append(name)
+                        .append("\">")
+                        .append(name)
+                        .append("</a></li>\r\n");
             }
         }
 
@@ -322,8 +306,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
     /**
      * When file timestamp is the same as what the browser is sending up, send a "304 Not Modified"
      *
-     * @param ctx
-     *            Context
+     * @param ctx Context
      */
     private void sendNotModified(ChannelHandlerContext ctx) {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, NOT_MODIFIED, Unpooled.EMPTY_BUFFER);
@@ -359,8 +342,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
     /**
      * Sets the Date header for the HTTP response
      *
-     * @param response
-     *            HTTP response
+     * @param response HTTP response
      */
     private static void setDateHeader(FullHttpResponse response) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.CHINA);
@@ -373,10 +355,8 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
     /**
      * Sets the Date and Cache headers for the HTTP Response
      *
-     * @param response
-     *            HTTP response
-     * @param fileToCache
-     *            file to extract content type
+     * @param response    HTTP response
+     * @param fileToCache file to extract content type
      */
     private static void setDateAndCacheHeaders(HttpResponse response, File fileToCache) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.CHINA);
@@ -397,10 +377,8 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
     /**
      * Sets the content type header for the HTTP Response
      *
-     * @param response
-     *            HTTP response
-     * @param file
-     *            file to extract content type
+     * @param response HTTP response
+     * @param file     file to extract content type
      */
     private static void setContentTypeHeader(HttpResponse response, File file) {
 //        MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
@@ -409,19 +387,19 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
     }
 
     private static String getContentTypeByName(String name) {
-        if (name.endsWith(".html")||name.endsWith(".htm")) {
+        if (name.endsWith(".html") || name.endsWith(".htm")) {
             return "text/html";
-        }else if (name.endsWith(".js") || name.endsWith("json")) {
+        } else if (name.endsWith(".js") || name.endsWith("json")) {
             return "application/javascript;charset=UTF-8";
-        }else if (name.endsWith(".css")) {
+        } else if (name.endsWith(".css")) {
             return "text/css";
-        }else if (name.endsWith(".gif")) {
+        } else if (name.endsWith(".gif")) {
             return "image/gif";
-        }else if (name.endsWith(".class")) {
+        } else if (name.endsWith(".class")) {
             return "application/octet-stream";
-        }else if (name.endsWith(".jpg")||name.endsWith(".jpeg")) {
+        } else if (name.endsWith(".jpg") || name.endsWith(".jpeg")) {
             return "image/jpeg";
-        }else {
+        } else {
             return "text/html";
         }
     }
