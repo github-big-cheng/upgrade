@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,10 +22,10 @@ public class TaskHandler implements Runnable {
     }
 
     // 任务处理队列
-    public static BlockingQueue<BaseTask> TASK_QUEUE = new LinkedBlockingQueue<>();
+    private static BlockingQueue<BaseTask> TASK_QUEUE = new LinkedBlockingQueue<>();
     public static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
     private static AtomicInteger TASK_ID = new AtomicInteger(0);
-    private static ThreadLocal<Integer> THREAD_LOCAL = new ThreadLocal<>();
+    private static Map<Integer, ThreadLocal<BaseTask>> THREAD_LOCAL_MAP = new ConcurrentHashMap<>();
 
     static {
         new Thread(new TaskHandler()).start();
@@ -45,7 +42,9 @@ public class TaskHandler implements Runnable {
                     continue;
                 }
 
-                EXECUTOR_SERVICE.submit(task);
+                Future id = EXECUTOR_SERVICE.submit(task);
+                // 任务结束，移除对应的任务线程变量
+                THREAD_LOCAL_MAP.remove(id);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -59,13 +58,36 @@ public class TaskHandler implements Runnable {
      * @return
      */
     public static Integer callTask(String taskName) {
-        Integer id =  TASK_ID.addAndGet(1);
 
-        BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
+        final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
+        if(task == null){
+            logger.warn("task [{}] not config, please check it...");
+            return null;
+        }
+
+        Integer id =  TASK_ID.addAndGet(1);
         task.setTaskId(id);
+        THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){
+            @Override
+            protected BaseTask initialValue() {
+                return task;
+            }
+        });
+
         TASK_QUEUE.add(task);
 
         return id;
+    }
+
+
+    /**
+     * 提交任务中断请求
+     * @param taskId
+     * @return
+     */
+    public static boolean interrupted(Integer taskId){
+        ThreadLocal<BaseTask> taskThreadLocal = THREAD_LOCAL_MAP.get(taskId);
+        return taskThreadLocal.get().interrupted();
     }
 
 }

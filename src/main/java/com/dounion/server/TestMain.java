@@ -3,6 +3,7 @@ package com.dounion.server;
 import com.dounion.server.core.base.BeanConfig;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.request.MappingConfigHandler;
+import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.dao.SubscribeInfoMapper;
 import com.dounion.server.entity.SubscribeInfo;
 import com.dounion.server.service.TransactionTestService;
@@ -19,10 +20,16 @@ public class TestMain {
                 new AnnotationConfigApplicationContext(BeanConfig.class);
 
         SpringApp.init(context);
-        MappingConfigHandler.initialization();
+//        MappingConfigHandler.initialization();
 
 //        transactionTest();
 //        pageTest();
+
+        taskTest();
+
+        while(true) {
+
+        }
     }
 
 
@@ -42,6 +49,19 @@ public class TestMain {
         PageHelper.startPage(1, 5);
         List<SubscribeInfo> list = mapper.selectListBySelective(query);
         System.out.println(list.size());
+    }
+
+
+    /**
+     * 后台任务测试
+     */
+    public static void taskTest(){
+        int id1 = TaskHandler.callTask("testTask");
+        int id2 = TaskHandler.callTask("testTask");
+
+        System.out.println(id1);
+        System.out.println(id2);
+        TaskHandler.interrupted(id1);
     }
 
 }

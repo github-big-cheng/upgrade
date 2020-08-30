@@ -29,14 +29,19 @@ public class SubscribeTask extends BaseTask {
     }
 
     @Override
-    public void run() {
-
+    public Integer call() {
         try {
+
+            if(super.isInterrupted()){
+                logger.info("subscribe task [{}] has been interrupted, it will be exit...", this.taskId);
+                return taskId;
+            }
+
             // 获取当前服务信息
             ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
             if(serviceInfo.getMasterBlur()){
                 logger.info("current service is master, service subscribe end");
-                return;
+                return taskId;
             }
 
             Assert.notNull(serviceInfo.getMasterService(), "master service address must config");
@@ -63,8 +68,8 @@ public class SubscribeTask extends BaseTask {
 
 
             if(super.isInterrupted()){
-                logger.info("subscribe task has been interrupted, it will be exit...");
-                return;
+                logger.info("subscribe task [{}] has been interrupted, it will be exit...", this.taskId);
+                return taskId;
             }
 
             // 调用主机订阅接口
@@ -81,6 +86,6 @@ public class SubscribeTask extends BaseTask {
         } catch (Exception e) {
             logger.error("service subscribe task error:{}", e);
         }
-
+        return taskId;
     }
 }

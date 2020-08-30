@@ -1,13 +1,15 @@
 package com.dounion.server.core.base;
 
+import java.util.concurrent.Callable;
+
 /**
  * 抽象任务
  */
-public abstract class BaseTask implements Runnable{
+public abstract class BaseTask implements Callable<Integer> {
 
 
     protected Integer taskId;
-    protected boolean interrupt = false;
+    private boolean interrupt = false;
 
 
     public Integer getTaskId() {
@@ -29,8 +31,8 @@ public abstract class BaseTask implements Runnable{
      * 设置任务需要被中断标识
      *      仅仅设置标识，不表示一定可以中断，具体是否中断由具体任务判断标识处理
      */
-    public void interrupted(){
-        interrupt = true;
+    public boolean interrupted(){
+        return interrupt = true;
     }
 
     /**
