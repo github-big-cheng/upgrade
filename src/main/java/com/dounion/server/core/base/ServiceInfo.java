@@ -58,7 +58,7 @@ public class ServiceInfo {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("ServerInfo :{");
+        sb.append("ServiceInfo :{");
 
         sb.append("code:").append(this.code).append(", \t")
             .append("localIp:").append(this.localIp).append(", \t")
@@ -73,7 +73,7 @@ public class ServiceInfo {
         if(!CollectionUtils.isEmpty(appList)){
             sb.append("\r\n localServices :[");
             for(AppInfo app : appList){
-                sb.append(app.toString());
+                sb.append(app.toString()).append(",\t");
             }
             sb.append("}");
         }

@@ -20,7 +20,7 @@ public class AppInfo {
         sb.append("appInfo : {");
         sb.append("serviceType:").append(this.getServiceType()).append(", \t")
           .append("versionNo:").append(this.versionNo).append(", \t")
-          .append("workPath:").append(this.workPath).append(", \t")
+          .append("workPath:").append(this.workPath)
         ;
         sb.append("}");
         return sb.toString();
