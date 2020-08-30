@@ -5,6 +5,8 @@ import com.dounion.server.entity.SubscribeInfo;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 @Repository("subscribeInfoMapper")
 public class SubscribeInfoMapper extends BaseDao<SubscribeInfo> {
 
@@ -17,6 +19,16 @@ public class SubscribeInfoMapper extends BaseDao<SubscribeInfo> {
     public int deleteBySelective(SubscribeInfo record) {
         Assert.notNull(record.getCode(), "code is null,it's dangerous operation...");
         return sql.delete(this.getNamespace() + ".deleteBySelective", record);
+    }
+
+
+    /**
+     * 被订阅服务列表查询
+     * @param record
+     * @return
+     */
+    public List<String> currentServiceSubscribeQuery(SubscribeInfo record){
+        return sql.selectList(this.getNamespace() + ".currentServiceSubscribeQuery", record);
     }
 
 }

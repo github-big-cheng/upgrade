@@ -31,7 +31,8 @@ import java.util.Properties;
 @ComponentScan(value={
         "com.dounion.server.dao",
         "com.dounion.server.service",
-        "com.dounion.server.controller"
+        "com.dounion.server.controller",
+        "com.dounion.server.task"
 })
 public class BeanConfig {
 

@@ -23,4 +23,8 @@ public interface Constant {
     // 下载路径
     String DOWNLOAD_PATH = ConfigurationHelper.getString("download_path") + File.separator;
 
+
+    // 订阅服务地址
+    String SUBSCRIBE_URL = "/subscribe/add.json";
+
 }

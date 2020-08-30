@@ -11,7 +11,7 @@ CREATE TABLE T_UPGRADE_SUBSCRIBE_INFO
     OS_TYPE        VARCHAR(15),  -- 操作系统类型
     IS_STAND_BY    CHAR(1),      -- 是否提供分发下载服务 1-是 0-否
     PUBLISH_URL    VARCAHR(100), -- 通知地址
-    STATUS         CHAR(1),      -- 订阅状态 0-未订阅 1-已订阅 2-已离线
+    STATUS         CHAR(1),      -- 订阅状态 0-已注销 1-已订阅
     SUBSCRIBE_TIME VARCAHR(20)   -- 订阅时间
 );
 

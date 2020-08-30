@@ -9,6 +9,7 @@ import com.dounion.server.eum.OsTypeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
@@ -25,6 +26,9 @@ public class ServiceInfo {
 
     // 是否主服务
     private String master;
+
+    // 上级服务地址
+    private String masterService;
 
     // 本地IP
     private String localIp;
@@ -61,7 +65,7 @@ public class ServiceInfo {
             .append("port:").append(this.port).append(", \t")
             .append("master:").append(this.getMaster()).append(", \t")
             .append("osType:").append(this.getOsType()).append(", \t")
-            .append("isStandBy:").append(this.getStandBy()).append(", \t")
+            .append("standBy:").append(this.getStandBy()).append(", \t")
             .append("publishPath:").append(this.getPublishPath()).append(", \t")
         ;
 
@@ -143,6 +147,14 @@ public class ServiceInfo {
         this.master = master;
     }
 
+    public String getMasterService() {
+        return masterService;
+    }
+
+    public void setMasterService(String masterService) {
+        this.masterService = masterService;
+    }
+
     public String getLocalIp() {
         return localIp;
     }
@@ -176,6 +188,8 @@ public class ServiceInfo {
     }
 
     public String getPublishPath() {
+        Assert.notNull(this.localIp, "localIp must be config");
+        Assert.notNull(this.port, "port must be config");
         if(StringUtils.isBlank(this.publishPath)){
             this.publishPath = "http://" + this.localIp + ":" +this.port + "/publish/callback";
         }

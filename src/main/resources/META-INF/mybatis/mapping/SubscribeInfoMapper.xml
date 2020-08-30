@@ -193,4 +193,11 @@
     </trim>
   </select>
 
+
+  <select id="currentServiceSubscribeQuery" parameterType="com.dounion.server.entity.SubscribeInfo" resultType="java.lang.String">
+    SELECT DISTINCT APP_TYPE
+    FROM T_UPGRADE_SUBSCRIBE_INFO
+    WHERE STATUS = '1'
+  </select>
+
 </mapper>
