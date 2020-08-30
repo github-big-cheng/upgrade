@@ -16,12 +16,17 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 /**
- * 想主机订阅更新服务
+ * 向主机订阅更新服务
  */
 @Task("subscribeTask")
 public class SubscribeTask extends BaseTask {
 
     private final static Logger logger = LoggerFactory.getLogger(SubscribeTask.class);
+
+    @Override
+    public String getTaskName() {
+        return "更新订阅后台任务";
+    }
 
     @Override
     public void run() {

@@ -6,8 +6,24 @@ package com.dounion.server.core.base;
 public abstract class BaseTask implements Runnable{
 
 
+    protected Integer taskId;
     protected boolean interrupt = false;
 
+
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
+    }
+
+    public abstract String getTaskName();
+
+    @Override
+    public String toString() {
+        return "task: [taskId=" + this.taskId + ", taskName=]" + this.getTaskName();
+    }
 
     /**
      * 设置任务需要被中断标识
