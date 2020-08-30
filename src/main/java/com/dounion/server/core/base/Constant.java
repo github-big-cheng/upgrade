@@ -6,6 +6,8 @@ import java.io.File;
 
 public interface Constant {
 
+    // ==========================================  文件路径相关 ==========================================================
+
     // 服务配置文件名称
     String JSON_CONFIG_FILE_NAME = "serviceInfo.json";
 
@@ -24,7 +26,14 @@ public interface Constant {
     String DOWNLOAD_PATH = ConfigurationHelper.getString("download_path") + File.separator;
 
 
+    // ==========================================  请求地址相关 ==========================================================
+
     // 订阅服务地址
     String SUBSCRIBE_URL = "/subscribe/add.json";
+
+    // ==========================================  后台任务相关 ==========================================================
+
+    // 订阅任务
+    String SUBSCRIBE_TASk = "subscribeTask";
 
 }

@@ -1,7 +1,6 @@
 package com.dounion.server.core.request;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.BaseException;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.exception.SystemException;
@@ -33,18 +32,27 @@ import java.util.Map;
 
 import static com.dounion.server.core.helper.SpringApp.getInstance;
 
-public class HandlerMappingConfig {
+/**
+ * 请求路由处理器
+ */
+public class MappingConfigHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(HandlerMappingConfig.class);
+    private final static Logger logger = LoggerFactory.getLogger(MappingConfigHandler.class);
+
+
+    // 私有化构造方法
+    private MappingConfigHandler(){
+
+    }
 
     // 参数名称发现器
     private final static ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
 
-    public HandlerMappingConfig(Object bean, Method method) {
+    public MappingConfigHandler(Object bean, Method method) {
         this(bean, method, method.getName());
     }
 
-    public HandlerMappingConfig(Object bean, Method method, String desc){
+    public MappingConfigHandler(Object bean, Method method, String desc){
         this.obj = bean;
         this.method = method;
         this.desc = desc;
@@ -171,10 +179,10 @@ public class HandlerMappingConfig {
 
     // ================================ static method ============================================
 
-    public static Map<URI, HandlerMappingConfig> mapping = new HashMap<>();
+    public static Map<URI, MappingConfigHandler> mapping = new HashMap<>();
 
     public static void initialization(){
-        Map<String, Object> map =  getInstance().getObjectByAnnotationType(Controller.class);
+        Map<String, Object> map = getInstance().getObjectByAnnotationType(Controller.class);
         for(String key : map.keySet()){
             Object o = map.get(key);
 
@@ -190,7 +198,7 @@ public class HandlerMappingConfig {
             }
 
             URI uri;
-            HandlerMappingConfig config;
+            MappingConfigHandler config;
             StringBuffer urlBuffer = new StringBuffer();
             StringBuffer nameBuffer = new StringBuffer();
             for(Method method : methods){
@@ -211,7 +219,7 @@ public class HandlerMappingConfig {
                 urlBuffer.append(StringHelper.urlAppend(null, annotation.value()));
                 nameBuffer.append(StringUtils.isBlank(annotation.name()) ? method : annotation.name());
                 uri = URI.create(urlBuffer.toString());
-                config = new HandlerMappingConfig(o, method, nameBuffer.toString());
+                config = new MappingConfigHandler(o, method, nameBuffer.toString());
                 config.setPath(uri.getPath());
                 mapping.put(uri, config);
 
@@ -274,7 +282,7 @@ public class HandlerMappingConfig {
             return response;
         }
 
-        HandlerMappingConfig config = null;
+        MappingConfigHandler config = null;
         ByteBuf buf = Unpooled.EMPTY_BUFFER;
         Exception error = null;
         Object result;

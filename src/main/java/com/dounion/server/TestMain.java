@@ -2,7 +2,7 @@ package com.dounion.server;
 
 import com.dounion.server.core.base.BeanConfig;
 import com.dounion.server.core.helper.SpringApp;
-import com.dounion.server.core.request.HandlerMappingConfig;
+import com.dounion.server.core.request.MappingConfigHandler;
 import com.dounion.server.dao.SubscribeInfoMapper;
 import com.dounion.server.entity.SubscribeInfo;
 import com.dounion.server.service.TransactionTestService;
@@ -19,7 +19,7 @@ public class TestMain {
                 new AnnotationConfigApplicationContext(BeanConfig.class);
 
         SpringApp.init(context);
-        HandlerMappingConfig.initialization();
+        MappingConfigHandler.initialization();
 
 //        transactionTest();
 //        pageTest();

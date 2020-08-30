@@ -1,8 +1,10 @@
 package com.dounion.server.task;
 
 import com.dounion.server.core.base.AppInfo;
+import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
+import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.dao.SubscribeInfoMapper;
 import com.dounion.server.entity.SubscribeInfo;
 import org.apache.commons.lang.StringUtils;
@@ -15,9 +17,9 @@ import java.util.*;
 
 /**
  * 想主机订阅更新服务
- *
  */
-public class SubscribeTask extends Thread{
+@Task("subscribeTask")
+public class SubscribeTask extends BaseTask {
 
     private final static Logger logger = LoggerFactory.getLogger(SubscribeTask.class);
 
@@ -54,6 +56,12 @@ public class SubscribeTask extends Thread{
                 servicesSet.addAll(subscribeList);
             }
 
+
+            if(super.isInterrupted()){
+                logger.info("subscribe task has been interrupted, it will be exit...");
+                return;
+            }
+
             // 调用主机订阅接口
             Map<String, Object> params = new HashMap<>();
             params.put("code", serviceInfo.getCode());
@@ -61,6 +69,8 @@ public class SubscribeTask extends Thread{
             params.put("serviceType", StringUtils.join(servicesSet, ","));
             params.put("standBy", serviceInfo.getStandBy());
             params.put("publishUrl", serviceInfo.getPublishPath());
+            // TODO 这里缺少NettyClient
+            // NettyClient.doRequest(params);
 
 
         } catch (Exception e) {

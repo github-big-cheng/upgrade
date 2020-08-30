@@ -1,7 +1,7 @@
 package com.dounion.server.core.netty.server.handlers;
 
 import com.dounion.server.core.base.Constant;
-import com.dounion.server.core.request.HandlerMappingConfig;
+import com.dounion.server.core.request.MappingConfigHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
@@ -45,7 +45,7 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
                     // 仅限post请求
                     this.request.method().equals(HttpMethod.POST) &&
                     // 是否是已注册的服务
-                    HandlerMappingConfig.isMapping(this.request.uri());
+                    MappingConfigHandler.isMapping(this.request.uri());
     }
 
 

@@ -1,6 +1,6 @@
 package com.dounion.server.core.netty.server.handlers;
 
-import com.dounion.server.core.request.HandlerMappingConfig;
+import com.dounion.server.core.request.MappingConfigHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpMethod;
@@ -24,7 +24,7 @@ public class NettyGetRequestServerHandler extends NettyHttpRequestServerHandler 
                     // GET请求
                     this.request.method().equals(HttpMethod.GET) &&
                     // 已注册的服务
-                    HandlerMappingConfig.isMapping(request.uri());
+                    MappingConfigHandler.isMapping(request.uri());
     }
 
     @Override

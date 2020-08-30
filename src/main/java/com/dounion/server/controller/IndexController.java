@@ -4,10 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
-import com.dounion.server.core.request.HandlerMappingConfig;
+import com.dounion.server.core.request.MappingConfigHandler;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
+import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.eum.ResponseTypeEnum;
 import com.dounion.server.task.SubscribeTask;
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +43,7 @@ public class IndexController {
     @RequestMapping(value = "/list.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object listJson(){
-        return ResponseBuilder.buildSuccess(HandlerMappingConfig.mapping);
+        return ResponseBuilder.buildSuccess(MappingConfigHandler.mapping);
     }
 
     /**
@@ -106,7 +107,7 @@ public class IndexController {
             serviceInfo.reloadLocalService();
 
             // 向主机刷新服务订阅信息
-            new SubscribeTask().start();
+            TaskHandler.callTask(Constant.SUBSCRIBE_TASk);
 
         } catch (IOException e) {
             return ResponseBuilder.buildError("文件解析失败");

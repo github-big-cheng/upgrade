@@ -1,7 +1,7 @@
 package com.dounion.server.core.netty.server.handlers;
 
 import com.dounion.server.core.helper.StringHelper;
-import com.dounion.server.core.request.HandlerMappingConfig;
+import com.dounion.server.core.request.MappingConfigHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -48,7 +48,7 @@ public abstract class NettyHttpRequestServerHandler extends SimpleChannelInbound
         String uri = StringHelper.getRealPath(request.uri());
         logger.debug("handlerMethod --> uri:[{}], path:[{}], params:[{}]", request.uri(), uri, this.params);
         ChannelFuture future =
-                ctx.writeAndFlush(HandlerMappingConfig.handlerMethod(uri, this.params)).addListener(ChannelFutureListener.CLOSE);
+                ctx.writeAndFlush(MappingConfigHandler.handlerMethod(uri, this.params)).addListener(ChannelFutureListener.CLOSE);
         if(this.request!=null || !this.params.isEmpty()){
             future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
