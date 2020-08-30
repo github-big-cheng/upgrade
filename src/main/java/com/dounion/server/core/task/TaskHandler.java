@@ -5,6 +5,8 @@ import com.dounion.server.core.helper.SpringApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -88,6 +90,19 @@ public class TaskHandler implements Runnable {
     public static boolean interrupted(Integer taskId){
         ThreadLocal<BaseTask> taskThreadLocal = THREAD_LOCAL_MAP.get(taskId);
         return taskThreadLocal.get().interrupted();
+    }
+
+
+    /**
+     * 获取当前任务列表
+     * @return
+     */
+    public static List<BaseTask> getTaskList(){
+        List<BaseTask> tasks = new ArrayList<>();
+        for(Integer id : THREAD_LOCAL_MAP.keySet()){
+            tasks.add(THREAD_LOCAL_MAP.get(id).get());
+        }
+        return tasks;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.dounion.server;
 
+import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.BeanConfig;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.request.MappingConfigHandler;
@@ -61,6 +62,11 @@ public class TestMain {
 
         System.out.println(id1);
         System.out.println(id2);
+
+        for(BaseTask task : TaskHandler.getTaskList()){
+            System.out.println(task);
+        }
+
         TaskHandler.interrupted(id1);
     }
 

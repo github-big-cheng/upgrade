@@ -1,7 +1,5 @@
 package com.dounion.server.core.base;
 
-import com.dounion.server.eum.ServiceTypeEnum;
-
 public class AppInfo {
 
     // 所属服务信息

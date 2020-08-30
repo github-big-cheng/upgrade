@@ -24,7 +24,7 @@ public abstract class BaseTask implements Callable<Integer> {
 
     @Override
     public String toString() {
-        return "task: [taskId=" + this.taskId + ", taskName=]" + this.getTaskName();
+        return "task: [taskId=" + this.taskId + ", taskName=" + this.getTaskName() + "]";
     }
 
     /**
