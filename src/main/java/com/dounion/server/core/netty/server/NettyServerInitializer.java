@@ -17,18 +17,18 @@ public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new HttpRequestDecoder()) // 解码
             .addLast(new HttpContentCompressor()) // 压缩
             .addLast(new HttpResponseEncoder()) // 编码
+            // url : like *.css|*.js|*.png|*.jpg some others, see detail in StringHelper.isStaticRequest
             .addLast(new NettyStaticFileServerHandler()) // 静态资源请求
+            // url : /download/
             .addLast(new NettyDownloadServerHandler()) // 文件下载请求
+            // method GET
             .addLast(new NettyGetRequestServerHandler()) // GET请求
+            // method POST
             .addLast(new ChunkedWriteHandler()) // 大文件的上传
             .addLast(new NettyPostRequestServerHandler()) // POST请求
+            // all request not matched return 404
             .addLast(new NettyNotFoundServerHandler()) // 404
         ;
-
-//        pipeline.addLast(new HttpRequestDecoder());
-//        pipeline.addLast(new HttpResponseEncoder());
-//        pipeline.addLast(new HttpContentCompressor());
-//        pipeline.addLast(new HttpUploadServerHandler());
     }
 
 }

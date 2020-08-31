@@ -18,7 +18,11 @@ import org.springframework.stereotype.Controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class IndexController {
@@ -42,7 +46,19 @@ public class IndexController {
     @RequestMapping(value = "/list.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object listJson(){
-        return ResponseBuilder.buildSuccess(MappingConfigHandler.mapping);
+        Map<URI, Object> result = new HashMap<>();
+        result.putAll(MappingConfigHandler.mapping);
+        // 下载地址
+        try {
+            final URI uri = new URI(Constant.URL_DOWNLOAD);
+            result.put(uri, new HashMap(){{
+                put("desc", "下载列表");
+                put("path", uri.getPath());
+            }});
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return ResponseBuilder.buildSuccess(result);
     }
 
     /**
@@ -71,7 +87,7 @@ public class IndexController {
     @RequestMapping("/index/download.file")
     @ResponseType(ResponseTypeEnum.FILE)
     public File download() {
-        return new File(Constant.PATH_CONF + "serviceInfo.json");
+        return new File(Constant.PATH_CONF + Constant.FILE_JSON_CONFIG_NAME);
     }
 
     /**
@@ -106,7 +122,7 @@ public class IndexController {
             serviceInfo.reloadLocalService();
 
             // 向主机刷新服务订阅信息
-            TaskHandler.callTask(Constant.SUBSCRIBE_TASk);
+            TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
 
         } catch (IOException e) {
             return ResponseBuilder.buildError("文件解析失败");

@@ -5,10 +5,10 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.task.annotation.Task;
 
 /**
- * 部署后台任务
+ * 更新通知后台任务
  */
-@Task(Constant.TASk_DEPLOY)
-public class DeployTask extends BaseTask {
+@Task(Constant.TASK_PUBLISH)
+public class PublishTask extends BaseTask {
 
 
     @Override
@@ -18,8 +18,6 @@ public class DeployTask extends BaseTask {
 
     @Override
     protected void execute() {
-
-        // some logic about do upgrade
 
         // called scripts here
 

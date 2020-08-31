@@ -23,6 +23,7 @@ CREATE TABLE T_UPGRADE_VERSION_INFO
     APP_TYPE        VARCHAR(15),  -- 应用类型
     VERSION_NO      VARCHAR(15),  -- 版本号
     IS_FORCE_UPDATE CHAR(1),      -- 是否强制更新 1-是 0-否
+    FILE_NAME       VARCAHR(50),  -- 文件名称
     FILE_PATH       VARCAHR(250), -- 更新文件路径
     STATUS          CHAR(1),      -- 版本状态 1-正常 0-取消 2-已过期
     PUBLISH_DATE    VARCHAR(20)   -- 发布日期

@@ -1,6 +1,7 @@
 package com.dounion.server.entity;
 
 import com.dounion.server.core.base.BaseEntity;
+import org.springframework.util.StringUtils;
 
 public class VersionInfo extends BaseEntity {
 
@@ -11,6 +12,8 @@ public class VersionInfo extends BaseEntity {
     private String versionNo;
 
     private String isForceUpdate;
+
+    private String fileName;
 
     private String filePath;
 
@@ -48,6 +51,17 @@ public class VersionInfo extends BaseEntity {
 
     public void setIsForceUpdate(String isForceUpdate) {
         this.isForceUpdate = isForceUpdate == null ? null : isForceUpdate.trim();
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileName() {
+        if(this.fileName != null){
+            return this.fileName;
+        }
+        return StringUtils.getFilename(this.filePath);
     }
 
     public String getFilePath() {

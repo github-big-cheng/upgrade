@@ -54,6 +54,46 @@ public class TaskHandler implements Runnable {
     }
 
 
+
+    /**
+     * 调用后台任务
+     * @param taskName
+     * @param delay 延迟多少秒提交
+     * @return
+     */
+    public static Integer callTask(String taskName, final long delay) {
+
+        final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
+        if(task == null){
+            logger.warn("task [{}] not config, please check it...");
+            return null;
+        }
+
+        Integer id =  TASK_ID.addAndGet(1);
+        task.setTaskId(id);
+        THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){
+            @Override
+            protected BaseTask initialValue() {
+                return task;
+            }
+        });
+
+
+        EXECUTOR_SERVICE.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                TASK_QUEUE.add(task);
+            }
+        });
+
+        return id;
+    }
+
     /**
      * 调用后台任务
      * @param taskName

@@ -379,20 +379,17 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
     }
 
     private static String getContentTypeByName(String name) {
-        if (name.endsWith(".html") || name.endsWith(".htm")) {
-            return "text/html";
-        } else if (name.endsWith(".js") || name.endsWith("json")) {
-            return "application/javascript;charset=UTF-8";
-        } else if (name.endsWith(".css")) {
-            return "text/css";
+        if (StringHelper.PATTER_HTML.matcher(name).matches()) {
+            return Constant.CONTENT_TYPE_HTML;
+        } else if (StringHelper.PATTER_JS.matcher(name).matches()) {
+            return Constant.CONTENT_TYPE_JS;
+        } else if (StringHelper.PATTER_CSS.matcher(name).matches()) {
+            return Constant.CONTENT_TYPE_CSS;
         } else if (name.endsWith(".gif")) {
-            return "image/gif";
-        } else if (name.endsWith(".class")) {
-            return "application/octet-stream";
+            return Constant.CONTENT_TYPE_GIF;
         } else if (name.endsWith(".jpg") || name.endsWith(".jpeg")) {
-            return "image/jpeg";
-        } else {
-            return "text/html";
+            return Constant.CONTENT_TYPE_JPG;
         }
+        return Constant.CONTENT_TYPE_PLAIN;
     }
 }

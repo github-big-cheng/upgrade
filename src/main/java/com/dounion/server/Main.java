@@ -1,6 +1,5 @@
 package com.dounion.server;
 
-import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.BeanConfig;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
@@ -8,7 +7,6 @@ import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.request.MappingConfigHandler;
 import com.dounion.server.core.task.TaskHandler;
-import com.dounion.server.task.SubscribeTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -28,13 +26,13 @@ public class Main {
             // 初始化路由表
             MappingConfigHandler.initialization();
 
+            // 订阅更新服务
+            TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 5000);
+
             // 启动服务端
             ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
             new NettyServer(serviceInfo).startUp();
 
-
-            // 订阅更新服务
-            TaskHandler.callTask(Constant.SUBSCRIBE_TASk);
 
         } catch (Exception e) {
             logger.error("server start up failed... {}", e);

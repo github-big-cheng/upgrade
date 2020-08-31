@@ -1,17 +1,20 @@
 package com.dounion.server.core.netty.server.handlers;
 
+import com.alibaba.fastjson.JSON;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.request.MappingConfigHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
+import io.netty.util.CharsetUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 @ChannelHandler.Sharable
 public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler {
@@ -20,11 +23,11 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
 
     private HttpPostRequestDecoder decoder;
     private static final HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
+    private StringBuffer message = new StringBuffer();
 
     static {
         DiskFileUpload.deleteOnExitTemporaryFile = true; // should delete file
-        // on exit (in normal
-        // exit)
+        // on exit (in normal exit)
         DiskFileUpload.baseDirectory = null; // system temp directory
         DiskAttribute.deleteOnExitTemporaryFile = true; // should delete file on
         // exit (in normal exit)
@@ -51,6 +54,7 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        message.setLength(0);
         if (decoder != null) {
             // 清理文件
             decoder.cleanFiles();
@@ -85,6 +89,7 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
         if(decoder != null){
             if(msg instanceof HttpContent){
                 HttpContent chunk = (HttpContent) msg;
+                writeJson(chunk);
                 decoder.offer(chunk);
                 writeChunk();
                 if (chunk instanceof LastHttpContent) {
@@ -137,6 +142,27 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
             }
         } catch (HttpPostRequestDecoder.EndOfDataDecoderException e) {
             //ignore. that's fine.
+        }
+
+
+    }
+
+    private void writeJson(HttpContent content){
+        try {
+//            String contentType = this.request.headers().get(HttpHeaderNames.CONTENT_TYPE);
+//            if(!StringUtils.contains(contentType, Constant.CONTENT_TYPE_JSON)){
+//                return;
+//            }
+            String json = content.content().toString(CharsetUtil.UTF_8);
+            if(StringUtils.isBlank(json) ||
+                    (!StringUtils.startsWith(json,"{") && !StringUtils.startsWith(json, "["))){
+                return;
+            }
+
+            Map<String, Object> params = JSON.parseObject(json, Map.class);
+            this.params.putAll(params);
+        } catch (Exception e) {
+            logger.error("parse error:{}", e);
         }
     }
 

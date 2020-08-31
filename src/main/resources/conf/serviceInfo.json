@@ -1,14 +1,16 @@
 {
   // 库点代码
-  "code": "nnlk118",
-  // 是否是master
-  "isMaster": "1",
-  // 上级服务器
-  "masterService" : "http://127.0.0.1:8000/",
+  "code": "dounion118",
   // 当前主机IP
   "localIp": "127.0.0.1",
   // 服务端口
   "port": 8001,
+  // 是否是master
+  "isMaster": "1",
+  // 上级服务器IP
+  "masterIp" : "127.0.0.1",
+  // 上级服务器IP
+  "masterPort" : 8001,
   // 操作系统
   "osType": "40300-20",
   // 是否提供分发下载服务

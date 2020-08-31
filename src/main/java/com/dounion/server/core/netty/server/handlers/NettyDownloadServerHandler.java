@@ -219,7 +219,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
     private static String sanitizeUri(String uri) {
         // Decode the path.
         try {
-            uri = StringUtils.substring(uri, Constant.URL_DOWNLOAD.length());
+            uri = StringUtils.substring(uri, Constant.URL_DOWNLOAD.length()-1);
             uri = URLDecoder.decode(uri, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new Error(e);

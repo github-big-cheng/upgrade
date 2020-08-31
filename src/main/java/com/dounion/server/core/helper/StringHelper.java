@@ -53,14 +53,15 @@ public class StringHelper {
             return uri;
         }
 
-        if(StringUtils.endsWith(uri, "/")){
-            uri = StringUtils.substring(uri, 0, uri.length()-1);
-        }
-
         int inx = StringUtils.indexOf(uri, "?");
         if(inx != -1){
             uri = StringUtils.substring(uri, 0, inx);
         }
+
+        if(StringUtils.endsWith(uri, "/")){
+            uri = StringUtils.substring(uri, 0, uri.length()-1);
+        }
+
         return uri;
     }
 

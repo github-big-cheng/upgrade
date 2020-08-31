@@ -22,17 +22,20 @@ public class ServiceInfo {
     // 库点代码
     private String code;
 
-    // 是否主服务
-    private String master;
-
-    // 上级服务地址
-    private String masterService;
-
     // 本地IP
     private String localIp;
 
     // 端口
     private int port;
+
+    // 是否主服务
+    private String master;
+
+    // 上级服务地址
+    private String masterIp;
+
+    // 上级服务端口
+    private int masterPort;
 
     // 操作系统类型
     private String osType;
@@ -62,6 +65,8 @@ public class ServiceInfo {
             .append("localIp:").append(this.localIp).append(", \t")
             .append("port:").append(this.port).append(", \t")
             .append("master:").append(this.getMaster()).append(", \t")
+            .append("masterIp:").append(this.masterIp).append(", \t")
+            .append("masterPort:").append(this.masterPort).append(", \t")
             .append("osType:").append(this.getOsType()).append(", \t")
             .append("standBy:").append(this.getStandBy()).append(", \t")
             .append("publishPath:").append(this.getPublishPath()).append(", \t")
@@ -121,7 +126,7 @@ public class ServiceInfo {
 
     public void toFile(){
         try {
-            FileHelper.writeFile(Constant.PATH_CONF + Constant.JSON_CONFIG_FILE_NAME, JSONObject.toJSONString(this));
+            FileHelper.writeFile(Constant.PATH_CONF + Constant.FILE_JSON_CONFIG_NAME, JSONObject.toJSONString(this));
         } catch (IOException e) {
             logger.error("ServiceInfo write to file error: {}", e);
         }
@@ -135,22 +140,6 @@ public class ServiceInfo {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getMaster() {
-        return master;
-    }
-
-    public void setMaster(String master) {
-        this.master = master;
-    }
-
-    public String getMasterService() {
-        return masterService;
-    }
-
-    public void setMasterService(String masterService) {
-        this.masterService = masterService;
     }
 
     public String getLocalIp() {
@@ -167,6 +156,30 @@ public class ServiceInfo {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public String getMaster() {
+        return master;
+    }
+
+    public void setMaster(String master) {
+        this.master = master;
+    }
+
+    public String getMasterIp() {
+        return masterIp;
+    }
+
+    public void setMasterIp(String masterIp) {
+        this.masterIp = masterIp;
+    }
+
+    public int getMasterPort() {
+        return masterPort;
+    }
+
+    public void setMasterPort(int masterPort) {
+        this.masterPort = masterPort;
     }
 
     public void setOsType(String osType) {

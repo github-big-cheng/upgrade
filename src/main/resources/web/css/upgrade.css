@@ -32,7 +32,7 @@ td,th {
     text-align: center;
 }
 
-.pure-table tr:hover{
+.pure-table tbody tr:hover{
     background-color: aqua;
 }
 

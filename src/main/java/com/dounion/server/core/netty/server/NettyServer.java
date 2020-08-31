@@ -36,7 +36,6 @@ public class NettyServer {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-//                    .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new NettyServerInitializer())
                 ;
 
@@ -54,7 +53,7 @@ public class NettyServer {
                 }
             });
 
-            f.channel().closeFuture().sync();
+            f.channel().closeFuture().syncUninterruptibly();
 
         } catch (Exception e) {
             logger.error("Netty Server error:{}", e);

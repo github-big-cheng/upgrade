@@ -319,7 +319,7 @@ public class MappingConfigHandler {
                     File file = (File) result;
                     buf = Unpooled.copiedBuffer(Files.readAllBytes(file.toPath()));
                     response.headers().set(HttpHeaderNames.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
-                    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/octet-stream; charset=UTF-8");
+                    response.headers().set(HttpHeaderNames.CONTENT_TYPE, Constant.CONTENT_TYPE_FILE + "; charset=UTF-8");
                     break;
                 default:
                     break;

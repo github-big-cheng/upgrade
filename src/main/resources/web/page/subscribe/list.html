@@ -61,9 +61,9 @@
         <td title="{%= code %}">{%= code %}</td>
         <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
         <td title="{%= $item.format('osType', $data.osType) %}">{%= $item.format('osType', $data.osType) %}</td>
-        <td title="{%= isStandBy=='1'?'是':'否' %}">{%= isStandBy=='1'?'是':'否' %}</td>
-        <td title="{%= publishUrl %}">{%= publishUrl %}</td>
-        <td title="{%= status=='1'?'已订阅':'已取消' %}">{%= status=='1'?'已订阅':'已取消' %}</td>
+        <td title="{%= $data.isStandBy=='1'?'是':'否' %}">{%= $data.isStandBy=='1'?'是':'否' %}</td>
+        <td title="{%= $data.publishUrl %}">{%= $data.publishUrl %}</td>
+        <td title="{%= $data.status=='1'?'已订阅':'已取消' %}">{%= $data.status=='1'?'已订阅':'已取消' %}</td>
         <td title="{%= subscribeTime %}">{%= subscribeTime %}</td>
     </tr>
 </script>

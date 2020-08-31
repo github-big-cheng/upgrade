@@ -1,24 +1,28 @@
 package com.dounion.server.task;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.AppInfo;
 import com.dounion.server.core.base.BaseTask;
+import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
+import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.dao.SubscribeInfoMapper;
 import com.dounion.server.entity.SubscribeInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static com.dounion.server.core.base.Constant.URL_SUBSCRIBE;
+
 /**
  * 向主机订阅更新服务
  */
-@Task("subscribeTask")
+@Task(Constant.TASK_SUBSCRIBE)
 public class SubscribeTask extends BaseTask {
 
     private final static Logger logger = LoggerFactory.getLogger(SubscribeTask.class);
@@ -35,19 +39,17 @@ public class SubscribeTask extends BaseTask {
 
             // 获取当前服务信息
             ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
-            if(serviceInfo.getMasterBlur()){
+            if (serviceInfo.getMasterBlur()) {
                 logger.info("current service is master, service subscribe end");
                 return;
             }
-
-            Assert.notNull(serviceInfo.getMasterService(), "master service address must config");
 
             Set<String> servicesSet = new HashSet<>();
 
             // 本地服务列表
             List<AppInfo> appInfoList = serviceInfo.getLocalServiceList();
-            if(!CollectionUtils.isEmpty(appInfoList)){
-                for(AppInfo appInfo : appInfoList){
+            if (!CollectionUtils.isEmpty(appInfoList)) {
+                for (AppInfo appInfo : appInfoList) {
                     servicesSet.add(appInfo.getServiceType());
                 }
             }
@@ -58,12 +60,12 @@ public class SubscribeTask extends BaseTask {
             SubscribeInfo query = new SubscribeInfo();
             query.setStatus("1");
             List<String> subscribeList = subscribeInfoMapper.currentServiceSubscribeQuery(query);
-            if(!CollectionUtils.isEmpty(subscribeList)){
+            if (!CollectionUtils.isEmpty(subscribeList)) {
                 servicesSet.addAll(subscribeList);
             }
 
 
-            if(super.isInterrupted()){
+            if (super.isInterrupted()) {
                 logger.info("subscribe task [{}] has been interrupted, it will be exit...", this.taskId);
                 return;
             }
@@ -72,12 +74,15 @@ public class SubscribeTask extends BaseTask {
             Map<String, Object> params = new HashMap<>();
             params.put("code", serviceInfo.getCode());
             params.put("osType", serviceInfo.getOsType());
-            params.put("serviceType", StringUtils.join(servicesSet, ","));
-            params.put("standBy", serviceInfo.getStandBy());
+            params.put("appType", StringUtils.join(servicesSet, ","));
+            params.put("isStandBy", serviceInfo.getStandBy());
             params.put("publishUrl", serviceInfo.getPublishPath());
-            // TODO 这里缺少NettyClient
-            // NettyClient.doRequest(params);
 
+            String json = JSONObject.toJSONString(params);
+            NettyClient client = NettyClient.getMasterInstance();
+            String result = client.doHttpRequest(NettyClient.buildPostMap(URL_SUBSCRIBE, json));
+
+            logger.info("SubscribeTask:[{}], result is [{}]", this, result);
 
         } catch (Exception e) {
             logger.error("service subscribe task error:{}", e);
