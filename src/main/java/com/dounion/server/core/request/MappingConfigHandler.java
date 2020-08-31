@@ -305,7 +305,7 @@ public class MappingConfigHandler {
                     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
                     break;
                 case HTML: // html
-                    String filePath = Constant.PAGE_PATH + result;
+                    String filePath = Constant.PATH_PAGE + result;
                     if(!new File(filePath).exists()){
                         response.setStatus(HttpResponseStatus.NOT_FOUND);
                         response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);

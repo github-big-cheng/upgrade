@@ -10,7 +10,6 @@ import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.eum.ResponseTypeEnum;
-import com.dounion.server.task.SubscribeTask;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +71,7 @@ public class IndexController {
     @RequestMapping("/index/download.file")
     @ResponseType(ResponseTypeEnum.FILE)
     public File download() {
-        return new File(Constant.CONG_PATH+"serviceInfo.json");
+        return new File(Constant.PATH_CONF + "serviceInfo.json");
     }
 
     /**

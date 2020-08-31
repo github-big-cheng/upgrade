@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.dounion.server.core.helper.FileHelper;
-import com.dounion.server.eum.OsTypeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ServiceInfo {
 
@@ -123,7 +121,7 @@ public class ServiceInfo {
 
     public void toFile(){
         try {
-            FileHelper.writeFile(Constant.CONG_PATH + Constant.JSON_CONFIG_FILE_NAME, JSONObject.toJSONString(this));
+            FileHelper.writeFile(Constant.PATH_CONF + Constant.JSON_CONFIG_FILE_NAME, JSONObject.toJSONString(this));
         } catch (IOException e) {
             logger.error("ServiceInfo write to file error: {}", e);
         }

@@ -15,21 +15,23 @@ public interface Constant {
     String TEMP_PATH = System.getProperty("java.io.tmpdir");
     // 工作目录
 //    String WORK_PATH = System.getProperty("user.dir") + File.separator;
-    String WORK_PATH = System.getProperty("user.dir") + File.separator + "src\\main\\resources\\";
+    String PATH_WORK = System.getProperty("user.dir") + File.separator + "src\\main\\resources\\";
     // 配置文件路径
-    String CONG_PATH = WORK_PATH + "conf" + File.separator;
+    String PATH_CONF = PATH_WORK + "conf" + File.separator;
     // 静态文件路径
-    String WEB_PATH = WORK_PATH + "web" + File.separator;
+    String PATH_WEB = PATH_WORK + "web" + File.separator;
     // html文件路径
-    String PAGE_PATH = WEB_PATH + "page" + File.separator;
+    String PATH_PAGE = PATH_WEB + "page" + File.separator;
     // 下载路径
-    String DOWNLOAD_PATH = ConfigurationHelper.getString("download_path") + File.separator;
+    String PATH_DOWNLOAD = ConfigurationHelper.getString("download_path") + File.separator;
 
 
     // ==========================================  请求地址相关 ==========================================================
 
+    // 下载请求路径
+    String URL_DOWNLOAD = "/download";
     // 订阅服务地址
-    String SUBSCRIBE_URL = "/subscribe/add.json";
+    String URL_SUBSCRIBE = "/subscribe/add.json";
 
     // ==========================================  后台任务相关 ==========================================================
 

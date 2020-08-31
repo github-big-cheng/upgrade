@@ -18,6 +18,7 @@ public class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
             .addLast(new HttpContentCompressor()) // 压缩
             .addLast(new HttpResponseEncoder()) // 编码
             .addLast(new NettyStaticFileServerHandler()) // 静态资源请求
+            .addLast(new NettyDownloadServerHandler()) // 文件下载请求
             .addLast(new NettyGetRequestServerHandler()) // GET请求
             .addLast(new ChunkedWriteHandler()) // 大文件的上传
             .addLast(new NettyPostRequestServerHandler()) // POST请求

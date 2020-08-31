@@ -12,17 +12,22 @@ public class TestTask extends BaseTask {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public void execute() {
 
-        Thread.sleep(10000);
+        try {
+            Thread.sleep(10000);
 
-        if(super.isInterrupted()){
-            System.out.println("我被中断了");
-            return this.taskId;
+            if(super.isInterrupted()){
+                System.out.println("我被中断了:" + this);
+                return;
+            }
+
+            System.out.println("我被执行了:" + this);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        System.out.println("我被执行了");
-
-        return this.taskId;
+        return;
     }
 }

@@ -1,5 +1,8 @@
 package com.dounion.server.core.base;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.Callable;
 
 /**
@@ -7,10 +10,10 @@ import java.util.concurrent.Callable;
  */
 public abstract class BaseTask implements Callable<Integer> {
 
+    private final static Logger logger = LoggerFactory.getLogger(BaseTask.class);
 
     protected Integer taskId;
     private boolean interrupt = false;
-
 
     public Integer getTaskId() {
         return taskId;
@@ -43,5 +46,26 @@ public abstract class BaseTask implements Callable<Integer> {
         return interrupt;
     }
 
+
+    @Override
+    public Integer call() throws Exception {
+
+        // 任务开始前检查是否已被撤销
+        if(this.isInterrupted()){
+            logger.info("task [{}] has been interrupted, it will be exit...", this.taskId);
+            return taskId;
+        }
+
+        // 调用实现类的执行方法
+        this.execute();
+
+        return this.taskId;
+    }
+
+    /**
+     * 实际后台任务执行方法
+     * @return
+     */
+    protected abstract void execute();
 
 }

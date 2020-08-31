@@ -16,15 +16,16 @@
 package com.dounion.server.core.netty.server.handlers;
 
 import com.dounion.server.core.base.Constant;
-import com.dounion.server.core.helper.StringHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
@@ -86,9 +87,9 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * </pre>
  */
 @ChannelHandler.Sharable
-public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<HttpRequest> {
+public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyStaticFileServerHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyDownloadServerHandler.class);
 
     public static final String HTTP_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
@@ -101,7 +102,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
 
         this.request = msg;
 
-        if (!StringHelper.isStaticRequest(this.request.uri())) {
+        if (!StringUtils.startsWith(this.request.uri(), Constant.URL_DOWNLOAD)) {
             ctx.fireChannelRead(msg);
             return;
         }
@@ -126,6 +127,15 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
         File file = new File(path);
         if (file.isHidden() || !file.exists()) {
             this.sendError(ctx, NOT_FOUND);
+            return;
+        }
+
+        if (file.isDirectory()) {
+            if (uri.endsWith("/")) {
+                this.sendListing(ctx, file, uri);
+            } else {
+                this.sendRedirect(ctx, uri + '/');
+            }
             return;
         }
 
@@ -181,15 +191,15 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
             @Override
             public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
                 if (total < 0) { // total unknown
-                    System.err.println(future.channel() + " Transfer progress: " + progress);
+                    logger.debug(future.channel() + " Transfer progress: " + progress);
                 } else {
-                    System.err.println(future.channel() + " Transfer progress: " + progress + " / " + total);
+                    logger.debug(future.channel() + " Transfer progress: " + progress + " / " + total);
                 }
             }
 
             @Override
             public void operationComplete(ChannelProgressiveFuture future) {
-                System.err.println(future.channel() + " Transfer complete.");
+                logger.debug(future.channel() + " Transfer complete.");
             }
         });
 
@@ -209,6 +219,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
     private static String sanitizeUri(String uri) {
         // Decode the path.
         try {
+            uri = StringUtils.substring(uri, Constant.URL_DOWNLOAD.length());
             uri = URLDecoder.decode(uri, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new Error(e);
@@ -231,7 +242,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
         }
 
         // Convert to absolute path.
-        return Constant.PATH_WEB + uri;
+        return Constant.PATH_DOWNLOAD + uri;
     }
 
     private void sendListing(ChannelHandlerContext ctx, File dir, String dirPath) {
@@ -257,11 +268,8 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
                 }
 
                 String name = f.getName();
-                if (!StringHelper.isStaticRequest(name)) {
-                    continue;
-                }
 
-                buf.append("<li><a href=\"")
+                buf.append("<li style=\"margin-top:5px;\"><a href=\"")
                         .append(name)
                         .append("\">")
                         .append(name)
@@ -373,26 +381,7 @@ public class NettyStaticFileServerHandler extends SimpleChannelInboundHandler<Ht
      * @param file     file to extract content type
      */
     private static void setContentTypeHeader(HttpResponse response, File file) {
-//        MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-//        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeTypesMap.getContentType(file.getPath()));
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, getContentTypeByName(file.getName()));
-    }
-
-    private static String getContentTypeByName(String name) {
-        if (name.endsWith(".html") || name.endsWith(".htm")) {
-            return "text/html";
-        } else if (name.endsWith(".js") || name.endsWith("json")) {
-            return "application/javascript;charset=UTF-8";
-        } else if (name.endsWith(".css")) {
-            return "text/css";
-        } else if (name.endsWith(".gif")) {
-            return "image/gif";
-        } else if (name.endsWith(".class")) {
-            return "application/octet-stream";
-        } else if (name.endsWith(".jpg") || name.endsWith(".jpeg")) {
-            return "image/jpeg";
-        } else {
-            return "text/html";
-        }
+        MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeTypesMap.getContentType(file.getPath()));
     }
 }

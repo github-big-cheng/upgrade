@@ -123,7 +123,7 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
                             if(StringUtils.contains(fileName, File.separator)){
                                 fileName = StringUtils.substring(fileName, fileName.lastIndexOf(File.separator)+1);
                             }
-                            final File file = new File(Constant.DOWNLOAD_PATH + fileName);
+                            final File file = new File(Constant.PATH_DOWNLOAD + fileName);
                             if(file.exists()){
                                 file.delete();
                             }
