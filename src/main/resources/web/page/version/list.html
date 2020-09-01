@@ -47,7 +47,7 @@
                 <th>应用类型</th>
                 <th>版本号</th>
                 <th>是否强制更新</th>
-                <th>文件路径</th>
+                <th>文件名称</th>
                 <th>版本状态</th>
                 <th>发布时间</th>
                 <th>操作</th>
@@ -71,7 +71,7 @@
         <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
         <td title="{%= versionNo %}">{%= versionNo %}</td>
         <td title="{%= $data.isForceUpdate=='1'?'是':'否' %}">{%= $data.isForceUpdate=='1'?'是':'否' %}</td>
-        <td title="{%= filePath %}">{%= filePath %}</td>
+        <td title="{%= filePath %}">{%= fileName %}</td>
         <td title="{%= $data.status=='1'?'已发布':'已注销' %}">{%= $data.status=='1'?'已发布':'已注销' %}</td>
         <td title="{%= publishDate %}">{%= publishDate %}</td>
         <td>

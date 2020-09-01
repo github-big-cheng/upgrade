@@ -102,6 +102,16 @@ public class TaskHandler implements Runnable {
     /**
      * 调用后台任务
      * @param taskName 任务名称
+     * @param delay 延迟时间
+     * @return
+     */
+    public static Integer callTask(String taskName, long delay) {
+        return callTask(taskName, null, delay);
+    }
+
+    /**
+     * 调用后台任务
+     * @param taskName 任务名称
      * @param params 额外参数
      * @return
      */

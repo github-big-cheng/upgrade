@@ -155,7 +155,8 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
 //            }
             String json = content.content().toString(CharsetUtil.UTF_8);
             if(StringUtils.isBlank(json) ||
-                    (!StringUtils.startsWith(json,"{") && !StringUtils.startsWith(json, "["))){
+                    !(StringUtils.startsWith(json,"{") && StringUtils.endsWith(json, "}")) ||
+                            (StringUtils.startsWith(json, "[") && StringUtils.endsWith(json, "]"))){
                 return;
             }
 

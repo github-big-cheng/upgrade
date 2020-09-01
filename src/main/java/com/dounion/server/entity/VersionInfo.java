@@ -1,7 +1,7 @@
 package com.dounion.server.entity;
 
 import com.dounion.server.core.base.BaseEntity;
-import org.springframework.util.StringUtils;
+import com.dounion.server.core.helper.StringHelper;
 
 public class VersionInfo extends BaseEntity {
 
@@ -61,7 +61,7 @@ public class VersionInfo extends BaseEntity {
         if(this.fileName != null){
             return this.fileName;
         }
-        return StringUtils.getFilename(this.filePath);
+        return StringHelper.getFileName(this.filePath);
     }
 
     public String getFilePath() {

@@ -2,6 +2,7 @@ package com.dounion.server.core.helper;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 public class StringHelper {
@@ -63,6 +64,17 @@ public class StringHelper {
         }
 
         return uri;
+    }
+
+
+
+    public static String getFileName(String path){
+        if(path  == null){
+            return null;
+        }
+
+        int separatorIndex = path.lastIndexOf(File.separator);
+        return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
     }
 
 }

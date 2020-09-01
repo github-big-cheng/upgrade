@@ -4,6 +4,7 @@ package com.dounion.server.core.netty.client;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
+import com.dounion.server.core.helper.StringHelper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -128,7 +129,7 @@ public class NettyClient {
 
     public void fileDownload(String url) {
         try {
-            String fileName = StringUtils.getFilename(url);
+            String fileName = StringHelper.getFileName(url);
 
             FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
             Channel channel = this.future.channel();
