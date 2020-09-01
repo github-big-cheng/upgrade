@@ -24,6 +24,7 @@
 	<hr/>
 	<div>
 		<form id="form" method="post" style="float: left;width: 70%"  enctype="multipart/form-data">
+			<input type="hidden" name="addSource" value="1" />
 			<table class="pure-table" style="width: 90%;">
 				<colgroup>
 					<col width="15%">
@@ -126,6 +127,7 @@
 		formData.append("versionNo", $('input[name=versionNo]').val());
 		formData.append("isForceUpdate", $('input[name=isForceUpdate]').val());
 		formData.append("file", $('input[name=file]')[0].files[0]);
+		formData.append("addSource", $('input[name=addSource]').val());
 
 		$.ajax({
 			dataType:'json',

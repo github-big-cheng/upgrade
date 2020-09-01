@@ -50,6 +50,14 @@ public interface Constant {
      * 订阅服务地址
      */
     String URL_SUBSCRIBE = "/subscribe/add.json";
+    /**
+     * 取消订阅服务地址
+     */
+    String URL_UN_SUBSCRIBE = "/subscribe/cancel.json";
+    /**
+     * 版本发布接口
+     */
+    String URL_VERSION = "/version/add.json";
 
     // ==========================================  后台任务相关 ==========================================================
 
@@ -57,6 +65,10 @@ public interface Constant {
      * 订阅后台任务
      */
     String TASK_SUBSCRIBE = "subscribeTask";
+    /**
+     * 取消订阅后台任务
+     */
+    String TASK_UN_SUBSCRIBE = "unSubscribeTask";
     /**
      * 发布后台任务
      */

@@ -5,8 +5,10 @@
   "localIp": "127.0.0.1",
   // 服务端口
   "port": 8001,
+  // 忽略模式 非强制更新不更新
+  "ignoreMode": "1",
   // 是否是master
-  "isMaster": "1",
+  "master": "0",
   // 上级服务器IP
   "masterIp" : "127.0.0.1",
   // 上级服务器IP
@@ -15,7 +17,7 @@
   "osType": "40300-20",
   // 是否提供分发下载服务
   "standBy": "1",
-  // 发布回调地址 未配置则默认 http://local_ip:port/publish/callback
+  // 发布回调地址 未配置则默认 http://local_ip:port/version/add.json
   "publishPath": "",
   // 本地注册的服务
   "localServices": [

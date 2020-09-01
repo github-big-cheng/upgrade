@@ -7,19 +7,21 @@ public class VersionInfo extends BaseEntity {
 
     private Integer id;
 
-    private String appType;
+    private String appType; // 应用类型
 
-    private String versionNo;
+    private String versionNo; // 版本号
 
-    private String isForceUpdate;
+    private String isForceUpdate; // 是否强制更新
 
-    private String fileName;
+    private String fileName; // 文件名称
 
-    private String filePath;
+    private String filePath; // 文件保存路径
 
-    private String status;
+    private String status; // 版本状态 1-正常 2-已注销
 
-    private String publishDate;
+    private String addSource; // 版本来源 1-本地发布 2-远程发布
+
+    private String publishDate; // 发布日期
 
     public Integer getId() {
         return id;
@@ -74,6 +76,14 @@ public class VersionInfo extends BaseEntity {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getAddSource() {
+        return addSource;
+    }
+
+    public void setAddSource(String addSource) {
+        this.addSource = addSource;
     }
 
     public void setStatus(String status) {

@@ -44,9 +44,10 @@ public class TaskHandler implements Runnable {
                     continue;
                 }
 
-                Future id = EXECUTOR_SERVICE.submit(task);
+                Future<Integer> future = EXECUTOR_SERVICE.submit(task);
                 // 任务结束，移除对应的任务线程变量
-                ThreadLocal<BaseTask> threadLocal = THREAD_LOCAL_MAP.get(id);
+                int id = future.get();
+                ThreadLocal<BaseTask> threadLocal = THREAD_LOCAL_MAP.get(future.get());
                 threadLocal.remove();
                 THREAD_LOCAL_MAP.remove(id);
             }
@@ -72,7 +73,7 @@ public class TaskHandler implements Runnable {
             return null;
         }
 
-        Integer id =  TASK_ID.addAndGet(1);
+        Integer id = TASK_ID.addAndGet(1);
         task.setTaskId(id);
         task.setParams(params);
         THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){

@@ -49,4 +49,21 @@ public class SubscribeServiceImpl implements SubscribeService {
             subscribeInfoMapper.insert(temp);
         }
     }
+
+
+    /**
+     * 当前服务订阅信息查询
+     * @param query
+     * @return
+     */
+    @Override
+    public List<String> currentServiceSubscribeQuery(SubscribeInfo query) {
+        return subscribeInfoMapper.currentServiceSubscribeQuery(query);
+    }
+
+
+    @Override
+    public void deleteBySelective(SubscribeInfo record){
+        subscribeInfoMapper.deleteBySelective(record);
+    }
 }

@@ -1,11 +1,10 @@
 package com.dounion.server.controller;
 
 import com.dounion.server.core.base.Constant;
-import com.dounion.server.core.exception.SystemException;
-import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
+import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.entity.VersionInfo;
 import com.dounion.server.eum.ResponseTypeEnum;
 import com.dounion.server.service.VersionInfoService;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
-import java.io.IOException;
 
 @Controller
 @RequestMapping("/version")
@@ -60,9 +58,16 @@ public class VersionController {
     @RequestMapping("/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(VersionInfo record, File file){
-        record.setFilePath(file.getPath());
+
         // 更新版本信息
+        record.setFilePath(file.getPath());
         versionInfoService.updateVersion(record);
+
+        // 调度任务:发布通知
+        TaskHandler.callTask(Constant.TASK_PUBLISH);
+        // 调度任务:本地部署
+        TaskHandler.callTask(Constant.TASk_DEPLOY);
+
         return ResponseBuilder.buildSuccess();
     }
 

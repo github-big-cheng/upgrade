@@ -6,9 +6,10 @@ import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.netty.client.NettyClient;
+import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.core.task.annotation.Task;
-import com.dounion.server.dao.SubscribeInfoMapper;
 import com.dounion.server.entity.SubscribeInfo;
+import com.dounion.server.service.SubscribeService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +30,13 @@ public class SubscribeTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "更新订阅后台任务";
+        return "服务订阅后台任务";
     }
 
     @Autowired
     private ServiceInfo serviceInfo;
     @Autowired
-    private SubscribeInfoMapper subscribeInfoMapper;
+    private SubscribeService subscribeService;
 
     @Override
     public void execute() {
@@ -43,6 +44,14 @@ public class SubscribeTask extends BaseTask {
 
             // 获取当前服务信息
             if (serviceInfo.getMasterBlur()) {
+                // 配置上级主机IP/PORT 调用取消订阅接口
+                if(StringUtils.isNotBlank(serviceInfo.getMasterIp()) &&
+                            serviceInfo.getMasterPort() != null){
+                    logger.info("current service is master, and master ip/port is config, unSubscribe task been called");
+                    TaskHandler.callTask(Constant.TASK_UN_SUBSCRIBE);
+                    return;
+                }
+
                 logger.info("current service is master, service subscribe end");
                 return;
             }
@@ -61,7 +70,7 @@ public class SubscribeTask extends BaseTask {
             // 查询向当前主机被订阅的服务列表(去重)
             SubscribeInfo query = new SubscribeInfo();
             query.setStatus("1");
-            List<String> subscribeList = subscribeInfoMapper.currentServiceSubscribeQuery(query);
+            List<String> subscribeList = subscribeService.currentServiceSubscribeQuery(query);
             if (!CollectionUtils.isEmpty(subscribeList)) {
                 servicesSet.addAll(subscribeList);
             }

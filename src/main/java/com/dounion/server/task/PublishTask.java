@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Task(Constant.TASK_PUBLISH)
 public class PublishTask extends BaseTask {
 
-
     @Autowired
     private UpgradeRecordMapper upgradeRecordMapper;
 
@@ -24,6 +23,7 @@ public class PublishTask extends BaseTask {
     @Override
     protected void execute() {
 
+        // 推送前，生成个更新记录信息
 //        List<>upgradeRecordMapper.selectListBySelective();
 
     }

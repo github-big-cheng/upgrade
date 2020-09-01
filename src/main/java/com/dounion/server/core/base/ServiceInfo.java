@@ -26,16 +26,18 @@ public class ServiceInfo {
     private String localIp;
 
     // 端口
-    private int port;
+    private Integer port;
 
     // 是否主服务
     private String master;
+
+    private String ignoreMode;
 
     // 上级服务地址
     private String masterIp;
 
     // 上级服务端口
-    private int masterPort;
+    private Integer masterPort;
 
     // 操作系统类型
     private String osType;
@@ -150,11 +152,11 @@ public class ServiceInfo {
         this.localIp = localIp;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
@@ -166,6 +168,14 @@ public class ServiceInfo {
         this.master = master;
     }
 
+    public String getIgnoreMode() {
+        return ignoreMode;
+    }
+
+    public void setIgnoreMode(String ignoreMode) {
+        this.ignoreMode = ignoreMode;
+    }
+
     public String getMasterIp() {
         return masterIp;
     }
@@ -174,11 +184,11 @@ public class ServiceInfo {
         this.masterIp = masterIp;
     }
 
-    public int getMasterPort() {
+    public Integer getMasterPort() {
         return masterPort;
     }
 
-    public void setMasterPort(int masterPort) {
+    public void setMasterPort(Integer masterPort) {
         this.masterPort = masterPort;
     }
 
@@ -202,7 +212,7 @@ public class ServiceInfo {
         Assert.notNull(this.localIp, "localIp must be config");
         Assert.notNull(this.port, "port must be config");
         if(StringUtils.isBlank(this.publishPath)){
-            this.publishPath = "http://" + this.localIp + ":" +this.port + "/publish/callback";
+            this.publishPath = "http://" + this.localIp + ":" +this.port + Constant.URL_VERSION;
         }
         return publishPath;
     }

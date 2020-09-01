@@ -122,6 +122,14 @@ public class MappingConfigHandler {
                     args[i] = Integer.parseInt(String.valueOf(params.get(parameter.getParameterName())));
                     continue;
                 }
+                // java.util.Map
+                if(parameter.getParameterType().equals(Map.class) ||
+                        parameter.getParameterType().isAssignableFrom(Map.class)){
+                    args[i] = params;
+                    continue;
+                }
+
+                // 引用类型对象转换
                 args[i] = BeanHelper.mapToObject(params, parameter.getParameterType());
             }
         }

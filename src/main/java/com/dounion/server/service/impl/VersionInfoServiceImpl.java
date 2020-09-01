@@ -31,11 +31,13 @@ public class VersionInfoServiceImpl implements VersionInfoService {
     @Transactional
     @Override
     public void updateVersion(VersionInfo record) {
+
         // 删除已有版本信息
         VersionInfo delete = new VersionInfo();
         delete.setAppType(record.getAppType());
         versionInfoMapper.deleteBySelective(delete);
 
+        // 保存版本记录
         record.setStatus("1");
         record.setPublishDate(DateHelper.format(new Date()));
         versionInfoMapper.insert(record);

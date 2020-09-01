@@ -10,4 +10,7 @@ public interface SubscribeService {
 
     void addSubscribe(SubscribeInfo record);
 
+    List<String> currentServiceSubscribeQuery(SubscribeInfo query);
+
+    void deleteBySelective(SubscribeInfo record);
 }

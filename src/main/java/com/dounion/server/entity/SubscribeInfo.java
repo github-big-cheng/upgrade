@@ -6,17 +6,17 @@ public class SubscribeInfo extends BaseEntity {
 
     private Integer id;
 
-    private String code;
+    private String code; // 库点代码
 
-    private String appType;
+    private String appType; // 应用类型
 
-    private String osType;
+    private String osType; // 操作系统类型
 
-    private String isStandBy;
+    private String isStandBy; // 是否提供分发下载服务 1-是 0-否
 
-    private String publishUrl;
+    private String status; // 订阅状态 0-已注销 1-已订阅
 
-    private String status;
+    private String publishUrl; // 回调地址
 
     private String subscribeTime;
 

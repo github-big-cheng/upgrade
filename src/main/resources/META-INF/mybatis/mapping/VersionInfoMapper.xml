@@ -10,11 +10,13 @@
     <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
     <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
     <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ADD_SOURCE" property="addSource" jdbcType="VARCHAR" />
     <result column="PUBLISH_DATE" property="publishDate" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
-    ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE, FILE_NAME, FILE_PATH, STATUS, PUBLISH_DATE
+    ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE, FILE_NAME, FILE_PATH,
+    STATUS, ADD_SOURCE, PUBLISH_DATE
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -40,6 +42,7 @@
         #{fileName,jdbcType=VARCHAR},
         #{filePath,jdbcType=VARCHAR},
         #{status,jdbcType=VARCHAR},
+        #{addSource,jdbcType=VARCHAR},
         #{publishDate,jdbcType=VARCHAR}
     )
   </insert>
@@ -68,6 +71,9 @@
       <if test="status != null" >
         STATUS,
       </if>
+      <if test="addSource != null" >
+        ADD_SOURCE,
+      </if>
       <if test="publishDate != null" >
         PUBLISH_DATE,
       </if>
@@ -93,6 +99,9 @@
       </if>
       <if test="status != null" >
         #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="addSource != null" >
+        #{addSource,jdbcType=VARCHAR},
       </if>
       <if test="publishDate != null" >
         #{publishDate,jdbcType=VARCHAR},
@@ -121,6 +130,9 @@
       <if test="status != null" >
         STATUS = #{status,jdbcType=VARCHAR},
       </if>
+      <if test="addSource != null" >
+        ADD_SOURCE = #{addSource,jdbcType=VARCHAR},
+      </if>
       <if test="publishDate != null" >
         PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR},
       </if>
@@ -136,6 +148,7 @@
       FILE_NAME = #{fileName,jdbcType=VARCHAR},
       FILE_PATH = #{filePath,jdbcType=VARCHAR},
       STATUS = #{status,jdbcType=VARCHAR},
+      ADD_SOURCE = #{addSource,jdbcType=VARCHAR},
       PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=INTEGER}
   </update>
@@ -162,6 +175,9 @@
       </if>
       <if test="status != null" >
         AND STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="addSource != null" >
+        AND ADD_SOURCE = #{addSource,jdbcType=VARCHAR}
       </if>
       <if test="publishDate != null" >
         AND PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR}
@@ -190,6 +206,9 @@
       </if>
       <if test="status != null" >
         AND STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="addSource != null" >
+        AND ADD_SOURCE = #{addSource,jdbcType=VARCHAR}
       </if>
       <if test="publishDate != null" >
         AND PUBLISH_DATE = #{publishDate,jdbcType=VARCHAR}

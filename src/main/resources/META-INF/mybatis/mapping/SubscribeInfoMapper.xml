@@ -33,9 +33,14 @@
     insert into T_UPGRADE_SUBSCRIBE_INFO (
         <include refid="Base_Column_List" />
     ) values (
-      #{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{appType,jdbcType=VARCHAR},
-      #{osType,jdbcType=VARCHAR}, #{isStandBy,jdbcType=VARCHAR}, #{publishUrl,jdbcType=VARCHAR}, 
-      #{status,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=VARCHAR}
+      #{id,jdbcType=INTEGER},
+      #{code,jdbcType=VARCHAR},
+      #{appType,jdbcType=VARCHAR},
+      #{osType,jdbcType=VARCHAR},
+      #{isStandBy,jdbcType=VARCHAR},
+      #{publishUrl,jdbcType=VARCHAR},
+      #{status,jdbcType=VARCHAR},
+      #{subscribeTime,jdbcType=VARCHAR}
     )
   </insert>
 
