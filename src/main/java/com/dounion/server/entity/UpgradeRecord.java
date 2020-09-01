@@ -14,6 +14,8 @@ public class UpgradeRecord extends BaseEntity {
 
     private Integer notifyCount;
 
+    private String notifyCountStr; // 更新次数字段
+
     private String notifyTime;
 
     private String upgradeStatus;
@@ -56,6 +58,14 @@ public class UpgradeRecord extends BaseEntity {
 
     public void setNotifyCount(Integer notifyCount) {
         this.notifyCount = notifyCount;
+    }
+
+    public String getNotifyCountStr() {
+        return notifyCountStr;
+    }
+
+    public void setNotifyCountStr(String notifyCountStr) {
+        this.notifyCountStr = notifyCountStr;
     }
 
     public String getNotifyTime() {

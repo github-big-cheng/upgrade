@@ -15,6 +15,7 @@ public abstract class BaseTask implements Callable<Integer> {
 
     protected Integer taskId;
     protected Map<String, Object> params;
+    private Callback callback;
     private boolean interrupt = false;
 
     public Integer getTaskId() {
@@ -31,6 +32,14 @@ public abstract class BaseTask implements Callable<Integer> {
 
     public void setParams(Map<String, Object> params) {
         this.params = params;
+    }
+
+    public Callback getCallback() {
+        return callback;
+    }
+
+    public void setCallback(Callback callback) {
+        this.callback = callback;
     }
 
     public abstract String getTaskName();
@@ -69,6 +78,9 @@ public abstract class BaseTask implements Callable<Integer> {
         // 调用实现类的执行方法
         this.execute();
 
+        // 调用回调方法
+        this.callback.doSomething();
+
         return this.taskId;
     }
 
@@ -77,5 +89,9 @@ public abstract class BaseTask implements Callable<Integer> {
      * @return
      */
     protected abstract void execute();
+
+    public interface Callback{
+        void doSomething();
+    }
 
 }

@@ -18,11 +18,13 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,6 +72,22 @@ public class NettyClient {
      */
     public static NettyClient getInstance(String ip, int port) {
         return new NettyClient(ip, port, false);
+    }
+
+
+    /**
+     * 获取NettyClient
+     * @return
+     */
+    public static NettyClient getInstance(String url) {
+        try {
+            URI uri = new URI(url);
+            int port = uri.getPort()==-1 ? (StringUtils.equals(uri.getScheme(), "https") ? 443 : 80) : uri.getPort();
+            return new NettyClient(uri.getHost(), port, false);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

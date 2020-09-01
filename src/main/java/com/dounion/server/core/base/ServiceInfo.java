@@ -212,7 +212,7 @@ public class ServiceInfo {
         Assert.notNull(this.localIp, "localIp must be config");
         Assert.notNull(this.port, "port must be config");
         if(StringUtils.isBlank(this.publishPath)){
-            this.publishPath = "http://" + this.localIp + ":" +this.port + Constant.URL_VERSION;
+            this.publishPath = "http://" + this.localIp + ":" +this.port + Constant.URL_PUBLISH;
         }
         return publishPath;
     }

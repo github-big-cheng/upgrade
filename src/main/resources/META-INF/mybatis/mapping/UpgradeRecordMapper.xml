@@ -108,6 +108,9 @@
       <if test="notifyCount != null" >
         NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER},
       </if>
+      <if test="notifyCountStr != null" >
+        NOTIFY_COUNT = NOTIFY_COUNT+1,
+      </if>
       <if test="notifyTime != null" >
         NOTIFY_TIME = #{notifyTime, jdbcType=VARCHAR},
       </if>
@@ -157,7 +160,29 @@
 
 
   <select id="publishListQuery" resultType="java.util.HashMap">
-
+        SELECT A.ID AS VERSION_ID,
+               A.APP_TYPE,
+               A.VERSION_NO,
+               A.IS_FORCE_UPDATE,
+               A.FILE_NAME,
+               A.FILE_PATH,
+               A.ADD_SOURCE,
+               B.ID AS SUBSCRIBE_ID,
+               B.CODE,
+               B.OS_TYPE,
+               B.IS_STAND_BY,
+               B.PUBLISH_URL,
+               C.ID AS RECORD_ID
+        FROM T_UPGRADE_VERSION_INFO A
+            INNER JOIN T_UPGRADE_SUBSCRIBE_INFO B ON A.APP_TYPE = B.APP_TYPE AND B.STATUS = 1
+            LEFT JOIN T_UPGRADE_RECORD C ON C.VERSION_ID = A.ID AND C.SUBSCRIBE_ID = B.ID
+        WHERE A.STATUS = 1
+          AND NOT EXISTS(
+                  SELECT 1 FROM T_UPGRADE_RECORD D
+                  WHERE D.SUBSCRIBE_ID = B.ID
+                    AND D.VERSION_ID = A.ID
+                    AND (D.NOTIFY_COUNT >=6 OR D.NOTIFY_STATUS = 1)
+              )
   </select>
 
 </mapper>

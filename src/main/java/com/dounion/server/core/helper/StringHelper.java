@@ -67,7 +67,11 @@ public class StringHelper {
     }
 
 
-
+    /**
+     * 根据文件路径获取文件名称
+     * @param path
+     * @return
+     */
     public static String getFileName(String path){
         if(path  == null){
             return null;

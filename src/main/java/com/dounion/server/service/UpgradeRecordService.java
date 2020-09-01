@@ -1,5 +1,7 @@
 package com.dounion.server.service;
 
+import com.dounion.server.entity.UpgradeRecord;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,4 +12,8 @@ public interface UpgradeRecordService {
      * @return
      */
     List<Map<String, Object>> publishListQuery();
+
+    int insert(UpgradeRecord record);
+
+    int updateBySelective(UpgradeRecord record);
 }

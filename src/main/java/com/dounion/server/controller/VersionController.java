@@ -8,10 +8,12 @@ import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.entity.VersionInfo;
 import com.dounion.server.eum.ResponseTypeEnum;
 import com.dounion.server.service.VersionInfoService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/version")
@@ -57,16 +59,27 @@ public class VersionController {
      */
     @RequestMapping("/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object addJson(VersionInfo record, File file){
+    public Object addJson(final VersionInfo record, File file){
 
-        // 更新版本信息
+        // 是否远程发布
+        boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");
+
         record.setFilePath(file.getPath());
+        // 更新版本信息
         versionInfoService.updateVersion(record);
 
         // 调度任务:发布通知
         TaskHandler.callTask(Constant.TASK_PUBLISH);
         // 调度任务:本地部署
-        TaskHandler.callTask(Constant.TASk_DEPLOY);
+        TaskHandler.callTask(Constant.TASK_DEPLOY);
+
+        // 远程发布
+        if(isRemotePublish){
+            // 文件下载
+            TaskHandler.callTask(Constant.TASK_DEPLOY, new HashMap(){{
+                put("id", record.getId());
+            }});
+        }
 
         return ResponseBuilder.buildSuccess();
     }

@@ -57,10 +57,22 @@ public interface Constant {
     /**
      * 版本发布接口
      */
-    String URL_VERSION = "/version/add.json";
+    String URL_PUBLISH = "/version/add.json";
 
     // ==========================================  后台任务相关 ==========================================================
 
+    /**
+     * 任务链
+     */
+    String TASK_CHAIN = "chainTask";
+    /**
+     * 任务链-任务名称
+     */
+    String TASK_CHAIN_NAMES = "TASK_chainTaskNames";
+    /**
+     * 任务链-任务名称
+     */
+    String TASK_CHAIN_DELAY = "TASK_chainTaskDelay";
     /**
      * 订阅后台任务
      */
@@ -76,7 +88,7 @@ public interface Constant {
     /**
      * 部署后台任务
      */
-    String TASk_DEPLOY = "deployTask";
+    String TASK_DEPLOY = "deployTask";
 
 
     // ==========================================  请求头相关 ============================================================
