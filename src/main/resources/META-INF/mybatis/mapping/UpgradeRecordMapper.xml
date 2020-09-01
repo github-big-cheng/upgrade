@@ -8,11 +8,12 @@
     <result column="VERSION_ID" property="versionId" jdbcType="INTEGER" />
     <result column="NOTIFY_STATUS" property="notifyStatus" jdbcType="VARCHAR" />
     <result column="NOTIFY_COUNT" property="notifyCount" jdbcType="INTEGER" />
+    <result column="NOTIFY_TIME" property="notifyTime" jdbcType="VARCHAR" />
     <result column="UPGRADE_STATUS" property="upgradeStatus" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
-    ID, SUBSCRIBE_ID, VERSION_ID, NOTIFY_STATUS, NOTIFY_COUNT, UPGRADE_STATUS
+    ID, SUBSCRIBE_ID, VERSION_ID, NOTIFY_STATUS, NOTIFY_COUNT, NOTIFY_TIME, UPGRADE_STATUS
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -36,6 +37,7 @@
         #{versionId,jdbcType=INTEGER},
         #{notifyStatus,jdbcType=VARCHAR},
         #{notifyCount,jdbcType=INTEGER},
+        #{notifyTime, jdbcType=VARCHAR},
         #{upgradeStatus,jdbcType=VARCHAR}
       )
   </insert>
@@ -59,6 +61,9 @@
       <if test="notifyCount != null" >
         NOTIFY_COUNT,
       </if>
+      <if test="notifyTime != null" >
+        NOTIFY_TIME,
+      </if>
       <if test="upgradeStatus != null" >
         UPGRADE_STATUS,
       </if>
@@ -78,6 +83,9 @@
       </if>
       <if test="notifyCount != null" >
         #{notifyCount,jdbcType=INTEGER},
+      </if>
+      <if test="notifyTime != null" >
+        #{notifyTime, jdbcType=VARCHAR},
       </if>
       <if test="upgradeStatus != null" >
         #{upgradeStatus,jdbcType=VARCHAR},
@@ -100,6 +108,9 @@
       <if test="notifyCount != null" >
         NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER},
       </if>
+      <if test="notifyTime != null" >
+        NOTIFY_TIME = #{notifyTime, jdbcType=VARCHAR},
+      </if>
       <if test="upgradeStatus != null" >
         UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR},
       </if>
@@ -113,6 +124,7 @@
       VERSION_ID = #{versionId,jdbcType=INTEGER},
       NOTIFY_STATUS = #{notifyStatus,jdbcType=VARCHAR},
       NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER},
+      NOTIFY_TIME = #{notifyTime, jdbcType=VARCHAR},
       UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=INTEGER}
   </update>
@@ -134,10 +146,18 @@
       <if test="notifyCount != null" >
         AND NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER}
       </if>
+      <if test="notifyTime != null" >
+        AND NOTIFY_TIME = #{notifyTime, jdbcType=VARCHAR}
+      </if>
       <if test="upgradeStatus != null" >
         AND UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR}
       </if>
     </trim>
+  </select>
+
+
+  <select id="publishListQuery" resultType="java.util.HashMap">
+
   </select>
 
 </mapper>

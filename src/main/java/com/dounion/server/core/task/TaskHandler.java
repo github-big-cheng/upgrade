@@ -46,10 +46,12 @@ public class TaskHandler implements Runnable {
 
                 Future id = EXECUTOR_SERVICE.submit(task);
                 // 任务结束，移除对应的任务线程变量
+                ThreadLocal<BaseTask> threadLocal = THREAD_LOCAL_MAP.get(id);
+                threadLocal.remove();
                 THREAD_LOCAL_MAP.remove(id);
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("TaskHandler run error:{}", e);
         }
     }
 
@@ -58,10 +60,11 @@ public class TaskHandler implements Runnable {
     /**
      * 调用后台任务
      * @param taskName
+     * @param params 额外参数
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Integer callTask(String taskName, final long delay) {
+    public static Integer callTask(String taskName, Map<String, Object> params, final long delay) {
 
         final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
         if(task == null){
@@ -71,6 +74,7 @@ public class TaskHandler implements Runnable {
 
         Integer id =  TASK_ID.addAndGet(1);
         task.setTaskId(id);
+        task.setParams(params);
         THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){
             @Override
             protected BaseTask initialValue() {
@@ -94,31 +98,24 @@ public class TaskHandler implements Runnable {
         return id;
     }
 
+
     /**
      * 调用后台任务
-     * @param taskName
+     * @param taskName 任务名称
+     * @param params 额外参数
+     * @return
+     */
+    public static Integer callTask(String taskName, Map<String, Object> params) {
+        return callTask(taskName, params, 0);
+    }
+
+    /**
+     * 调用后台任务
+     * @param taskName 任务名称
      * @return
      */
     public static Integer callTask(String taskName) {
-
-        final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
-        if(task == null){
-            logger.warn("task [{}] not config, please check it...");
-            return null;
-        }
-
-        Integer id =  TASK_ID.addAndGet(1);
-        task.setTaskId(id);
-        THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){
-            @Override
-            protected BaseTask initialValue() {
-                return task;
-            }
-        });
-
-        TASK_QUEUE.add(task);
-
-        return id;
+        return callTask(taskName, null);
     }
 
 

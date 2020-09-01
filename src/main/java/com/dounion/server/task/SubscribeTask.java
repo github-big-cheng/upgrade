@@ -5,7 +5,6 @@ import com.dounion.server.core.base.AppInfo;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
-import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.dao.SubscribeInfoMapper;
@@ -13,6 +12,7 @@ import com.dounion.server.entity.SubscribeInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -32,13 +32,16 @@ public class SubscribeTask extends BaseTask {
         return "更新订阅后台任务";
     }
 
+    @Autowired
+    private ServiceInfo serviceInfo;
+    @Autowired
+    private SubscribeInfoMapper subscribeInfoMapper;
 
     @Override
     public void execute() {
         try {
 
             // 获取当前服务信息
-            ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
             if (serviceInfo.getMasterBlur()) {
                 logger.info("current service is master, service subscribe end");
                 return;
@@ -56,7 +59,6 @@ public class SubscribeTask extends BaseTask {
 
 
             // 查询向当前主机被订阅的服务列表(去重)
-            SubscribeInfoMapper subscribeInfoMapper = SpringApp.getInstance().getBean(SubscribeInfoMapper.class);
             SubscribeInfo query = new SubscribeInfo();
             query.setStatus("1");
             List<String> subscribeList = subscribeInfoMapper.currentServiceSubscribeQuery(query);

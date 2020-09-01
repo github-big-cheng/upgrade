@@ -25,7 +25,7 @@ CREATE TABLE T_UPGRADE_VERSION_INFO
     IS_FORCE_UPDATE CHAR(1),      -- 是否强制更新 1-是 0-否
     FILE_NAME       VARCAHR(50),  -- 文件名称
     FILE_PATH       VARCAHR(250), -- 更新文件路径
-    STATUS          CHAR(1),      -- 版本状态 1-正常 0-取消 2-已过期
+    STATUS          CHAR(1),      -- 版本状态 1-正常 2-已注销
     PUBLISH_DATE    VARCHAR(20)   -- 发布日期
 );
 
@@ -37,6 +37,7 @@ CREATE TABLE T_UPGRADE_RECORD
     SUBSCRIBE_ID   INTEGER, -- 订阅信息ID
     VERSION_ID     INTEGER, -- 版本号
     NOTIFY_STATUS  CHAR(1), -- 通知结果 1-成功 0-失败
-    NOTIFY_STATUS  INTEGER, -- 通知次数
+    NOTIFY_COUNT   INTEGER, -- 通知次数
+    NOTIFY_TIME    INTEGER, -- 最后通知时间
     UPGRADE_STATUS CHAR(1)  -- 更新结果 1-成功 0-失败
 );

@@ -3,6 +3,7 @@ package com.dounion.server.core.base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -13,6 +14,7 @@ public abstract class BaseTask implements Callable<Integer> {
     private final static Logger logger = LoggerFactory.getLogger(BaseTask.class);
 
     protected Integer taskId;
+    protected Map<String, Object> params;
     private boolean interrupt = false;
 
     public Integer getTaskId() {
@@ -21,6 +23,14 @@ public abstract class BaseTask implements Callable<Integer> {
 
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
+    }
+
+    public Map<String, Object> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
     }
 
     public abstract String getTaskName();
