@@ -29,42 +29,43 @@
     <table class="pure-table">
         <colgroup>
             <col width="5%">
-            <col width="10%">
-            <col width="15%">
-            <col width="10%">
-            <col width="7.5%">
-            <col width="27.5%">
-            <col width="10%">
-            <col width="15%">
         </colgroup>
         <thead>
             <tr>
                 <th>序号</th>
                 <th>库点代码</th>
+                <th>库点名称</th>
+                <th>通知地址</th>
                 <th>应用类型</th>
-                <th>操作系统类型</th>
-                <th>备用分发</th>
-                <th>发布回调地址</th>
-                <th>订阅状态</th>
-                <th>订阅时间</th>
+                <th>版本号</th>
+                <th>强制更新</th>
+                <th>发布类型</th>
+                <th>通知结果</th>
+                <th>通知次数</th>
+                <th>最后通知时间</th>
+                <th>更新结果</th>
             </tr>
         </thead>
-        <tbody id="subscribe_list_tbody"></tbody>
+        <tbody id="publish_list_tbody"></tbody>
     </table>
 </div>
 </body>
 
-<script id="subscribe_list_tmpl" type="jquery/template">
+<script id="publish_list_tmpl" type="jquery/template">
     {%= $item.addIndex() %}
 	<tr>
         <td>{%= $item.getIndex() %}</td>
         <td title="{%= code %}">{%= code %}</td>
+        <td title="{%= name %}">{%= name %}</td>
+        <td title="{%= publishUrl %}">{%= publishUrl %}</td>
         <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
-        <td title="{%= $item.format('osType', $data.osType) %}">{%= $item.format('osType', $data.osType) %}</td>
-        <td title="{%= $data.isStandBy=='1'?'是':'否' %}">{%= $data.isStandBy=='1'?'是':'否' %}</td>
-        <td title="{%= $data.publishUrl %}">{%= $data.publishUrl %}</td>
-        <td title="{%= $data.status=='1'?'已订阅':'已取消' %}">{%= $data.status=='1'?'已订阅':'已取消' %}</td>
-        <td title="{%= subscribeTime %}">{%= subscribeTime %}</td>
+        <td title="{%= versionNo %}">{%= versionNo %}</td>
+        <td title="{%= $data.isForceUpdate=='1'?'是':'否' %}">{%= $data.isForceUpdate=='1'?'是':'否' %}</td>
+        <td title="{%= $data.publishType=='1'?'手动发布':'自动发布' %}">{%= $data.publishType=='1'?'手动发布':'自动发布' %}</td>
+        <td title="{%= $data.notifyStatus=='1'?'成功':'失败' %}">{%= $data.notifyStatus=='1'?'成功':'失败' %}</td>
+        <td title="{%= notifyCount %}">{%= notifyCount %}</td>
+        <td title="{%= notifyTime %}">{%= notifyTime %}</td>
+        <td title="{%= $data.upgradeStatus=='1'?'成功':($data.upgradeStatus=='0'?'失败':'') %}">{%= $data.upgradeStatus=='1'?'成功':($data.upgradeStatus=='0'?'失败':'') %}</td>
     </tr>
 </script>
 
@@ -91,13 +92,13 @@
 
 	function query(param){
 
-	    $("#subscribe_list_tbody").html("");
+	    $("#publish_list_tbody").html("");
 
         $.ajax({
             type:'post',
             data : param,
             dataType:'json',
-            url:'/subscribe/list.json',
+            url:'/publish/list.json',
             success:function(rdata) {
                 // console.log(rdata);
                 if(rdata && rdata.code=='0'){
@@ -108,7 +109,7 @@
                         arr.push(data[k]);
                     }
                     let index = 0;
-                    $("#subscribe_list_tmpl").tmpl(arr, {
+                    $("#publish_list_tmpl").tmpl(arr, {
                         addIndex : function(){
                             index ++;
                             return "";
@@ -120,7 +121,7 @@
                             let r = dict[mapKey]==null ? "" : dict[mapKey][val];
                             return r ? r : "";
                         }
-                    }).appendTo($("#subscribe_list_tbody"));
+                    }).appendTo($("#publish_list_tbody"));
                 }
             }
         });
