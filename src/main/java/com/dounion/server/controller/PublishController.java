@@ -45,6 +45,13 @@ public class PublishController {
         return "publish/add.html";
     }
 
+
+    /**
+     * 新增/修改
+     * @param version
+     * @param subscribeCodes
+     * @return
+     */
     @RequestMapping("/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(final VersionInfo version, String subscribeCodes){
@@ -61,6 +68,18 @@ public class PublishController {
             put("versionId", version.getId());
         }});
 
+        return ResponseBuilder.buildSuccess();
+    }
+
+
+    /**
+     * 下载路由
+     * @param record
+     * @return
+     */
+    @RequestMapping("/downloadRoute")
+    @ResponseType(ResponseTypeEnum.JSON)
+    public Object downloadRouteJson(VersionInfo record){
         return ResponseBuilder.buildSuccess();
     }
 

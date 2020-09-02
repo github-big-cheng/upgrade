@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.core.netty.client.NettyClient;
@@ -38,7 +39,7 @@ public class PublishManualTask extends BaseTask {
         if(CollectionUtils.isEmpty(super.params) ||
                 super.params.get("versionId")==null){
             logger.error("【{}】, params can not be empty", this);
-            return;
+            throw new SystemException("params can not be empty");
         }
 
         UpgradeRecord query = new UpgradeRecord();
@@ -48,7 +49,7 @@ public class PublishManualTask extends BaseTask {
                 upgradeRecordService.selectEntityListBySelective(query);
         if(CollectionUtils.isEmpty(records)){
             logger.warn("【{}】, upgrade list is empty", this);
-            return;
+            throw new SystemException("upgrade list is empty");
         }
 
         String time = DateHelper.format(new Date());

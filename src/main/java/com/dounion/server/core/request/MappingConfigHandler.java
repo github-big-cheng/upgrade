@@ -286,7 +286,7 @@ public class MappingConfigHandler {
         // 未找到匹配的urlMapping
         if(!isMapping(requestUri)){
             response.setStatus(HttpResponseStatus.NOT_FOUND);
-            response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
+            HttpUtil.setContentLength(response, 0);
             return response;
         }
 
@@ -298,7 +298,7 @@ public class MappingConfigHandler {
             config = mapping.get(requestUri);
             if(config==null || config.responseType == null){
                 response.setStatus(HttpResponseStatus.NOT_FOUND);
-                response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
+                HttpUtil.setContentLength(response, 0);
                 return response;
             }
 
@@ -316,7 +316,7 @@ public class MappingConfigHandler {
                     String filePath = Constant.PATH_PAGE + result;
                     if(!new File(filePath).exists()){
                         response.setStatus(HttpResponseStatus.NOT_FOUND);
-                        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
+                        HttpUtil.setContentLength(response, 0);
                         return response;
                     }
                     byte[] fileBytes = FileHelper.getFile(filePath);
@@ -347,7 +347,7 @@ public class MappingConfigHandler {
             buf = Unpooled.copiedBuffer(error.getMessage(), CharsetUtil.UTF_8);
         }
 
-        response.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, buf.readableBytes());
+        HttpUtil.setContentLength(response, buf.readableBytes());
 
         return response.replace(buf);
     }

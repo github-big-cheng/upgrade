@@ -93,6 +93,11 @@ public interface Constant {
      * 部署后台任务
      */
     String TASK_DEPLOY = "deployTask";
+    /**
+     * 下载后台任务
+     */
+    String TASK_DOWNLOAD = "downloadTask";
+
 
 
     // ==========================================  请求头相关 ============================================================

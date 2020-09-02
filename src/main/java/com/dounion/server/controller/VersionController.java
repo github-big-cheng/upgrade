@@ -61,9 +61,6 @@ public class VersionController {
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(final VersionInfo record, File file){
 
-        // 是否远程发布
-        boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");
-
         record.setFilePath(file.getPath());
         // 更新版本信息
         versionInfoService.updateVersion(record);
@@ -75,11 +72,17 @@ public class VersionController {
         // 调度任务:本地部署
         TaskHandler.callTask(Constant.TASK_DEPLOY);
 
-        // 远程发布
+        // 是否远程发布
+        boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");
         if(isRemotePublish){
+            TaskHandler.callTaskChain(
+                new HashMap(){{ put("versionId", record.getId()); }},
+                Constant.TASK_DOWNLOAD, Constant.TASK_DEPLOY
+            );
+        } else {
             // 文件下载
             TaskHandler.callTask(Constant.TASK_DEPLOY, new HashMap(){{
-                put("id", record.getId());
+                put("versionId", record.getId());
             }});
         }
 

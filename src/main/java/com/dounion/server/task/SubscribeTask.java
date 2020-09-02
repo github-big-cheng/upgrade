@@ -36,65 +36,60 @@ public class SubscribeTask extends BaseTask {
 
     @Override
     public void execute() throws Exception {
-        try {
 
-            // 获取当前服务信息
-            if (serviceInfo.getMasterBlur()) {
-                // 配置上级主机IP/PORT 调用取消订阅接口
-                if(StringUtils.isNotBlank(serviceInfo.getMasterIp()) &&
-                            serviceInfo.getMasterPort() != null){
-                    logger.info("current service is master, and master ip/port is config, unSubscribe task been called");
-                    TaskHandler.callTask(Constant.TASK_UN_SUBSCRIBE);
-                    return;
-                }
-
-                logger.info("current service is master, service subscribe end");
+        // 获取当前服务信息
+        if (serviceInfo.getMasterBlur()) {
+            // 配置上级主机IP/PORT 调用取消订阅接口
+            if (StringUtils.isNotBlank(serviceInfo.getMasterIp()) &&
+                    serviceInfo.getMasterPort() != null) {
+                logger.info("current service is master, and master ip/port is config, unSubscribe task been called");
+                TaskHandler.callTask(Constant.TASK_UN_SUBSCRIBE);
                 return;
             }
 
-            Set<String> servicesSet = new HashSet<>();
-
-            // 本地服务列表
-            List<AppInfo> appInfoList = serviceInfo.getLocalServiceList();
-            if (!CollectionUtils.isEmpty(appInfoList)) {
-                for (AppInfo appInfo : appInfoList) {
-                    servicesSet.add(appInfo.getServiceType());
-                }
-            }
-
-
-            // 查询向当前主机被订阅的服务列表(去重)
-            SubscribeInfo query = new SubscribeInfo();
-            query.setStatus("1");
-            List<String> subscribeList = subscribeService.currentServiceSubscribeQuery(query);
-            if (!CollectionUtils.isEmpty(subscribeList)) {
-                servicesSet.addAll(subscribeList);
-            }
-
-
-            if (super.isInterrupted()) {
-                logger.info("subscribe task 【{}】 has been interrupted, it will be exit...", this.taskId);
-                return;
-            }
-
-            // 调用主机订阅接口
-            Map<String, Object> params = new HashMap<>();
-            params.put("code", serviceInfo.getCode());
-            params.put("name", serviceInfo.getName());
-            params.put("osType", serviceInfo.getOsType());
-            params.put("appType", StringUtils.join(servicesSet, ","));
-            params.put("isStandBy", serviceInfo.getStandBy());
-            params.put("publishUrl", serviceInfo.getPublishPath());
-
-            String json = JSONObject.toJSONString(params);
-            NettyClient client = NettyClient.getMasterInstance();
-            String result = client.doHttpRequest(NettyClient.buildPostMap(URL_SUBSCRIBE, json));
-
-            logger.info("【{}】, result is 【{}】", this, result);
-
-        } catch (Exception e) {
-            logger.error("service subscribe task error:{}", e);
+            logger.info("current service is master, service subscribe end");
+            return;
         }
-        return;
+
+        Set<String> servicesSet = new HashSet<>();
+
+        // 本地服务列表
+        List<AppInfo> appInfoList = serviceInfo.getLocalServiceList();
+        if (!CollectionUtils.isEmpty(appInfoList)) {
+            for (AppInfo appInfo : appInfoList) {
+                servicesSet.add(appInfo.getServiceType());
+            }
+        }
+
+
+        // 查询向当前主机被订阅的服务列表(去重)
+        SubscribeInfo query = new SubscribeInfo();
+        query.setStatus("1");
+        List<String> subscribeList = subscribeService.currentServiceSubscribeQuery(query);
+        if (!CollectionUtils.isEmpty(subscribeList)) {
+            servicesSet.addAll(subscribeList);
+        }
+
+
+        if (super.isInterrupted()) {
+            logger.info("subscribe task 【{}】 has been interrupted, it will be exit...", this.taskId);
+            return;
+        }
+
+        // 调用主机订阅接口
+        Map<String, Object> params = new HashMap<>();
+        params.put("code", serviceInfo.getCode());
+        params.put("name", serviceInfo.getName());
+        params.put("osType", serviceInfo.getOsType());
+        params.put("appType", StringUtils.join(servicesSet, ","));
+        params.put("isStandBy", serviceInfo.getStandBy());
+        params.put("publishUrl", serviceInfo.getPublishPath());
+
+        String json = JSONObject.toJSONString(params);
+        NettyClient client = NettyClient.getMasterInstance();
+        String result = client.doHttpRequest(NettyClient.buildPostMap(URL_SUBSCRIBE, json));
+
+        logger.info("【{}】, result is 【{}】", this, result);
+
     }
 }

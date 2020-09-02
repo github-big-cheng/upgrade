@@ -180,7 +180,7 @@ public class NettyClient {
 
         // 创建request对象
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, httpMethod, url, buf);
-        request.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(request.content().readableBytes()));
+        HttpUtil.setContentLength(request, request.content().readableBytes());
 
         // 请求头其他参数 content/cookie 等
         for(Object key : params.keySet()){

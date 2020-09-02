@@ -291,7 +291,6 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
     private void sendRedirect(ChannelHandlerContext ctx, String newUri) {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, FOUND, Unpooled.EMPTY_BUFFER);
         response.headers().set(HttpHeaderNames.LOCATION, newUri);
-
         this.sendAndCleanupConnection(ctx, response);
     }
 
@@ -299,7 +298,6 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
         FullHttpResponse response = new DefaultFullHttpResponse(
                 HTTP_1_1, status, Unpooled.copiedBuffer("Failure: " + status + "\r\n", CharsetUtil.UTF_8));
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
-
         this.sendAndCleanupConnection(ctx, response);
     }
 
