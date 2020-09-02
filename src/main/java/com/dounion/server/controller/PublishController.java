@@ -13,10 +13,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashMap;
+
 @Controller
 @RequestMapping("/publish")
 public class PublishController {
-
 
     @Autowired
     private UpgradeRecordService upgradeRecordService;
@@ -46,16 +47,19 @@ public class PublishController {
 
     @RequestMapping("/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object addJson(VersionInfo version, String subscribeCodes){
+    public Object addJson(final VersionInfo version, String subscribeCodes){
 
         if(StringUtils.isBlank(subscribeCodes)){
             return ResponseBuilder.buildError("请选择要发布的库点");
         }
 
-
+        // 生成发布记录
+        upgradeRecordService.upgradeRecordsGenerate(version, subscribeCodes);
 
         // 调度任务: 手工发布
-        TaskHandler.callTask(Constant.TASK_PUBLISH_MANUAL);
+        TaskHandler.callTask(Constant.TASK_PUBLISH_MANUAL, new HashMap(){{
+            put("versionId", version.getId());
+        }});
 
         return ResponseBuilder.buildSuccess();
     }

@@ -10,9 +10,9 @@ import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.service.UpgradeRecordService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class PublishAutoTask extends BaseTask {
 
         // 推送前，生成个更新记录信息
         Map<String, Object> query = new HashMap<>();
-        query.put("maxCount", ConfigurationHelper.getInt("max_notify_count", 6));
+        query.put("maxCount", ConfigurationHelper.getInt("max_notify_count", 1));
         List<Map<String, Object>> list = upgradeRecordService.publishListQuery(query);
         if(CollectionUtils.isEmpty(list)){
             logger.info("no publish record found");
@@ -52,6 +52,8 @@ public class PublishAutoTask extends BaseTask {
 
                 // 最后更新时间
                 record.setNotifyTime(DateHelper.format(new Date()));
+                record.setNotifyStatus("0");
+                record.setNotifyCountStr("1");
 
                 Integer recordId = (Integer) item.get("RECORD_ID");
                 if(recordId == null){
@@ -63,12 +65,12 @@ public class PublishAutoTask extends BaseTask {
                     record.setVersionId((Integer) item.get("VERSION_ID"));
                     record.setAppType((String) item.get("APP_TYPE"));
                     record.setVersionNo((String) item.get("VERSION_NO"));
-                    record.setNotifyCount(1);
+                    record.setPublishType((String) item.get("PUBLISH_TYPE"));
+                    record.setNotifyCount(0);
                     upgradeRecordService.insert(record);
                 } else {
                     // 更新
                     record.setId(recordId);
-                    record.setNotifyCountStr("1");
                 }
 
                 Map<String, Object> params = new HashMap<>();
@@ -87,15 +89,12 @@ public class PublishAutoTask extends BaseTask {
 
                 Map<String, Object> rst = JSON.parseObject(result, Map.class);
                 record.setNotifyStatus("0");
-                if(StringUtils.pathEquals((String) rst.get("code"), "0")){
+                if(rst != null && StringUtils.equals((String) rst.get("code"), "0")){
                     record.setNotifyStatus("1");
                 }
 
             } catch (Exception e) {
                 logger.error("record publish failed..{}", item);
-                if(record != null) {
-                    record.setNotifyStatus("0");
-                }
             } finally {
                 if(record != null && record.getId()!=null){
                     upgradeRecordService.updateBySelective(record);

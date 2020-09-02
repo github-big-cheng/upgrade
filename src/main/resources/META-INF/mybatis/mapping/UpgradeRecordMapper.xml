@@ -22,12 +22,12 @@
   <resultMap id="EntityResultMap" type="com.dounion.server.entity.UpgradeRecord" extends="BaseResultMap">
     <association property="subscribe" column="SUBSCRIBE_ID"
                  select="com.dounion.server.dao.SubscribeInfoMapper.selectByPrimaryKey" />
-    <association property="version" column="SUBSCRIBE_ID"
+    <association property="version" column="VERSION_ID"
                  select="com.dounion.server.dao.VersionInfoMapper.selectByPrimaryKey" />
   </resultMap>
 
   <sql id="Base_Column_List" >
-    ID, SUBSCRIBE_ID, CODE, NAME, PUBLISH_URL, VERSION_ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE,
+    ID, SUBSCRIBE_ID, CODE, `NAME`, PUBLISH_URL, VERSION_ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE,
     PUBLISH_TYPE, NOTIFY_STATUS, NOTIFY_COUNT, NOTIFY_TIME, UPGRADE_STATUS
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -41,17 +41,26 @@
     where ID = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.dounion.server.entity.UpgradeRecord" >
-    insert into T_UPGRADE_RECORD (ID, SUBSCRIBE_ID, CODE,
-      NAME, PUBLISH_URL, VERSION_ID,
-      APP_TYPE, VERSION_NO, IS_FORCE_UPDATE,
-      PUBLISH_TYPE, NOTIFY_STATUS, NOTIFY_COUNT,
-      NOTIFY_TIME, UPGRADE_STATUS)
-    values (#{id,jdbcType=INTEGER}, #{subscribeId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR},
-      #{name,jdbcType=VARCHAR}, #{publishUrl,jdbcType=VARCHAR}, #{versionId,jdbcType=INTEGER},
-      #{appType,jdbcType=VARCHAR}, #{versionNo,jdbcType=VARCHAR}, #{isForceUpdate,jdbcType=VARCHAR},
-      #{publishType,jdbcType=VARCHAR}, #{notifyStatus,jdbcType=VARCHAR}, #{notifyCount,jdbcType=INTEGER},
-      #{notifyTime,jdbcType=INTEGER}, #{upgradeStatus,jdbcType=VARCHAR})
+    insert into T_UPGRADE_RECORD (
+        <include refid="Base_Column_List"/>
+    ) values (
+        #{id,jdbcType=INTEGER},
+        #{subscribeId,jdbcType=INTEGER},
+        #{code,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR},
+        #{publishUrl,jdbcType=VARCHAR},
+        #{versionId,jdbcType=INTEGER},
+        #{appType,jdbcType=VARCHAR},
+        #{versionNo,jdbcType=VARCHAR},
+        #{isForceUpdate,jdbcType=VARCHAR},
+        #{publishType,jdbcType=VARCHAR},
+        #{notifyStatus,jdbcType=VARCHAR},
+        #{notifyCount,jdbcType=INTEGER},
+        #{notifyTime,jdbcType=INTEGER},
+        #{upgradeStatus,jdbcType=VARCHAR}
+      )
   </insert>
+
   <insert id="insertSelective" parameterType="com.dounion.server.entity.UpgradeRecord" >
     insert into T_UPGRADE_RECORD
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -65,7 +74,7 @@
         CODE,
       </if>
       <if test="name != null" >
-        NAME,
+        `NAME`,
       </if>
       <if test="publishUrl != null" >
         PUBLISH_URL,
@@ -143,6 +152,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.dounion.server.entity.UpgradeRecord" >
     update T_UPGRADE_RECORD
     <set >
@@ -153,7 +163,7 @@
         CODE = #{code,jdbcType=VARCHAR},
       </if>
       <if test="name != null" >
-        NAME = #{name,jdbcType=VARCHAR},
+        `NAME` = #{name,jdbcType=VARCHAR},
       </if>
       <if test="publishUrl != null" >
         PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR},
@@ -179,6 +189,9 @@
       <if test="notifyCount != null" >
         NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER},
       </if>
+      <if test="notifyCountStr != null" >
+        NOTIFY_COUNT = NOTIFY_COUNT + 1,
+      </if>
       <if test="notifyTime != null" >
         NOTIFY_TIME = #{notifyTime,jdbcType=INTEGER},
       </if>
@@ -192,7 +205,7 @@
     update T_UPGRADE_RECORD
     set SUBSCRIBE_ID = #{subscribeId,jdbcType=INTEGER},
       CODE = #{code,jdbcType=VARCHAR},
-      NAME = #{name,jdbcType=VARCHAR},
+      `NAME` = #{name,jdbcType=VARCHAR},
       PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR},
       VERSION_ID = #{versionId,jdbcType=INTEGER},
       APP_TYPE = #{appType,jdbcType=VARCHAR},
@@ -290,6 +303,9 @@
       </if>
       <if test="upgradeStatus != null" >
         AND UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="notifyCountStr != null" >
+        AND IFNULL(NOTIFY_COUNT, 0) <![CDATA[<]]> #{notifyCountStr}
       </if>
     </trim>
   </select>

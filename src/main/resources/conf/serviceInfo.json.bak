@@ -12,9 +12,9 @@
   // 是否是master
   "master": "1",
   // 上级服务器IP
-  "masterIp" : "127.0.0.1",
+  "masterIp" : "",
   // 上级服务器IP
-  "masterPort" : 8000,
+  "masterPort" : 0,
   // 操作系统
   "osType": "40300-20",
   // 是否提供分发下载服务

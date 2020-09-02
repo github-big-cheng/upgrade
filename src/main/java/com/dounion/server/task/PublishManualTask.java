@@ -4,14 +4,17 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.helper.ConfigurationHelper;
+import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.service.UpgradeRecordService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +43,7 @@ public class PublishManualTask extends BaseTask {
 
         UpgradeRecord query = new UpgradeRecord();
         query.setVersionId((Integer) super.params.get("versionId")); // 根据版本号查询
+        query.setNotifyCountStr(ConfigurationHelper.getString("max_notify_count", "1"));
         List<UpgradeRecord> records =
                 upgradeRecordService.selectEntityListBySelective(query);
         if(CollectionUtils.isEmpty(records)){
@@ -47,17 +51,24 @@ public class PublishManualTask extends BaseTask {
             return;
         }
 
+        String time = DateHelper.format(new Date());
         for(UpgradeRecord record : records){
-            if(record.getVersion() == null ||
-                        record.getSubscribe() == null){
-                logger.warn("【{}】, 记录【{}】缺少必要实体", this, record.getId());
-                continue;
-            }
             try{
+                if(record.getVersion() == null ||
+                            record.getSubscribe() == null){
+                    logger.warn("【{}】, 记录【{}】缺少必要实体", this, record.getId());
+                    continue;
+                }
+
+                record.setNotifyStatus("0");
+                record.setNotifyCountStr("1");
+                record.setNotifyTime(time);
+
                 Map<String, Object> params = new HashMap<>();
-                params.put("versionNo", record.getVersion().getVersionNo()); // 版本号
-                params.put("appType", record.getSubscribe().getAppType()); // 应用类型
-                params.put("isForceUpdate", record.getVersion().getIsForceUpdate()); // 是否强制更新
+                params.put("versionNo", record.getVersionNo()); // 版本号
+                params.put("appType", record.getAppType()); // 应用类型
+                params.put("isForceUpdate", record.getIsForceUpdate()); // 是否强制更新
+                params.put("publishType", "2"); // 发布类型 默认自动发布
                 params.put("addSource", "2"); // 远程发布
 
                 // 通知发布
@@ -69,16 +80,13 @@ public class PublishManualTask extends BaseTask {
                 logger.info("manual publish task result:【{}】", result);
 
                 Map<String, Object> rst = JSON.parseObject(result, Map.class);
-                record.setNotifyStatus("0");
-                if(StringUtils.pathEquals((String) rst.get("code"), "0")){
+                if(rst != null && StringUtils.equals((String) rst.get("code"), "0")){
                     record.setNotifyStatus("1");
                 }
 
             } catch (Exception e) {
                 logger.error("【{}】 error in loop :{}", this, e);
-                record.setNotifyStatus("0");
             } finally {
-                record.setNotifyCountStr("1");
                 upgradeRecordService.updateBySelective(record);
             }
 

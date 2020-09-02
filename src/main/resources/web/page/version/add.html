@@ -133,10 +133,10 @@
 		let formData = new FormData();
 		formData.append("appType", $('select[name=appType]').val());
 		formData.append("versionNo", $('input[name=versionNo]').val());
-		formData.append("isForceUpdate", $('input[name=isForceUpdate]').val());
+		formData.append("isForceUpdate", $('input[name=isForceUpdate]:checked').val());
 		formData.append("file", $('input[name=file]')[0].files[0]);
-		formData.append("addSource", $('input[name=addSource]').val());
-		formData.append("publishType", $('input[name=publishType]').val());
+		formData.append("addSource", $('input[name=addSource]:checked').val());
+		formData.append("publishType", $('input[name=publishType]:checked').val());
 
 		$.ajax({
 			dataType:'json',

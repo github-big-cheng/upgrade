@@ -10,11 +10,11 @@
   // 忽略模式 非强制更新不更新
   "ignoreMode": "1",
   // 是否是master
-  "master": "0",
+  "master": "1",
   // 上级服务器IP
-  "masterIp" : "127.0.0.1",
+  "masterIp" : "",
   // 上级服务器IP
-  "masterPort" : 8001,
+  "masterPort" : 0,
   // 操作系统
   "osType": "40300-20",
   // 是否提供分发下载服务

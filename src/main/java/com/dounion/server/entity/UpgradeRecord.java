@@ -24,6 +24,8 @@ public class UpgradeRecord extends BaseEntity {
 
     private String isForceUpdate; // 是否强制更新 1-是 0-否
 
+    private String publishType; // 发布类型 1-手动发布 2-自动发布
+
     private VersionInfo version; // 版本记录实体类
 
     private String notifyStatus; // 通知结果 通知结果 1-成功 0-失败
@@ -162,5 +164,13 @@ public class UpgradeRecord extends BaseEntity {
 
     public void setIsForceUpdate(String isForceUpdate) {
         this.isForceUpdate = isForceUpdate;
+    }
+
+    public String getPublishType() {
+        return publishType;
+    }
+
+    public void setPublishType(String publishType) {
+        this.publishType = publishType;
     }
 }

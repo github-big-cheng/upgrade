@@ -52,7 +52,7 @@ public class IndexController {
         try {
             final URI uri = new URI(Constant.URL_DOWNLOAD);
             result.put(uri, new HashMap(){{
-                put("desc", "下载列表");
+                put("desc", "下载文件列表");
                 put("path", uri.getPath());
             }});
         } catch (URISyntaxException e) {

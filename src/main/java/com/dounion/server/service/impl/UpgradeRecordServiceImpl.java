@@ -79,6 +79,7 @@ public class UpgradeRecordServiceImpl implements UpgradeRecordService {
         }
 
         SubscribeInfo query = new SubscribeInfo();
+        query.setAppType(versionInfo.getAppType());
         query.setCodes(subscribeCodes);
         List<SubscribeInfo> subscribeInfos = subscribeInfoMapper.selectListBySelective(query);
         if(CollectionUtils.isEmpty(subscribeInfos)){
@@ -92,6 +93,8 @@ public class UpgradeRecordServiceImpl implements UpgradeRecordService {
             record.setVersionId(versionInfo.getId());
             record.setVersionNo(versionInfo.getVersionNo());
             record.setAppType(versionInfo.getAppType());
+            record.setPublishType(versionInfo.getPublishType());
+            record.setIsForceUpdate(versionInfo.getIsForceUpdate());
             record.setSubscribeId(subscribeInfo.getId());
             record.setCode(subscribeInfo.getCode());
             record.setName(subscribeInfo.getName());

@@ -47,6 +47,19 @@ const CommonJS = {
         }).appendTo($("#"+target));
     },
 
+
+    /**
+     * 值转换
+     * @param mapKey
+     * @param val
+     * @returns {*}
+     */
+    dictTypeConvert: function (mapKey, val) {
+        let map = dictMap[mapKey];
+        return map == null ? "" : (map[val] == null ? "" : map[val]);
+    },
+
+
     /**
      * 排序
      * @param arr 要排序的数组

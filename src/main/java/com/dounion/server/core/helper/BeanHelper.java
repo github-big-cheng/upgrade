@@ -41,11 +41,11 @@ public class BeanHelper {
             if (StringUtils.isEmpty(paraValueStr)) {
                 continue;
             }
-            if (long.class.equals(fieldType)) {
+            if (long.class.equals(fieldType) || Long.class.equals(fieldType)) {
                 paraValueObj = Long.parseLong(paraValueStr.trim());
             } else if (short.class.equals(fieldType)) {
                 paraValueObj = Short.parseShort(paraValueStr.trim());
-            } else if (int.class.equals(fieldType)) {
+            } else if (int.class.equals(fieldType) || Integer.class.equals(fieldType)) {
                 paraValueObj = Integer.parseInt(paraValueStr.trim().replaceAll("^(-?\\d+)\\.[0]+$", "$1"));
             } else {
                 paraValueObj = paraValueStr;

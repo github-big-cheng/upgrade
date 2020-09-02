@@ -16,6 +16,14 @@
 		.pure-table input[type=text]{
 			width: 100%;
 		}
+		.pure-table select{
+			width: 100%;
+			height: 30px;
+		}
+		.pure-table select option{
+			width: 100%;
+			height: 20px;
+		}
 	</style>
 </head>
 <body>
@@ -25,7 +33,7 @@
 	<hr/>
 
 	<div>
-		<form id="form" method="post" style="float: left;width: 70%">
+		<form id="form" method="post" style="float: left;width: 60%">
 			<table class="pure-table" style="width: 90%;">
 				<colgroup>
 					<col width="15%">
@@ -34,37 +42,17 @@
 				</colgroup>
 				<tbody>
 					<tr>
-						<td>主机地址</td>
-						<td><input type="text" name="masterAddress" value="/subscribe/add.json"/></td>
-						<td>更新服务订阅地址，向哪台主机订阅更新服务</td>
+						<td>发布版本</td>
+						<td><select name="versionId" ></select></td>
+						<td>请选择要手工发布的版本</td>
 					</tr>
 					<tr>
-						<td>库点代码</td>
-						<td><input type="text" name="code"/></td>
-						<td>库点代码，如：dounion118</td>
-					</tr>
-					<tr>
-						<td>操作系统</td>
-						<td id="os_type_td"></td>
-						<td>订阅方主机操作系统类型</td>
-					</tr>
-					<tr>
-						<td>服务类型</td>
-						<td id="service_type_td"></td>
-						<td>服务类型</td>
-					</tr>
-					<tr>
-						<td>是否提供备用下载服务</td>
+						<td>库点</td>
 						<td>
-							<input type="radio" name="standBy" value="1"/>是&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" name="standBy" value="0" checked/>否
+							<ul id="deptCodeUl" class="my-list" style="list-style: none;padding-left: 0px;">
+							</ul>
 						</td>
-						<td>主机下载繁忙时，会从备用服务器下载指定文件</td>
-					</tr>
-					<tr>
-						<td>发布回调地址</td>
-						<td><input type="text" name="publishUrl" /></td>
-						<td>有可用更新时的主机回调地址,如：http://127.0.0.1:1996/</td>
+						<td>请勾选要发布更新的库点</td>
 					</tr>
 				</tbody>
 				<tfoot>
@@ -78,61 +66,163 @@
 			</table>
 		</form>
 
-		<div id="right-div" style="float:left; width:30%;"></div>
+		<div id="right-div" style="float:left; width:40%;">
+		</div>
 	</div>
 </body>
 
 
 <script id="option_tmpl" type="jquery/template">
-	<option value="{%= id%}">{%= %}</option>
+	<option value="{%= id%}">{%= $item.getDictType('serviceType', $data.appType) %} / {%= versionNo %}</option>
+</script>
+<script id="version_info_tmpl" type="jquery/template">
+	<h2>版本详情</h2>
+	<ul class="my-list">
+		<li>版本类型：{%= $item.getDictType('serviceType', $data.appType)%}</li>
+		<li>版本号：{%= versionNo%}</li>
+		<li>文件名称：{%= fileName%}</li>
+		<li>文件路径：{%= filePath%}</li>
+		<li>是否强制更新：{%= $data.isForceUpdate=='1'?'是':'否'%}</li>
+		<li>发布日期：{%= publishDate%}</li>
+		<li>添加来源：{%= $data.addSource=='1'?'本地发布':'远程发布'%}</li>
+		<li>发布类型：{%= $data.publishType=='1'?'手工发布':'自动发布'%}</li>
+	</ul>
+</script>
+<script id="dept_code_li_tmpl" type="jquery/template">
+	<li>
+		<input type="checkbox"
+			   class="{%= $data.id==null?'check-box-all':'check-box-item'%}"
+			   name="{%= $data.id==null?'':'code'%}" value="{%= id%}"/>
+		{%if $data.id!=null %}
+			{%= code%} / {%= name%}
+		{%else%}
+			全选
+		{%/if%}
+	</li>
 </script>
 
 <script>
 
+	let dictMap = {};
 	let versionMap = {};
-	let subscribeList = [];
 	$(function(){
+
+		// 字典查询
+		CommonJS.dictQuery('', function(data){
+			dictMap = data;
+		});
+
+		// 可用版本列表查询
+		let param = {
+			publishType: "1", // 手动发布
+			status: "1" // 状态正常
+		};
 		$.ajax({
 			url: '/version/list.json',
 			type: 'post',
 			dataType: 'json',
-			data : $("#form").serialize(),
+			data : param,
 			success: function (rdata) {
-				console.log(rdata);
+				// console.log(rdata);
 				if(rdata && rdata.code=='0'){
-					// versionList = rdata.data;
 					//生成模板
+					$("#option_tmpl").tmpl(rdata.data, {
+						getDictType : CommonJS.dictTypeConvert
+					}).appendTo($("select[name=versionId]"));
+
 
 					// 保存对象
 					versionMap = {};
-					for(let i in rdata.data){
-						versionMap[rdata.data['id']] = rdata.data;
+					if(rdata.data && rdata.data.length>0){
+						for(let i in rdata.data){
+							versionMap[rdata.data[i]['id']] = rdata.data[i];
+						}
+						_versionChange(rdata.data[0]['id']);
 					}
 				}
 			}
 		});
+
 	});
 
 
-	$("#submit").on('click', function (e) {
+	$("#deptCodeUl").on('click', '.check-box-all', function(e){
+		if($(this).prop("checked")){
+			$("input[type='checkbox'][name='code']").prop("checked",true); // 全选
+		} else {
+			$("input[type='checkbox'][name='code']").prop("checked",false); // 取消全选
+		}
+	});
+	$("#deptCodeUl").on('click', '.check-box-item', function(e){
+		let _checkAll = $("input[type=checkbox].check-box-all");
+		if (!_checkAll.checked) {
+			_checkAll.prop("checked", false);
+		}
+		let subsLen = $("input[type='checkbox'][name='code']").length;
+		let checkedLen = $("input[type='checkbox'][name='code']:checked").length;
+		if (checkedLen == subsLen) {
+			_checkAll.prop("checked", true);
+		}
+	});
 
+	$("select[name=versionId]").on('change', function(e){
+		let id = $(this).val();
+		_versionChange(id);
+	});
+	function _versionChange(id){
+		$("#right-div").html("");
+
+		let versionInfo = versionMap[id];
+		$("#version_info_tmpl").tmpl(versionInfo, {
+			getDictType : CommonJS.dictTypeConvert
+		}).appendTo($("#right-div"));
+
+		_deptQuery(versionInfo['appType']);
+	}
+	function _deptQuery(appType){
+		// 已订阅库点查询
+		$.ajax({
+			url: '/subscribe/list.json',
+			type: 'post',
+			dataType: 'json',
+			data : {status:'1', appType:appType},
+			success: function (rdata) {
+				console.log(rdata);
+				if(rdata && rdata.code=='0'){
+					let _ul = $("#deptCodeUl");
+					_ul.html("");
+					//生成模板
+					rdata.data.unshift({name:'全选'})
+					$("#dept_code_li_tmpl").tmpl(rdata.data).appendTo(_ul);
+				}
+			}
+		});
+	}
+
+	$("#submit").on('click', function (e) {
 		e.preventDefault();
 
-		let url = "/subscribe/add.json";
-		let _url = $("input[name=masterAddress]").val();
-		if(_url && _url!=''){
-			url = _url;
+		let subscribeCodes = $("input[name=code]:checked").val();
+		if(!subscribeCodes){
+			alert("请选择库点");
+			return;
 		}
+
+		let param = {
+			id : $("select[name=versionId]").val(),
+			subscribeCodes : subscribeCodes
+		};
+		console.log(param);
 
 		$.ajax({
 			type: 'post',
 			dataType: 'json',
-			data : $("#form").serialize(),
-			url: url,
+			data : param,
+			url: "/publish/add.json",
 			success: function (rdata) {
 				console.log(rdata);
 				if(rdata && rdata.code=='0'){
-					window.location.href = "/subscribe/list";
+					window.location.href = "/publish/list";
 				} else {
 					alert(rdata.message);
 				}
