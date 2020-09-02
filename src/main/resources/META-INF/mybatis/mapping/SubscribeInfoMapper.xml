@@ -5,6 +5,7 @@
   <resultMap id="BaseResultMap" type="com.dounion.server.entity.SubscribeInfo">
     <id column="ID" jdbcType="INTEGER" property="id" />
     <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="APP_TYPE" jdbcType="VARCHAR" property="appType" />
     <result column="OS_TYPE" jdbcType="VARCHAR" property="osType" />
     <result column="IS_STAND_BY" jdbcType="VARCHAR" property="isStandBy" />
@@ -14,7 +15,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    ID, CODE, APP_TYPE, OS_TYPE, IS_STAND_BY, PUBLISH_URL, STATUS, SUBSCRIBE_TIME
+    ID, CODE, `NAME`, APP_TYPE, OS_TYPE, IS_STAND_BY, PUBLISH_URL, STATUS, SUBSCRIBE_TIME
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -35,6 +36,7 @@
     ) values (
       #{id,jdbcType=INTEGER},
       #{code,jdbcType=VARCHAR},
+      #{name,jdbcType=VARCHAR},
       #{appType,jdbcType=VARCHAR},
       #{osType,jdbcType=VARCHAR},
       #{isStandBy,jdbcType=VARCHAR},
@@ -53,6 +55,9 @@
       </if>
       <if test="code != null">
         CODE,
+      </if>
+      <if test="name != null">
+        `NAME`,
       </if>
       <if test="appType != null">
         APP_TYPE,
@@ -79,6 +84,9 @@
       </if>
       <if test="code != null">
         #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
       </if>
       <if test="appType != null">
         #{appType,jdbcType=VARCHAR},
@@ -107,6 +115,9 @@
       <if test="code != null">
         CODE = #{code,jdbcType=VARCHAR},
       </if>
+      <if test="name != null">
+        `NAME` = #{name,jdbcType=VARCHAR},
+      </if>
       <if test="appType != null">
         APP_TYPE = #{appType,jdbcType=VARCHAR},
       </if>
@@ -132,6 +143,7 @@
   <update id="updateByPrimaryKey" parameterType="com.dounion.server.entity.SubscribeInfo">
     update T_UPGRADE_SUBSCRIBE_INFO
     set CODE = #{code,jdbcType=VARCHAR},
+      `NAME` = #{name,jdbcType=VARCHAR},
       APP_TYPE = #{appType,jdbcType=VARCHAR},
       OS_TYPE = #{osType,jdbcType=VARCHAR},
       IS_STAND_BY = #{isStandBy,jdbcType=VARCHAR},
@@ -148,6 +160,9 @@
     <trim prefix="where " prefixOverrides="AND |OR" >
       <if test="code != null" >
         AND CODE = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null" >
+        AND `NAME` = #{name,jdbcType=VARCHAR}
       </if>
       <if test="appType != null">
         AND APP_TYPE = #{appType,jdbcType=VARCHAR}
@@ -176,6 +191,9 @@
     <trim prefix="where " prefixOverrides="AND |OR" >
       <if test="code != null" >
         AND CODE = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null" >
+        AND `NAME` = #{name,jdbcType=VARCHAR}
       </if>
       <if test="appType != null">
         AND APP_TYPE = #{appType,jdbcType=VARCHAR}

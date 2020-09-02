@@ -22,6 +22,9 @@ public class ServiceInfo {
     // 库点代码
     private String code;
 
+    // 库点名称
+    private String name;
+
     // 本地IP
     private String localIp;
 
@@ -64,6 +67,7 @@ public class ServiceInfo {
         sb.append("ServiceInfo :{");
 
         sb.append("code:").append(this.code).append(", \t")
+            .append("name:").append(this.name).append(", \t")
             .append("localIp:").append(this.localIp).append(", \t")
             .append("port:").append(this.port).append(", \t")
             .append("master:").append(this.getMaster()).append(", \t")
@@ -142,6 +146,14 @@ public class ServiceInfo {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLocalIp() {

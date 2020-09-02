@@ -80,6 +80,7 @@ public class SubscribeTask extends BaseTask {
             // 调用主机订阅接口
             Map<String, Object> params = new HashMap<>();
             params.put("code", serviceInfo.getCode());
+            params.put("name", serviceInfo.getName());
             params.put("osType", serviceInfo.getOsType());
             params.put("appType", StringUtils.join(servicesSet, ","));
             params.put("isStandBy", serviceInfo.getStandBy());

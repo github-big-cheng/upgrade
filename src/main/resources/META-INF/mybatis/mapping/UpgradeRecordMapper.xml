@@ -321,7 +321,7 @@
                   SELECT 1 FROM T_UPGRADE_RECORD D
                   WHERE D.SUBSCRIBE_ID = B.ID
                     AND D.VERSION_ID = A.ID
-                    AND (D.NOTIFY_COUNT >=${maxCount} OR D.NOTIFY_STATUS = 1)
+                    AND (D.NOTIFY_COUNT >=#{maxCount} OR D.NOTIFY_STATUS = 1)
               )
   </select>
 
