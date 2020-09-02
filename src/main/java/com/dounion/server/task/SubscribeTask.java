@@ -11,8 +11,6 @@ import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.SubscribeInfo;
 import com.dounion.server.service.SubscribeService;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -26,8 +24,6 @@ import static com.dounion.server.core.base.Constant.URL_SUBSCRIBE;
 @Task(Constant.TASK_SUBSCRIBE)
 public class SubscribeTask extends BaseTask {
 
-    private final static Logger logger = LoggerFactory.getLogger(SubscribeTask.class);
-
     @Override
     public String getTaskName() {
         return "服务订阅后台任务";
@@ -39,7 +35,7 @@ public class SubscribeTask extends BaseTask {
     private SubscribeService subscribeService;
 
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         try {
 
             // 获取当前服务信息
@@ -77,7 +73,7 @@ public class SubscribeTask extends BaseTask {
 
 
             if (super.isInterrupted()) {
-                logger.info("subscribe task [{}] has been interrupted, it will be exit...", this.taskId);
+                logger.info("subscribe task 【{}】 has been interrupted, it will be exit...", this.taskId);
                 return;
             }
 
@@ -93,7 +89,7 @@ public class SubscribeTask extends BaseTask {
             NettyClient client = NettyClient.getMasterInstance();
             String result = client.doHttpRequest(NettyClient.buildPostMap(URL_SUBSCRIBE, json));
 
-            logger.info("SubscribeTask:[{}], result is [{}]", this, result);
+            logger.info("SubscribeTask:【{}】, result is 【{}】", this, result);
 
         } catch (Exception e) {
             logger.error("service subscribe task error:{}", e);

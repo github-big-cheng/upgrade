@@ -68,8 +68,10 @@ public class VersionController {
         // 更新版本信息
         versionInfoService.updateVersion(record);
 
-        // 调度任务:发布通知
-        TaskHandler.callTask(Constant.TASK_PUBLISH);
+        // 自动发布 - 调度任务:发布通知
+        if(StringUtils.equals(record.getPublishType(), "2")){
+            TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
+        }
         // 调度任务:本地部署
         TaskHandler.callTask(Constant.TASK_DEPLOY);
 

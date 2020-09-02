@@ -53,6 +53,14 @@
 						<td>非强制更新时，订阅主机可能会忽略更新</td>
 					</tr>
 					<tr>
+						<td>发布类型</td>
+						<td>
+							<input type="radio" name="publishType" value="1" checked/>手动发布&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="publishType" value="2"/>自动发布
+						</td>
+						<td>手动发布时，需要去发布界面手动选择已订阅实体，点击发布；自动发布将自动发布所有已订阅实体</td>
+					</tr>
+					<tr>
 						<td>版本文件</td>
 						<td><input type="file" name="file" /></td>
 						<td>版本文件 *.war;*.exe;*.zip</td>
@@ -128,6 +136,7 @@
 		formData.append("isForceUpdate", $('input[name=isForceUpdate]').val());
 		formData.append("file", $('input[name=file]')[0].files[0]);
 		formData.append("addSource", $('input[name=addSource]').val());
+		formData.append("publishType", $('input[name=publishType]').val());
 
 		$.ajax({
 			dataType:'json',

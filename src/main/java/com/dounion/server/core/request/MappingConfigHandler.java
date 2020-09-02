@@ -231,7 +231,7 @@ public class MappingConfigHandler {
                 config.setPath(uri.getPath());
                 mapping.put(uri, config);
 
-                logger.debug("url:[{}],method:[{}]", uri.getPath(), method);
+                logger.debug("url:【{}】,method:【{}】", uri.getPath(), method);
             }
         }
     }

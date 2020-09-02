@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
  */
 public abstract class BaseTask implements Callable<Integer> {
 
-    private final static Logger logger = LoggerFactory.getLogger(BaseTask.class);
+    protected final static Logger logger = LoggerFactory.getLogger(BaseTask.class);
 
     protected Integer taskId;
     protected Map<String, Object> params;
@@ -71,15 +71,19 @@ public abstract class BaseTask implements Callable<Integer> {
 
         // 任务开始前检查是否已被撤销
         if(this.isInterrupted()){
-            logger.info("task [{}] has been interrupted, it will be exit...", this.taskId);
+            logger.info("task 【{}】 has been interrupted, it will be exit...", this.taskId);
             return taskId;
         }
 
-        // 调用实现类的执行方法
-        this.execute();
+        try {
+            // 调用实现类的执行方法
+            this.execute();
 
-        // 调用回调方法
-        this.callback.doSomething();
+            // 调用回调方法
+            this.callback.doSomething();
+        } catch (Exception e) {
+            logger.error("task:【{}】执行异常:{}", this, e);
+        }
 
         return this.taskId;
     }
@@ -88,7 +92,7 @@ public abstract class BaseTask implements Callable<Integer> {
      * 实际后台任务执行方法
      * @return
      */
-    protected abstract void execute();
+    protected abstract void execute() throws Exception;
 
     public interface Callback{
         void doSomething();

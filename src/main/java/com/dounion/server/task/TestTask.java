@@ -12,7 +12,7 @@ public class TestTask extends BaseTask {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws Exception {
 
         try {
             Thread.sleep(10000);

@@ -4,13 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.service.UpgradeRecordService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -21,26 +20,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 更新通知后台任务
+ * 自动发布后台任务
  */
-@Task(Constant.TASK_PUBLISH)
-public class PublishTask extends BaseTask {
-
-    private Logger logger = LoggerFactory.getLogger(PublishTask.class);
+@Task(Constant.TASK_PUBLISH_AUTO)
+public class PublishAutoTask extends BaseTask {
 
     @Autowired
     private UpgradeRecordService upgradeRecordService;
 
     @Override
     public String getTaskName() {
-        return "部署后台任务";
+        return "自动发布后台任务";
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws Exception {
 
         // 推送前，生成个更新记录信息
-        List<Map<String, Object>> list = upgradeRecordService.publishListQuery();
+        Map<String, Object> query = new HashMap<>();
+        query.put("maxCount", ConfigurationHelper.getInt("max_notify_count", 6));
+        List<Map<String, Object>> list = upgradeRecordService.publishListQuery(query);
         if(CollectionUtils.isEmpty(list)){
             logger.info("no publish record found");
             return;
@@ -58,7 +57,12 @@ public class PublishTask extends BaseTask {
                 if(recordId == null){
                     // 新增
                     record.setSubscribeId((Integer) item.get("SUBSCRIBE_ID"));
+                    record.setCode((String) item.get("CODE"));
+                    record.setName((String) item.get("NAME"));
+                    record.setPublishUrl((String) item.get("PUBLISH_URL"));
                     record.setVersionId((Integer) item.get("VERSION_ID"));
+                    record.setAppType((String) item.get("APP_TYPE"));
+                    record.setVersionNo((String) item.get("VERSION_NO"));
                     record.setNotifyCount(1);
                     upgradeRecordService.insert(record);
                 } else {
@@ -79,7 +83,7 @@ public class PublishTask extends BaseTask {
                 String result = NettyClient.getInstance(publishUrl)
                         .doHttpRequest(NettyClient.buildPostMap(Constant.URL_PUBLISH, message));
 
-                logger.info("publish task result:[{}]", result);
+                logger.info("publish task result:【{}】", result);
 
                 Map<String, Object> rst = JSON.parseObject(result, Map.class);
                 record.setNotifyStatus("0");

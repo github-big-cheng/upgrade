@@ -16,8 +16,12 @@ public class UpgradeRecordMapper extends BaseDao<UpgradeRecord> {
     }
 
 
-    public List<Map<String, Object>> publishListQuery(){
+    public List<Map<String, Object>> publishListQuery(Map<String, Object> params){
         return sql.selectList(this.getNamespace() + ".publishListQuery");
+    }
+
+    public List<UpgradeRecord> selectEntityListBySelective(UpgradeRecord query) {
+        return sql.selectList(this.getNamespace() + ".selectEntityListBySelective", query);
     }
 
 }

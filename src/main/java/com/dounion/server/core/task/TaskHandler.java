@@ -42,7 +42,7 @@ public class TaskHandler implements Runnable {
                 // 阻塞获取任务
                 final BaseTask task = TASK_QUEUE.take();
                 if(task == null){
-                    logger.warn("task [{}] not config,please check it", task);
+                    logger.warn("task 【{}】 not config,please check it", task);
                     continue;
                 }
 
@@ -78,7 +78,7 @@ public class TaskHandler implements Runnable {
 
         final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
         if(task == null){
-            logger.warn("task [{}] not config, please check it...");
+            logger.warn("task 【{}】 not config, please check it...");
             return null;
         }
 
@@ -95,12 +95,12 @@ public class TaskHandler implements Runnable {
         EXECUTOR_SERVICE.submit(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                TASK_QUEUE.add(task);
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            TASK_QUEUE.add(task);
             }
         });
 
@@ -153,7 +153,7 @@ public class TaskHandler implements Runnable {
 
         final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
         if(task == null){
-            logger.warn("task [{}] not config, please check it...");
+            logger.warn("task 【{}】 not config, please check it...");
             return null;
         }
 

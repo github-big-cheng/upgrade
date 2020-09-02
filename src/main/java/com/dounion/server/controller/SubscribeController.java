@@ -58,7 +58,10 @@ public class SubscribeController {
     @RequestMapping(value = "/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(SubscribeInfo record){
+        // 更新订阅记录
         subscribeService.addSubscribe(record);
+        // 自动发布任务
+        TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
         return ResponseBuilder.buildSuccess();
     }
 

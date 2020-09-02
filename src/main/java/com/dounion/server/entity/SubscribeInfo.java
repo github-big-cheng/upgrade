@@ -8,6 +8,8 @@ public class SubscribeInfo extends BaseEntity {
 
     private String code; // 库点代码
 
+    private String name; // 库点名称
+
     private String appType; // 应用类型
 
     private String osType; // 操作系统类型
@@ -18,7 +20,10 @@ public class SubscribeInfo extends BaseEntity {
 
     private String publishUrl; // 回调地址
 
-    private String subscribeTime;
+    private String subscribeTime; // 订阅事件
+
+    // 查询条件
+    private String codes;
 
     public Integer getId() {
         return id;
@@ -34,6 +39,14 @@ public class SubscribeInfo extends BaseEntity {
 
     public void setCode(String code) {
         this.code = code == null ? null : code.trim();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAppType() {
@@ -82,5 +95,13 @@ public class SubscribeInfo extends BaseEntity {
 
     public void setSubscribeTime(String subscribeTime) {
         this.subscribeTime = subscribeTime == null ? null : subscribeTime.trim();
+    }
+
+    public String getCodes() {
+        return codes;
+    }
+
+    public void setCodes(String codes) {
+        this.codes = codes;
     }
 }

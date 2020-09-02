@@ -6,8 +6,6 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -21,8 +19,6 @@ import static com.dounion.server.core.base.Constant.URL_UN_SUBSCRIBE;
 @Task(Constant.TASK_UN_SUBSCRIBE)
 public class UnSubscribeTask extends BaseTask {
 
-    private final static Logger logger = LoggerFactory.getLogger(UnSubscribeTask.class);
-
     @Override
     public String getTaskName() {
         return "取消订阅后台任务";
@@ -32,7 +28,7 @@ public class UnSubscribeTask extends BaseTask {
     private ServiceInfo serviceInfo;
 
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         try {
             // 调用主机订阅接口
             Map<String, Object> params = new HashMap<>();
@@ -42,7 +38,7 @@ public class UnSubscribeTask extends BaseTask {
             NettyClient client = NettyClient.getMasterInstance();
             String result = client.doHttpRequest(NettyClient.buildPostMap(URL_UN_SUBSCRIBE, json));
 
-            logger.info("SubscribeTask:[{}], result is [{}]", this, result);
+            logger.info("SubscribeTask:【{}】, result is 【{}】", this, result);
 
         } catch (Exception e) {
             logger.error("service subscribe task error:{}", e);

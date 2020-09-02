@@ -6,19 +6,35 @@ public class UpgradeRecord extends BaseEntity {
 
     private Integer id;
 
-    private Integer subscribeId;
+    private Integer subscribeId; // 订阅ID
 
-    private Integer versionId;
+    private String code; // 库点代码
 
-    private String notifyStatus;
+    private String name; // 库点名称
 
-    private Integer notifyCount;
+    private String publishUrl; // 发布地址
 
-    private String notifyCountStr; // 更新次数字段
+    private SubscribeInfo subscribe; // 订阅记录实体类
 
-    private String notifyTime;
+    private Integer versionId; // 版本ID
 
-    private String upgradeStatus;
+    private String versionNo; // 版本号
+
+    private String appType; // 应用类型
+
+    private String isForceUpdate; // 是否强制更新 1-是 0-否
+
+    private VersionInfo version; // 版本记录实体类
+
+    private String notifyStatus; // 通知结果 通知结果 1-成功 0-失败
+
+    private Integer notifyCount; // 通知次数
+
+    private String notifyCountStr; // sql count++ 使用
+
+    private String notifyTime; // 通知时间
+
+    private String upgradeStatus; // 版本升级状态
 
     public Integer getId() {
         return id;
@@ -36,12 +52,28 @@ public class UpgradeRecord extends BaseEntity {
         this.subscribeId = subscribeId;
     }
 
+    public SubscribeInfo getSubscribe() {
+        return subscribe;
+    }
+
+    public void setSubscribe(SubscribeInfo subscribe) {
+        this.subscribe = subscribe;
+    }
+
     public Integer getVersionId() {
         return versionId;
     }
 
     public void setVersionId(Integer versionId) {
         this.versionId = versionId;
+    }
+
+    public VersionInfo getVersion() {
+        return version;
+    }
+
+    public void setVersion(VersionInfo version) {
+        this.version = version;
     }
 
     public String getNotifyStatus() {
@@ -82,5 +114,53 @@ public class UpgradeRecord extends BaseEntity {
 
     public void setUpgradeStatus(String upgradeStatus) {
         this.upgradeStatus = upgradeStatus == null ? null : upgradeStatus.trim();
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPublishUrl() {
+        return publishUrl;
+    }
+
+    public void setPublishUrl(String publishUrl) {
+        this.publishUrl = publishUrl;
+    }
+
+    public String getVersionNo() {
+        return versionNo;
+    }
+
+    public void setVersionNo(String versionNo) {
+        this.versionNo = versionNo;
+    }
+
+    public String getAppType() {
+        return appType;
+    }
+
+    public void setAppType(String appType) {
+        this.appType = appType;
+    }
+
+    public String getIsForceUpdate() {
+        return isForceUpdate;
+    }
+
+    public void setIsForceUpdate(String isForceUpdate) {
+        this.isForceUpdate = isForceUpdate;
     }
 }

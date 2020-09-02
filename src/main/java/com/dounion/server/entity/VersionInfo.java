@@ -21,6 +21,8 @@ public class VersionInfo extends BaseEntity {
 
     private String addSource; // 版本来源 1-本地发布 2-远程发布
 
+    private String publishType; // 发布类型 1-手动发布 2-自动发布
+
     private String publishDate; // 发布日期
 
     public Integer getId() {
@@ -88,6 +90,14 @@ public class VersionInfo extends BaseEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPublishType() {
+        return publishType;
+    }
+
+    public void setPublishType(String publishType) {
+        this.publishType = publishType;
     }
 
     public String getPublishDate() {

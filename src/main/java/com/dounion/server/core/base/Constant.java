@@ -82,9 +82,13 @@ public interface Constant {
      */
     String TASK_UN_SUBSCRIBE = "unSubscribeTask";
     /**
-     * 发布后台任务
+     * 自动发布后台任务
      */
-    String TASK_PUBLISH = "publishTask";
+    String TASK_PUBLISH_AUTO = "publishAutoTask";
+    /**
+     * 手动发布后台任务
+     */
+    String TASK_PUBLISH_MANUAL = "publishManualTask";
     /**
      * 部署后台任务
      */

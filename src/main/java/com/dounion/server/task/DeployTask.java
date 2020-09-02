@@ -5,8 +5,6 @@ import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.task.annotation.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -16,10 +14,8 @@ import java.util.List;
  * 部署后台任务
  *      本地任务
  */
-@Task(Constant.TASk_DEPLOY)
+@Task(Constant.TASK_DEPLOY)
 public class DeployTask extends BaseTask {
-
-    private final static Logger logger = LoggerFactory.getLogger(DeployTask.class);
 
     @Autowired
     private ServiceInfo serviceInfo;
@@ -30,7 +26,7 @@ public class DeployTask extends BaseTask {
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws Exception {
 
         // some logic about do upgrade
 
