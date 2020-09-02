@@ -89,7 +89,7 @@ public class SubscribeTask extends BaseTask {
             NettyClient client = NettyClient.getMasterInstance();
             String result = client.doHttpRequest(NettyClient.buildPostMap(URL_SUBSCRIBE, json));
 
-            logger.info("SubscribeTask:【{}】, result is 【{}】", this, result);
+            logger.info("【{}】, result is 【{}】", this, result);
 
         } catch (Exception e) {
             logger.error("service subscribe task error:{}", e);

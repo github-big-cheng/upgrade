@@ -17,7 +17,7 @@ public class FileHelper {
 
         File file = new File(path);
         if (file == null || !file.exists() || file.isDirectory()) {
-            throw new SystemException("file not found : [" + path + "]");
+            throw new SystemException("file not found : 【" + path + "】");
         }
 
         byte[] bytes = null;
@@ -129,7 +129,7 @@ public class FileHelper {
         File to = new File(realPath);
         if(to.exists()){
             if(!deleteIfExists){
-                throw new SystemException("file :[" + realPath + "] exists..");
+                throw new SystemException("file :【" + realPath + "】 exists..");
             }
             to.delete();
         }

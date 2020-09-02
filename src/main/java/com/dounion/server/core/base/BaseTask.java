@@ -46,7 +46,7 @@ public abstract class BaseTask implements Callable<Integer> {
 
     @Override
     public String toString() {
-        return "task: [taskId=" + this.taskId + ", taskName=" + this.getTaskName() + "]";
+        return "task: 【taskId=" + this.taskId + ", taskName=" + this.getTaskName() + "】";
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class BaseTask implements Callable<Integer> {
             // 调用回调方法
             this.callback.doSomething();
         } catch (Exception e) {
-            logger.error("task:【{}】执行异常:{}", this, e);
+            logger.error("【{}】执行异常:{}", this, e);
         }
 
         return this.taskId;

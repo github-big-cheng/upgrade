@@ -34,7 +34,7 @@ public class PublishManualTask extends BaseTask {
     protected void execute() throws Exception{
         if(CollectionUtils.isEmpty(super.params) ||
                 super.params.get("versionId")==null){
-            logger.error("task:【{}】, params can not be empty", this);
+            logger.error("【{}】, params can not be empty", this);
             return;
         }
 
@@ -43,14 +43,14 @@ public class PublishManualTask extends BaseTask {
         List<UpgradeRecord> records =
                 upgradeRecordService.selectEntityListBySelective(query);
         if(CollectionUtils.isEmpty(records)){
-            logger.warn("task:【{}】, upgrade list is empty", this);
+            logger.warn("【{}】, upgrade list is empty", this);
             return;
         }
 
         for(UpgradeRecord record : records){
             if(record.getVersion() == null ||
                         record.getSubscribe() == null){
-                logger.warn("task:【{}】, 记录【{}】缺少必要实体", this, record.getId());
+                logger.warn("【{}】, 记录【{}】缺少必要实体", this, record.getId());
                 continue;
             }
             try{
@@ -75,7 +75,7 @@ public class PublishManualTask extends BaseTask {
                 }
 
             } catch (Exception e) {
-                logger.error("task:【{}】 error in loop :{}", this, e);
+                logger.error("【{}】 error in loop :{}", this, e);
                 record.setNotifyStatus("0");
             } finally {
                 record.setNotifyCountStr("1");

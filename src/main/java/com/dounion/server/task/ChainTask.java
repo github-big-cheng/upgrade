@@ -26,7 +26,7 @@ public class ChainTask extends BaseTask {
 
         String[] taskNames = (String[]) params.get(Constant.TASK_CHAIN_NAMES);
         if (taskNames == null || taskNames.length == 0) {
-            logger.warn("task:【{}】 taskNames check failed", this);
+            logger.warn("【{}】 taskNames check failed", this);
             return;
         }
         Integer delay = (Integer) params.get(Constant.TASK_CHAIN_DELAY);
@@ -37,7 +37,7 @@ public class ChainTask extends BaseTask {
         for (String taskName : taskNames) {
             Future<Integer> task = TaskHandler.callTaskBlock(taskName, params, delay);
             Integer id = task.get();
-            logger.debug("chain task:【{}】 completed, sub task:【{}】", this, TaskHandler.getTask(id));
+            logger.debug("【{}】 completed, sub 【{}】", this, TaskHandler.getTask(id));
         }
     }
 }
