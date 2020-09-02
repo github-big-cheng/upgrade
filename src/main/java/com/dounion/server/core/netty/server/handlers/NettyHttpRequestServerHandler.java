@@ -47,8 +47,10 @@ public abstract class NettyHttpRequestServerHandler extends SimpleChannelInbound
     protected void writeResponse(ChannelHandlerContext ctx) throws Exception {
         String uri = StringHelper.getRealPath(request.uri());
         logger.debug("handlerMethod --> uri:【{}】, path:【{}】, params:【{}】", request.uri(), uri, this.params);
+        FullHttpResponse response = MappingConfigHandler.handlerMethod(uri, this.params);
+        HttpUtil.setContentLength(response, response.content().readableBytes());
         ChannelFuture future =
-                ctx.writeAndFlush(MappingConfigHandler.handlerMethod(uri, this.params)).addListener(ChannelFutureListener.CLOSE);
+                ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         if(this.request!=null || !this.params.isEmpty()){
             future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override

@@ -271,7 +271,7 @@
       <if test="subscribeId != null" >
         AND SUBSCRIBE_ID = #{subscribeId,jdbcType=INTEGER}
       </if>
-      <if test="name != null" >
+      <if test="code != null" >
         AND CODE = #{code,jdbcType=VARCHAR}
       </if>
       <if test="name != null" >
