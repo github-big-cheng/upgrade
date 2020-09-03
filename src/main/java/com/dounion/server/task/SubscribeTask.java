@@ -43,6 +43,7 @@ public class SubscribeTask extends BaseTask {
             if (StringUtils.isNotBlank(serviceInfo.getMasterIp()) &&
                     serviceInfo.getMasterPort() != null) {
                 logger.info("current service is master, and master ip/port is config, unSubscribe task been called");
+                // 取消订阅
                 TaskHandler.callTask(Constant.TASK_UN_SUBSCRIBE);
                 return;
             }
@@ -70,11 +71,13 @@ public class SubscribeTask extends BaseTask {
             servicesSet.addAll(subscribeList);
         }
 
-
         if (super.isInterrupted()) {
             logger.info("subscribe task 【{}】 has been interrupted, it will be exit...", this.taskId);
             return;
         }
+
+        // progress 75%
+        this.setProgressSeventyFive();
 
         // 调用主机订阅接口
         Map<String, Object> params = new HashMap<>();

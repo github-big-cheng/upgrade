@@ -1,6 +1,8 @@
 package com.dounion.server.core.download;
 
 
+import com.dounion.server.core.helper.ConfigurationHelper;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -62,4 +64,24 @@ public class DownloadHandler {
     }
 
 
+    /**
+     * 判断是否需要新的下载路由
+     * @param url
+     * @return
+     */
+    public static String getNewUrl(String host, String url) {
+
+        Integer maxCount = ConfigurationHelper.getInt("max_download_count", -1);
+        if(maxCount <= 0){
+            // 小于等于0为不限制
+            return null;
+        }
+
+        // 当前下载数未超过最大限制
+        if(getCount(url) < maxCount){
+            return null;
+        }
+
+        return null;
+    }
 }

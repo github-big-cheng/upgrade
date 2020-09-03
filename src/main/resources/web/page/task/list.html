@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/css/upgrade.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+
+    <title>后台列表</title>
+</head>
+<body>
+<h1>任务列表</h1>
+<a class="auto-refresh-btn">自动刷新</a>
+<input type="radio" name="refreshTime" value="5" checked/> 5秒
+<input type="radio" name="refreshTime" value="10"/> 10秒
+<input type="radio" name="refreshTime" value="15"/> 15秒
+<hr/>
+<div style="margin-top: 20px;">
+    <table class="pure-table">
+        <colgroup>
+            <col width="5%">
+        </colgroup>
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>任务名称</th>
+            <th>活动状态</th>
+            <th>任务进度</th>
+            <th>任务类型</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>耗时(单次/s)</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="task_list_tbody"></tbody>
+    </table>
+</div>
+</body>
+
+<script id="task_list_tmpl" type="jquery/template">
+    {%= $item.addIndex() %}
+    <tr>
+        <td>{%= $item.getIndex() %}</td>
+        <td title="{%= taskName %}">{%= taskName %}</td>
+        <td title="{%= $data.active?'活动':'停止' %}">{%= $data.active?'活动':'停止' %}</td>
+        <td title="{%= $data.progress?$data.progress+'%':'' %}">
+            {%= $data.progress?$data.progress+'%':'' %}
+        </td>
+        <td title="{%= $data.loop?'定时任务':'调度任务' %}">{%= $data.loop?'定时任务':'调度任务' %}</td>
+        <td title="{%= startTime %}">{%= startTime %}</td>
+        <td title="{%= endTime %}">{%= endTime %}</td>
+        <td title="{%= $data.costTime?$data.costTime/1000:'' %}">{%= $data.costTime?$data.costTime/1000:'' %}</td>
+        <td>
+            {%if $data.active %}
+                <a class="stop-btn" data-id="{%= taskId%}" style="color: red;">停止</a>
+            {%/if%}
+        </td>
+    </tr>
+</script>
+
+<script>
+
+    $(function () {
+        query();
+    });
+
+    $("#task_list_tbody").on('click', 'stop-btn', function(e){
+       e.preventDefault();
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: {taskId : $(this).data('id')},
+            url: '/task/interrupted.json',
+            success: function (rdata) {
+                // console.log(rdata);
+                if (rdata && rdata.code == '0') {
+                    let data = rdata.data;
+                    let arr = [];
+                    for (let k in data) {
+                        // console.log(data[k]);
+                        arr.push(data[k]);
+                    }
+                    let index = 0;
+                    $("#task_list_tmpl").tmpl(arr, {
+                        addIndex: function () {
+                            index++;
+                            return "";
+                        },
+                        getIndex: function () {
+                            return index;
+                        },
+                        format: function (mapKey, val) {
+                            let r = dict[mapKey] == null ? "" : dict[mapKey][val];
+                            return r ? r : "";
+                        }
+                    }).appendTo($("#task_list_tbody"));
+                }
+            }
+        });
+    });
+
+    let refresh = false;
+    $("body").on('click', 'a.auto-refresh-btn', function(e) {
+        e.preventDefault();
+
+        $(this).removeClass('auto-refresh-btn');
+        $(this).addClass('stop-refresh-btn');
+        $(this).text('停止刷新');
+
+        refresh = true;
+
+        loopQuery();
+    });
+    $("body").on('click', 'a.stop-refresh-btn', function(e) {
+        $(this).removeClass('stop-refresh-btn');
+        $(this).addClass('auto-refresh-btn');
+        $(this).text('自动刷新');
+
+        refresh = false;
+    });
+
+    function loopQuery(){
+        query();
+
+        let time = $("input[name=refreshTime]:checked").val();
+        if(refresh){
+            setTimeout(function(){
+                loopQuery();
+            }, time*1000);
+        }
+    }
+
+    function query() {
+        $("#task_list_tbody").html("");
+
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: '/task/list.json',
+            success: function (rdata) {
+                // console.log(rdata);
+                if (rdata && rdata.code == '0') {
+                    let data = rdata.data;
+                    let arr = [];
+                    for (let k in data) {
+                        // console.log(data[k]);
+                        arr.push(data[k]);
+                    }
+                    let index = 0;
+                    $("#task_list_tmpl").tmpl(arr, {
+                        addIndex: function () {
+                            index++;
+                            return "";
+                        },
+                        getIndex: function () {
+                            return index;
+                        },
+                        format: function (mapKey, val) {
+                            let r = dict[mapKey] == null ? "" : dict[mapKey][val];
+                            return r ? r : "";
+                        }
+                    }).appendTo($("#task_list_tbody"));
+                }
+            }
+        });
+    }
+</script>
+
+</html>

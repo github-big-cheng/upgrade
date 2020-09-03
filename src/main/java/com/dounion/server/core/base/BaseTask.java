@@ -1,8 +1,11 @@
 package com.dounion.server.core.base;
 
+import com.dounion.server.core.helper.DateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -13,10 +16,17 @@ public abstract class BaseTask implements Callable<Integer> {
 
     protected final static Logger logger = LoggerFactory.getLogger(BaseTask.class);
 
-    protected Integer taskId;
-    protected Map<String, Object> params;
-    private Callback callback;
-    private boolean interrupt = false;
+    protected Integer taskId; // 任务ID
+    protected Map<String, Object> params; // 额外参数
+    private Callback callback; // 回调函数
+    private boolean interrupt = false; // 中断标识
+
+    // 页面展示
+    private String taskName;
+    private String startTime;
+    private String endTime;
+    private long costTime;
+    private BigDecimal progress = BigDecimal.ZERO; // 任务进度
 
     public Integer getTaskId() {
         return taskId;
@@ -42,11 +52,99 @@ public abstract class BaseTask implements Callable<Integer> {
         this.callback = callback;
     }
 
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setCostTime(long costTime) {
+        this.costTime = costTime;
+    }
+
+    public long getCostTime() {
+        return costTime;
+    }
+
+    public BigDecimal getProgress() {
+        return progress;
+    }
+
+    public void setProgress(BigDecimal progress) {
+        this.progress = progress;
+    }
+
+    /**
+     * progress 10%
+     */
+    protected void setProgressJustStart(){
+        this.setProgress(new BigDecimal(10));
+    }
+
+    /**
+     * progress 25%
+     */
+    protected void setProgressTwentyFive(){
+        this.setProgress(new BigDecimal(25));
+    }
+
+    /**
+     * progress 50%
+     */
+    protected void setProgressHalf(){
+        this.setProgress(new BigDecimal(50));
+    }
+
+    /**
+     * progress 75%
+     */
+    protected void setProgressSeventyFive(){
+        this.setProgress(new BigDecimal(75));
+    }
+
+    /**
+     * progress 95%
+     */
+    protected void setProgressNeelyComplete(){
+        this.setProgress(new BigDecimal(95));
+    }
+
+    /**
+     * progress 100%
+     */
+    protected void setProgressComplete(){
+        this.setProgress(new BigDecimal(100));
+    }
+
     public abstract String getTaskName();
+
+    public boolean isLoop() {
+        return false;
+    }
+
+    public long getLoopDelay() {
+        return 60 * 60 * 1000l; // 默认一个小时;
+    }
 
     @Override
     public String toString() {
-        return "task: 【taskId=" + this.taskId + ", taskName=" + this.getTaskName() + "】";
+        return "task: " +
+                "{taskId=" + this.taskId
+                + ", taskName=" + this.getTaskName()
+                + ", progress=" + this.getProgress()
+                + ", isLoop=" + this.isLoop()
+                + ", loopDelay=" + this.getLoopDelay()
+                + "}";
     }
 
     /**
@@ -65,9 +163,16 @@ public abstract class BaseTask implements Callable<Integer> {
         return interrupt;
     }
 
+    public boolean isActive(){
+        return Thread.currentThread().isAlive();
+    }
 
     @Override
     public Integer call() throws Exception {
+
+        long startTime = System.currentTimeMillis();
+        // 设置开始时间
+        this.setStartTime(DateHelper.format(new Date()));
 
         // 任务开始前检查是否已被撤销
         if(this.isInterrupted()){
@@ -79,10 +184,27 @@ public abstract class BaseTask implements Callable<Integer> {
             // 调用实现类的执行方法
             this.execute();
 
+            // 快要哇
+            this.setProgressNeelyComplete();
+
             // 调用回调方法
             this.callback.doSomething();
+
+            // 设置完成
+            this.setProgressComplete();
+
+            // 设置结束时间
+            this.setEndTime(DateHelper.format(new Date()));
+            // 设置耗时
+            this.setCostTime(System.currentTimeMillis() - startTime);
         } catch (Exception e) {
             logger.error("【{}】执行异常:{}", this, e);
+        }
+
+        // 间隔定时任务 循环执行
+        if(!this.isInterrupted() && this.isLoop()){
+            Thread.sleep(this.getLoopDelay());
+            this.call();
         }
 
         return this.taskId;

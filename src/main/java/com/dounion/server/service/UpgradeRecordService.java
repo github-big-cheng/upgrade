@@ -23,4 +23,5 @@ public interface UpgradeRecordService {
     List<UpgradeRecord> selectEntityListBySelective(UpgradeRecord query);
 
     void upgradeRecordsGenerate(VersionInfo versionInfo, String subscribeCodes);
+
 }

@@ -103,4 +103,5 @@ public class UpgradeRecordServiceImpl implements UpgradeRecordService {
             upgradeRecordMapper.insert(record);
         }
     }
+
 }

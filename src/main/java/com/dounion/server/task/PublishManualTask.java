@@ -6,6 +6,7 @@ import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.helper.ConfigurationHelper;
+import com.dounion.server.core.helper.DataHelper;
 import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
@@ -15,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,9 @@ public class PublishManualTask extends BaseTask {
             logger.warn("【{}】, upgrade list is empty", this);
             throw new SystemException("upgrade list is empty");
         }
+
+        this.setProgressTwentyFive(); // progress 25%
+        BigDecimal itemProcess = DataHelper.divide(90, records.size());
 
         String time = DateHelper.format(new Date());
         for(UpgradeRecord record : records){
@@ -89,6 +94,9 @@ public class PublishManualTask extends BaseTask {
                 logger.error("【{}】 error in loop :{}", this, e);
             } finally {
                 upgradeRecordService.updateBySelective(record);
+
+                // progress
+                this.setProgress(DataHelper.add(this.getProgress(), itemProcess));
             }
 
         }

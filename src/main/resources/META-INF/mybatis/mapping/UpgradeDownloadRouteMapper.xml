@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dounion.server.dao.DownloadRouteRecordMapper" >
+
+  <resultMap id="BaseResultMap" type="com.dounion.server.entity.DownloadRouteRecord" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="HOST" property="host" jdbcType="VARCHAR" />
+    <result column="PORT" property="port" jdbcType="INTEGER" />
+    <result column="VERSION_NO" property="versionNo" jdbcType="VARCHAR" />
+    <result column="APP_TYPE" property="appType" jdbcType="VARCHAR" />
+    <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+    <result column="PATH" property="path" jdbcType="VARCHAR" />
+    <result column="DOWNLOAD_PATH" property="downloadPath" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, HOST, PORT, VERSION_NO, APP_TYPE, FILE_NAME, PATH, DOWNLOAD_PATH
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from T_UPGRADE_DOWNLOAD_ROUTE
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from T_UPGRADE_DOWNLOAD_ROUTE
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.dounion.server.entity.DownloadRouteRecord" >
+    insert into T_UPGRADE_DOWNLOAD_ROUTE (
+        <include refid="Base_Column_List"/>
+    ) values (
+        #{id,jdbcType=INTEGER},
+        #{host,jdbcType=VARCHAR},
+        #{port,jdbcType=INTEGER},
+        #{versionNo,jdbcType=VARCHAR},
+        #{appType,jdbcType=VARCHAR},
+        #{fileName,jdbcType=VARCHAR},
+        #{path,jdbcType=VARCHAR},
+        #{downloadPath,jdbcType=VARCHAR}
+    )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.dounion.server.entity.DownloadRouteRecord" >
+    insert into T_UPGRADE_DOWNLOAD_ROUTE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="host != null" >
+        HOST,
+      </if>
+      <if test="port != null" >
+        PORT,
+      </if>
+      <if test="versionNo != null" >
+        VERSION_NO,
+      </if>
+      <if test="appType != null" >
+        APP_TYPE,
+      </if>
+      <if test="fileName != null" >
+        FILE_NAME,
+      </if>
+      <if test="path != null" >
+        PATH,
+      </if>
+      <if test="downloadPath != null" >
+        DOWNLOAD_PATH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="host != null" >
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null" >
+        #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadPath != null" >
+        #{downloadPath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.dounion.server.entity.DownloadRouteRecord" >
+    update T_UPGRADE_DOWNLOAD_ROUTE
+    <set >
+      <if test="host != null" >
+        HOST = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        PORT = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="versionNo != null" >
+        VERSION_NO = #{versionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null" >
+        APP_TYPE = #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null" >
+        FILE_NAME = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        PATH = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadPath != null" >
+        DOWNLOAD_PATH = #{downloadPath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.dounion.server.entity.DownloadRouteRecord" >
+    update T_UPGRADE_DOWNLOAD_ROUTE
+    set HOST = #{host,jdbcType=VARCHAR},
+      PORT = #{port,jdbcType=INTEGER},
+      VERSION_NO = #{versionNo,jdbcType=VARCHAR},
+      APP_TYPE = #{appType,jdbcType=VARCHAR},
+      FILE_NAME = #{fileName,jdbcType=VARCHAR},
+      PATH = #{path,jdbcType=VARCHAR},
+      DOWNLOAD_PATH = #{downloadPath,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectListBySelective" parameterType="com.dounion.server.entity.DownloadRouteRecord"
+            resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM T_UPGRADE_DOWNLOAD_ROUTE
+    <trim prefix="where " prefixOverrides="AND |OR " >
+      <if test="id != null" >
+        AND ID = #{id,jdbcType=INTEGER}
+      </if>
+      <if test="host != null" >
+        AND HOST = #{host,jdbcType=VARCHAR}
+      </if>
+      <if test="port != null" >
+        AND PORT = #{port,jdbcType=INTEGER}
+      </if>
+      <if test="versionNo != null" >
+        AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="appType != null" >
+        AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="fileName != null" >
+        AND FILE_NAME = #{fileName,jdbcType=VARCHAR}
+      </if>
+      <if test="path != null" >
+        AND PATH = #{path,jdbcType=VARCHAR}
+      </if>
+      <if test="downloadPath != null" >
+        AND DOWNLOAD_PATH = #{downloadPath,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
+  <delete id="deleteBySelective" parameterType="com.dounion.server.entity.DownloadRouteRecord">
+    DELETE FROM T_UPGRADE_DOWNLOAD_ROUTE
+    <trim prefix="where " prefixOverrides="AND |OR " >
+      <if test="id != null" >
+        AND ID = #{id,jdbcType=INTEGER}
+      </if>
+      <if test="host != null" >
+        AND HOST = #{host,jdbcType=VARCHAR}
+      </if>
+      <if test="port != null" >
+        AND PORT = #{port,jdbcType=INTEGER}
+      </if>
+      <if test="versionNo != null" >
+        AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="appType != null" >
+        AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="fileName != null" >
+        AND FILE_NAME = #{fileName,jdbcType=VARCHAR}
+      </if>
+      <if test="path != null" >
+        AND PATH = #{path,jdbcType=VARCHAR}
+      </if>
+      <if test="downloadPath != null" >
+        AND DOWNLOAD_PATH = #{downloadPath,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </delete>
+</mapper>

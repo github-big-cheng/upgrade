@@ -123,6 +123,9 @@ public class IndexController {
 
             // 向主机刷新服务订阅信息
             TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
+            if(serviceInfo.getStandByBlur()){
+                TaskHandler.callTask(Constant.TASK_DOWNLOAD_ROUTE);
+            }
 
         } catch (IOException e) {
             return ResponseBuilder.buildError("文件解析失败");

@@ -54,4 +54,41 @@ public class DataHelper {
         return pattern.matcher(s).matches();
     }
 
+
+    /**
+     * return o1/o2
+     * @param o1
+     * @param o2
+     * @return
+     */
+    public static BigDecimal divide(Object o1, Object o2){
+        BigDecimal b2 = getBigDecimal(o2);
+        if(b2.equals(BigDecimal.ZERO)){
+            return BigDecimal.ZERO;
+        }
+        return getBigDecimal(o1).divide(b2, BigDecimal.ROUND_HALF_UP, 2);
+    }
+
+
+
+    /**
+     * return percent of o2/o1
+     * @param o1 分母
+     * @param o2 分子
+     * @return
+     */
+    public static BigDecimal percent(Object o1, Object o2){
+        return divide(o2, o1).multiply(new BigDecimal(100));
+    }
+
+
+    /**
+     * return o1 + o2
+     * @param o1
+     * @param o2
+     * @return
+     */
+    public static BigDecimal add(Object o1, Object o2) {
+        return getBigDecimal(o1).add(getBigDecimal(o2));
+    }
 }

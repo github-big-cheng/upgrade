@@ -6,10 +6,7 @@ import com.dounion.server.core.helper.SpringApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,12 +24,18 @@ public class TaskHandler implements Runnable {
 
     // 任务处理队列
     private static BlockingQueue<BaseTask> TASK_QUEUE = new LinkedBlockingQueue<>();
-    public static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
+    // 线程池
+    public static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(10);
+    // 任务ID生成器
     private static AtomicInteger TASK_ID = new AtomicInteger(0);
-    private static Map<Integer, ThreadLocal<BaseTask>> THREAD_LOCAL_MAP = new ConcurrentHashMap<>();
+    // 任务控制集合
+    private final static Map<Integer, ThreadLocal<BaseTask>> THREAD_LOCAL_MAP = new ConcurrentHashMap<>();
+    // 循环执行任务单例控制
+    private final static ConcurrentHashMap<String, BaseTask> LOOP_TASK_MAP = new ConcurrentHashMap<>();
 
     static {
-        new Thread(new TaskHandler()).start();
+        // 创建后台任务处理器
+        EXECUTOR_SERVICE.submit(new TaskHandler());
     }
 
     @Override
@@ -46,13 +49,25 @@ public class TaskHandler implements Runnable {
                     continue;
                 }
 
+                if(task.isLoop()){
+                    // 保证loop task 单例运行
+                    BaseTask temp = LOOP_TASK_MAP.get(task.getTaskName());
+                    if(temp!=null && temp.isActive()){
+                        continue;
+                    }
+                    LOOP_TASK_MAP.put(task.getTaskName(), task);
+                }
+
                 task.setCallback(new BaseTask.Callback() {
                     @Override
                     public void doSomething() {
                         // 任务结束，移除对应的任务线程变量
                         ThreadLocal<BaseTask> threadLocal = THREAD_LOCAL_MAP.get(task.getTaskId());
-                        threadLocal.remove();
-                        THREAD_LOCAL_MAP.remove(task.getTaskId());
+                        BaseTask task1 = threadLocal.get();
+                        if(task1 !=null && !task.isLoop()){
+                            threadLocal.remove();
+                            THREAD_LOCAL_MAP.remove(task.getTaskId());
+                        }
                     }
                 });
 
@@ -67,16 +82,16 @@ public class TaskHandler implements Runnable {
 
     // ===============================================  任务调度  ========================================================
 
+
     /**
      * 调用后台任务
-     * @param taskName
+     * @param task
      * @param params 额外参数
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Integer callTask(String taskName, Map<String, Object> params, final long delay) {
+    public static Integer callTask(final BaseTask task, Map<String, Object> params, final long delay) {
 
-        final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
         if(task == null){
             logger.warn("task 【{}】 not config, please check it...");
             return null;
@@ -95,17 +110,44 @@ public class TaskHandler implements Runnable {
         EXECUTOR_SERVICE.submit(new Runnable() {
             @Override
             public void run() {
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            TASK_QUEUE.add(task);
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                TASK_QUEUE.add(task);
             }
         });
 
         return id;
     }
+
+
+    /**
+     * 调用后台任务
+     * @param taskName
+     * @param params 额外参数
+     * @param delay 延迟多少秒提交
+     * @return
+     */
+    public static Integer callTask(String taskName, Map<String, Object> params, final long delay) {
+        final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
+        return callTask(task, params, delay);
+    }
+
+
+
+    /**
+     * 调用后台任务
+     * @param task 任务名称
+     * @param delay 延迟时间
+     * @return
+     */
+    public static Integer callTask(BaseTask task, long delay) {
+        return callTask(task, null, delay);
+    }
+
+
 
 
     /**
@@ -118,6 +160,18 @@ public class TaskHandler implements Runnable {
         return callTask(taskName, null, delay);
     }
 
+
+    /**
+     * 调用后台任务
+     * @param task 任务
+     * @param params 额外参数
+     * @return
+     */
+    public static Integer callTask(BaseTask task, Map<String, Object> params) {
+        return callTask(task, params, 0);
+    }
+
+
     /**
      * 调用后台任务
      * @param taskName 任务名称
@@ -126,6 +180,16 @@ public class TaskHandler implements Runnable {
      */
     public static Integer callTask(String taskName, Map<String, Object> params) {
         return callTask(taskName, params, 0);
+    }
+
+
+    /**
+     * 调用后台任务
+     * @param task
+     * @return
+     */
+    public static Integer callTask(BaseTask task) {
+        return callTask(task, null);
     }
 
     /**
@@ -141,17 +205,17 @@ public class TaskHandler implements Runnable {
     // ===============================================  阻塞任务  ========================================================
 
 
+
     /**
      * 获取Future调用后台任务
      *      use future.get() to block it
-     * @param taskName
+     * @param task
      * @param params 额外参数
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Future callTaskBlock(String taskName, Map<String, Object> params, final long delay) {
+    public static Future callTaskBlock(final BaseTask task, Map<String, Object> params, final long delay) {
 
-        final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
         if(task == null){
             logger.warn("task 【{}】 not config, please check it...");
             return null;
@@ -178,6 +242,20 @@ public class TaskHandler implements Runnable {
                 TASK_QUEUE.add(task);
             }
         });
+    }
+
+
+    /**
+     * 获取Future调用后台任务
+     *      use future.get() to block it
+     * @param taskName
+     * @param params 额外参数
+     * @param delay 延迟多少秒提交
+     * @return
+     */
+    public static Future callTaskBlock(String taskName, Map<String, Object> params, final long delay) {
+        final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
+        return callTaskBlock(task, params, delay);
     }
 
 
@@ -230,13 +308,21 @@ public class TaskHandler implements Runnable {
 
 
     /**
+     * 获取具体任务对象，可能已执行完毕被删除
+     */
+    public static BaseTask getTask(Integer id) {
+        return THREAD_LOCAL_MAP.get(id)==null ? null : THREAD_LOCAL_MAP.get(id).get();
+    }
+
+
+    /**
      * 提交任务中断请求
      * @param taskId
      * @return
      */
     public static boolean interrupted(Integer taskId){
-        ThreadLocal<BaseTask> taskThreadLocal = THREAD_LOCAL_MAP.get(taskId);
-        return taskThreadLocal.get().interrupted();
+        BaseTask task = getTask(taskId);
+        return task==null ? false : task.interrupted();
     }
 
 
@@ -250,14 +336,6 @@ public class TaskHandler implements Runnable {
             tasks.add(THREAD_LOCAL_MAP.get(id).get());
         }
         return tasks;
-    }
-
-
-    /**
-     * 获取具体任务对象，可能已执行完毕
-     */
-    public static BaseTask getTask(Integer id) {
-        return THREAD_LOCAL_MAP.get(id)==null ? null : THREAD_LOCAL_MAP.get(id).get();
     }
 
 }

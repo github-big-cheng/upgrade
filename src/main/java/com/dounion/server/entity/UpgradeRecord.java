@@ -36,7 +36,13 @@ public class UpgradeRecord extends BaseEntity {
 
     private String notifyTime; // 通知时间
 
-    private String upgradeStatus; // 版本升级状态
+    private String downloadStatus; // 下载状态 1-成功 0-失败
+
+    private String downloadTime; // 下载完成时间
+
+    private String upgradeStatus; // 版本升级状态  1-成功 0-失败
+
+    private String upgradeTime; // 升级完成时间
 
     public Integer getId() {
         return id;
@@ -172,5 +178,29 @@ public class UpgradeRecord extends BaseEntity {
 
     public void setPublishType(String publishType) {
         this.publishType = publishType;
+    }
+
+    public String getDownloadStatus() {
+        return downloadStatus;
+    }
+
+    public void setDownloadStatus(String downloadStatus) {
+        this.downloadStatus = downloadStatus;
+    }
+
+    public String getDownloadTime() {
+        return downloadTime;
+    }
+
+    public void setDownloadTime(String downloadTime) {
+        this.downloadTime = downloadTime;
+    }
+
+    public String getUpgradeTime() {
+        return upgradeTime;
+    }
+
+    public void setUpgradeTime(String upgradeTime) {
+        this.upgradeTime = upgradeTime;
     }
 }

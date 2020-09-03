@@ -16,6 +16,7 @@
 package com.dounion.server.core.netty.server.handlers;
 
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.download.DownloadHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -160,6 +161,15 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             }
         }
 
+
+        // TODO download route
+        String newUrl = DownloadHandler.getNewUrl(null, request.uri());
+        if(StringUtils.isNotBlank(newUrl)){
+            this.sendPermanentRedirect(ctx, newUrl);
+            return;
+        }
+
+
         RandomAccessFile raf;
         try {
             raf = new RandomAccessFile(file, "r");
@@ -285,6 +295,22 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, buffer);
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
 
+        this.sendAndCleanupConnection(ctx, response);
+    }
+
+
+    /**
+     * 重定向
+     * @param ctx
+     * @param newUri
+     */
+    private void sendPermanentRedirect(ChannelHandlerContext ctx, String newUri){
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.PERMANENT_REDIRECT); //设置重定向响应码 （临时重定向、永久重定向）
+        HttpHeaders headers = response.headers();
+        headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "x-requested-with,content-type");
+        headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "POST,GET");
+        headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        headers.set(HttpHeaderNames.LOCATION, newUri); //重定向URL设置
         this.sendAndCleanupConnection(ctx, response);
     }
 

@@ -43,7 +43,7 @@
                 <th>通知结果</th>
                 <th>通知次数</th>
                 <th>最后通知时间</th>
-                <th>更新结果</th>
+<!--                <th>更新结果</th>-->
             </tr>
         </thead>
         <tbody id="publish_list_tbody"></tbody>
@@ -65,7 +65,7 @@
         <td title="{%= $data.notifyStatus=='1'?'成功':'失败' %}">{%= $data.notifyStatus=='1'?'成功':'失败' %}</td>
         <td title="{%= notifyCount %}">{%= notifyCount %}</td>
         <td title="{%= notifyTime %}">{%= notifyTime %}</td>
-        <td title="{%= $data.upgradeStatus=='1'?'成功':($data.upgradeStatus=='0'?'失败':'') %}">{%= $data.upgradeStatus=='1'?'成功':($data.upgradeStatus=='0'?'失败':'') %}</td>
+<!--        <td title="{%= $data.upgradeStatus=='1'?'成功':($data.upgradeStatus=='0'?'失败':'') %}">{%= $data.upgradeStatus=='1'?'成功':($data.upgradeStatus=='0'?'失败':'') %}</td>-->
     </tr>
 </script>
 

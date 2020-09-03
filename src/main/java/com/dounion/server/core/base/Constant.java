@@ -58,6 +58,10 @@ public interface Constant {
      * 版本发布接口
      */
     String URL_PUBLISH = "/version/add.json";
+    /**
+     * 路由注册接口
+     */
+    String URL_ROUTE = "/route/register.json";
 
     // ==========================================  后台任务相关 ==========================================================
 
@@ -97,6 +101,10 @@ public interface Constant {
      * 下载后台任务
      */
     String TASK_DOWNLOAD = "downloadTask";
+    /**
+     * 路由后台任务
+     */
+    String TASK_DOWNLOAD_ROUTE = "routeTask";
 
 
 

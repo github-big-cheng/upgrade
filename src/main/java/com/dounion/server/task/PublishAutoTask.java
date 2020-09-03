@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.helper.ConfigurationHelper;
+import com.dounion.server.core.helper.DataHelper;
 import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
@@ -14,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,10 @@ public class PublishAutoTask extends BaseTask {
             logger.info("no publish record found");
             return;
         }
+
+        // progress
+        this.setProgressJustStart();
+        BigDecimal itemProcess = DataHelper.divide(90, list.size());
 
         UpgradeRecord record = null;
         for(Map<String, Object> item : list){
@@ -99,6 +105,8 @@ public class PublishAutoTask extends BaseTask {
                 if(record != null && record.getId()!=null){
                     upgradeRecordService.updateBySelective(record);
                 }
+                // 设置执行进度
+                this.setProgress(DataHelper.add(this.getProgress(), itemProcess));
             }
 
         }

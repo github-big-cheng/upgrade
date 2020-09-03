@@ -26,11 +26,17 @@ public class Main {
             // 初始化路由表
             MappingConfigHandler.initialization();
 
+            ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
+
             // 订阅更新服务
             TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 5000);
+            if(serviceInfo.getStandByBlur()){
+                // 分发下载路由注册服务
+                TaskHandler.callTask(Constant.TASK_DOWNLOAD_ROUTE, 10000);
+            }
+
 
             // 启动服务端
-            ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
             new NettyServer(serviceInfo).startUp();
 
 

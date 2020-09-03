@@ -45,7 +45,13 @@
                selectByExampleQueryId="false">
         </table>
 
-        <table tableName="T_UPGRADE_RECORD" domainObjectName="UpgradeRecord"
+<!--        <table tableName="T_UPGRADE_RECORD" domainObjectName="UpgradeRecord"-->
+<!--               enableCountByExample="false" enableUpdateByExample="false"-->
+<!--               enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--               selectByExampleQueryId="false">-->
+<!--        </table>-->
+
+        <table tableName="T_UPGRADE_DOWNLOAD_ROUTE" domainObjectName="DownloadRouteRecord"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">

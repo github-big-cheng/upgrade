@@ -1,6 +1,7 @@
 DROP TABLE T_UPGRADE_SUBSCRIBE_INFO;
 DROP TABLE T_UPGRADE_VERSION_INFO;
 DROP TABLE T_UPGRADE_RECORD;
+DROP TABLE T_UPGRADE_DOWNLOAD_ROUTE;
 
 -- 订阅信息表
 CREATE TABLE T_UPGRADE_SUBSCRIBE_INFO
@@ -25,7 +26,7 @@ CREATE TABLE T_UPGRADE_VERSION_INFO
     VERSION_NO      VARCHAR(15),  -- 版本号
     IS_FORCE_UPDATE CHAR(1),      -- 是否强制更新 1-是 0-否
     FILE_NAME       VARCAHR(50),  -- 文件名称
-    FILE_PATH       VARCAHR(250), -- 更新文件路径
+    FILE_PATH       VARCAHR(150), -- 更新文件路径
     STATUS          CHAR(1),      -- 版本状态 1-正常 2-已注销
     ADD_SOURCE      CHAR(1),      -- 版本来源 1-本地发布 2-远程发布
     PUBLISH_DATE    VARCHAR(20),  -- 发布日期
@@ -49,5 +50,21 @@ CREATE TABLE T_UPGRADE_RECORD
     NOTIFY_STATUS   CHAR(1),      -- 通知结果 1-成功 0-失败
     NOTIFY_COUNT    INTEGER,      -- 通知次数
     NOTIFY_TIME     INTEGER,      -- 最后通知时间
-    UPGRADE_STATUS  CHAR(1)       -- 更新结果 1-成功 0-失败 2-已忽略
+    DOWNLOAD_STATUS CHAR(1),      -- 下载状态 1-已下载 0-待下载
+    DOWNLOAD_TIME   VARCHAR(20),  -- 下载成功时间
+    UPGRADE_STATUS  CHAR(1),      -- 更新结果 1-成功 0-失败 2-已忽略
+    UPGRADE_TIME    VARCHAR(20)   -- 更新成功时间
+);
+
+-- 下载路由表
+CREATE TABLE T_UPGRADE_DOWNLOAD_ROUTE
+(
+    ID            INTEGER PRIMARY KEY autoincrement,
+    HOST          VARCHAR(20),  -- 主机
+    PORT          INTEGER,      -- 端口
+    VERSION_NO    VARCHAR(15),  -- 版本号
+    APP_TYPE      VARCHAR(15),  -- 应用类型
+    FILE_NAME     VARCHAR(100), -- 下载文件名称
+    PATH          VARCHAR(100), -- 路径
+    DOWNLOAD_PATH VARCHAR(100)  -- 下载路径
 );
