@@ -41,7 +41,8 @@ public class RouteTask extends BaseTask {
     @Override
     public long getLoopDelay() {
         // 每4小时
-        return 4 * 60 * 60 * 1000l;
+//        return 4 * 60 * 60 * 1000l;
+        return 4 * 1000l;
     }
 
     @Override
