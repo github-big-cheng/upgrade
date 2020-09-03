@@ -16,7 +16,7 @@
 package com.dounion.server.core.netty.server.handlers;
 
 import com.dounion.server.core.base.Constant;
-import com.dounion.server.core.download.DownloadHandler;
+import com.dounion.server.core.route.RouteHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -163,7 +163,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
 
 
         // TODO download route
-        String newUrl = DownloadHandler.getNewUrl(null, request.uri());
+        String newUrl = RouteHandler.getNewUrl(null, request.uri());
         if(StringUtils.isNotBlank(newUrl)){
             this.sendPermanentRedirect(ctx, newUrl);
             return;

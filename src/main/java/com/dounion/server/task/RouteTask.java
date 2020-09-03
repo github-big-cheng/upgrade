@@ -54,7 +54,7 @@ public class RouteTask extends BaseTask {
 
         if(StringUtils.isNotBlank(serviceInfo.getMasterIp()) ||
                 serviceInfo.getMasterPort()==null){
-            logger.info("【{}】 masterIp and port not config, task will exists", this);
+            logger.info("【{}】 master's ip and port not config, task will exists", this);
             return;
         }
 
@@ -76,6 +76,12 @@ public class RouteTask extends BaseTask {
         final String hostAddress = "http://" + serviceInfo.getLocalIp() + ":" +serviceInfo.getPort();
         for(VersionInfo versionInfo : versionInfos){
             try {
+                // 检查文件是否已下载完成
+                if(StringUtils.isBlank(versionInfo.getFilePath())){
+                    logger.info("【{}】【version record:{}】file not download yet, loop next one", this, versionInfo.getId());
+                    continue;
+                }
+
                 Map<String, Object> params = new HashMap<>();
                 params.put("host", serviceInfo.getLocalIp());
                 params.put("port", serviceInfo.getPort());

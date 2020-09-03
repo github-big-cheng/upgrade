@@ -25,12 +25,12 @@
         <tr>
             <th>序号</th>
             <th>任务名称</th>
-            <th>活动状态</th>
-            <th>任务进度</th>
             <th>任务类型</th>
+            <th>任务进度</th>
             <th>开始时间</th>
             <th>结束时间</th>
             <th>耗时(单次/s)</th>
+            <th>活动状态</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -44,14 +44,14 @@
     <tr>
         <td>{%= $item.getIndex() %}</td>
         <td title="{%= taskName %}">{%= taskName %}</td>
-        <td title="{%= $data.active?'活动':'停止' %}">{%= $data.active?'活动':'停止' %}</td>
+        <td title="{%= $data.loop?'定时任务':'调度任务' %}">{%= $data.loop?'定时任务':'调度任务' %}</td>
         <td title="{%= $data.progress?$data.progress+'%':'' %}">
             {%= $data.progress?$data.progress+'%':'' %}
         </td>
-        <td title="{%= $data.loop?'定时任务':'调度任务' %}">{%= $data.loop?'定时任务':'调度任务' %}</td>
         <td title="{%= startTime %}">{%= startTime %}</td>
         <td title="{%= endTime %}">{%= endTime %}</td>
         <td title="{%= $data.costTime?$data.costTime/1000:'' %}">{%= $data.costTime?$data.costTime/1000:'' %}</td>
+        <td title="{%= $data.active?'活动':'停止' %}">{%= $data.active?'活动':'停止' %}</td>
         <td>
             {%if $data.active %}
                 <a class="stop-btn" data-id="{%= taskId%}" style="color: red;">停止</a>

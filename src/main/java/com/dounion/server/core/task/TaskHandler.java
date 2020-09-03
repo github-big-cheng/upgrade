@@ -2,6 +2,7 @@ package com.dounion.server.core.task;
 
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.helper.SpringApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,8 @@ public class TaskHandler implements Runnable {
     // 任务处理队列
     private static BlockingQueue<BaseTask> TASK_QUEUE = new LinkedBlockingQueue<>();
     // 线程池
-    public static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(10);
+    public static ExecutorService EXECUTOR_SERVICE =
+            Executors.newFixedThreadPool(ConfigurationHelper.getInt("max_task_thread_count", 5));
     // 任务ID生成器
     private static AtomicInteger TASK_ID = new AtomicInteger(0);
     // 任务控制集合
