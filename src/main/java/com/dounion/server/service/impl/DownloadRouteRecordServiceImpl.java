@@ -1,5 +1,6 @@
 package com.dounion.server.service.impl;
 
+import com.dounion.server.core.route.RouteHandler;
 import com.dounion.server.dao.DownloadRouteRecordMapper;
 import com.dounion.server.dao.VersionInfoMapper;
 import com.dounion.server.entity.DownloadRouteRecord;
@@ -38,11 +39,12 @@ public class DownloadRouteRecordServiceImpl implements DownloadRouteRecordServic
         Assert.notNull(record.getDownloadPath(), "downloadPath must not be null");
 
         // 按主机+应用类型删除指定记录
-        DownloadRouteRecord delete = new DownloadRouteRecord();
-        delete.setHost(record.getHost());
-        delete.setAppType(record.getAppType());
-        downloadRouteRecordMapper.deleteBySelective(delete);
-
+//        DownloadRouteRecord delete = new DownloadRouteRecord();
+//        delete.setHost(record.getHost());
+//        delete.setAppType(record.getAppType());
+//        downloadRouteRecordMapper.deleteBySelective(delete);
+        // 暂以内存处理
+        RouteHandler.routeCancel(record.getPath(), record.getHost());
 
 
         // 检查是否当前版本
@@ -57,7 +59,9 @@ public class DownloadRouteRecordServiceImpl implements DownloadRouteRecordServic
         }
 
         // 插入新记录
-        downloadRouteRecordMapper.insert(record);
+//        downloadRouteRecordMapper.insert(record);
+        // 暂以内存处理
+        RouteHandler.routeRegister(record.getPath(), record);
     }
 
 
