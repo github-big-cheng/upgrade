@@ -162,8 +162,8 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
         }
 
 
-        // TODO download route
-        String newUrl = RouteHandler.getNewUrl(null, request.uri());
+        // download route
+        String newUrl = RouteHandler.getNewUrl(request.uri());
         if(StringUtils.isNotBlank(newUrl)){
             this.sendPermanentRedirect(ctx, newUrl);
             return;
