@@ -11,20 +11,23 @@ public interface Constant {
     /**
      * 最大本地下载数量
      */
-    String MAX_TASK_THREAD_COUNT = "max_task_thread_count";
+    String CONF_TASK_MAX_THREAD_COUNT = "task.max_thread_count";
     /**
      * 订阅通知最大次数
      */
-    String MAX_NOTIFY_COUNT = "max_notify_count";
+    String CONF_PUBLISH_MAX_NOTIFY_COUNT = "publish.max_notify_count";
     /**
      * 最大本地下载数量
      */
-    String MAX_DOWNLOAD_COUNT = "max_download_count";
-
+    String CONF_DOWNLOAD_MAX_COUNT = "download.max_download_count";
     /**
      * 分发注册路由最大活动时间
      */
-    String MAX_DOWNLOAD_ROUTE_TIME = "max_download_route_time";
+    String CONF_DOWNLOAD_MAX_ROUTE_TIME = "download.max_route_active_time";
+    /**
+     * 路由注册间隔时间
+     */
+    String CONF_ROUTE_REGISTER_DELAY = "route.register_delay";
 
 
     // ==========================================  文件路径相关 ==========================================================

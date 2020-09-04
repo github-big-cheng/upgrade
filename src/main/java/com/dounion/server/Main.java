@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.HashMap;
-
 public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -31,16 +29,9 @@ public class Main {
             ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
 
             // 订阅更新服务
-//            TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 5000);
-            if(serviceInfo.getStandByBlur()){
-                // 分发下载路由注册服务
-//                TaskHandler.callTask(Constant.TASK_ROUTE, 10000);
-            }
-
-            // 测试download任务
-            TaskHandler.callTask(Constant.TASK_DOWNLOAD, new HashMap(){{
-                put("versionId", 1);
-            }}, 5000);
+            TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 5000);
+            // 分发下载路由注册服务
+            TaskHandler.callTask(Constant.TASK_ROUTE, 10000);
 
 
             // 启动服务端

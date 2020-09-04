@@ -26,8 +26,8 @@ public class RouteHandler {
     private static Object LOCK2 = new Object();
     private static Object LOCK3 = new Object();
 
-    final static Integer MAX_COUNT = ConfigurationHelper.getInt(Constant.MAX_DOWNLOAD_COUNT, -1);
-    final static Long MAX_ROUTE_TIME = ConfigurationHelper.getLong(Constant.MAX_DOWNLOAD_ROUTE_TIME, -1);
+    final static Integer MAX_COUNT = ConfigurationHelper.getInt(Constant.CONF_DOWNLOAD_MAX_COUNT, -1);
+    final static Long MAX_ROUTE_TIME = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_ROUTE_TIME, -1);
 
 
     /**

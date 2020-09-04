@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
+import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.VersionInfo;
@@ -40,8 +41,7 @@ public class RouteTask extends BaseTask {
 
     @Override
     public long getLoopDelay() {
-        // 每4小时
-        return 4 * 60 * 60 * 1000l;
+        return ConfigurationHelper.getLong(Constant.CONF_ROUTE_REGISTER_DELAY, 24 * 60 * 60 * 1000l);
     }
 
     @Override
