@@ -3,8 +3,11 @@ package com.dounion.server.task;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.task.annotation.Task;
 
-@Task("testTask")
-public class TestTask extends BaseTask {
+/**
+ * 样例
+ */
+@Task("sampleTask")
+public class SampleTask extends BaseTask {
 
     @Override
     public String getTaskName() {
