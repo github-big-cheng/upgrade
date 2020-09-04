@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
+
 /**
  * 资源下载后台任务
  */
@@ -49,12 +51,15 @@ public class DownloadTask extends BaseTask {
 
         String downloadUrl = Constant.URL_DOWNLOAD + versionInfo.getFileName();
         String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl);
-        if(StringUtils.isBlank(filePath)){
+
+        File file = new File(filePath);
+        if(!file.exists()){
             throw new BusinessException(StringHelper.parse1("【{}】下载失败", downloadUrl));
         }
 
         // 更新文件路径
         versionInfo.setFilePath(filePath);
+        versionInfo.setFileSize(file.length());
         versionInfoService.update(versionInfo);
     }
 }
