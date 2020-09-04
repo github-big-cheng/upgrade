@@ -24,6 +24,12 @@ public class VersionInfoServiceImpl implements VersionInfoService {
 
 
     @Override
+    public VersionInfo selectById(Integer id){
+        return versionInfoMapper.selectByPrimaryKey(id);
+    }
+
+
+    @Override
     public void update(VersionInfo record) {
         versionInfoMapper.updateByPrimaryKeySelective(record);
     }

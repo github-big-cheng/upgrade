@@ -17,6 +17,8 @@ public class VersionInfo extends BaseEntity {
 
     private String filePath; // 文件保存路径
 
+    private Long fileSize; // 文件大小
+
     private String status; // 版本状态 1-正常 2-已注销
 
     private String addSource; // 版本来源 1-本地发布 2-远程发布
@@ -74,6 +76,14 @@ public class VersionInfo extends BaseEntity {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath == null ? null : filePath.trim();
+    }
+
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
     }
 
     public String getStatus() {

@@ -26,7 +26,8 @@ CREATE TABLE T_UPGRADE_VERSION_INFO
     VERSION_NO      VARCHAR(15),  -- 版本号
     IS_FORCE_UPDATE CHAR(1),      -- 是否强制更新 1-是 0-否
     FILE_NAME       VARCAHR(50),  -- 文件名称
-    FILE_PATH       VARCAHR(150), -- 更新文件路径
+    FILE_PATH       VARCAHR(150), -- 文件路径
+    FILE_SIZE       BIGINT,       -- 文件大小
     STATUS          CHAR(1),      -- 版本状态 1-正常 2-已注销
     ADD_SOURCE      CHAR(1),      -- 版本来源 1-本地发布 2-远程发布
     PUBLISH_DATE    VARCHAR(20),  -- 发布日期

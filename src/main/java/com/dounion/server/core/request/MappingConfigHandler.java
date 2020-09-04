@@ -226,7 +226,7 @@ public class MappingConfigHandler {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                 urlBuffer.append(StringHelper.urlAppend(null, annotation.value()));
                 nameBuffer.append(StringUtils.isBlank(annotation.name()) ? method : annotation.name());
-                uri = URI.create(urlBuffer.toString());
+                uri = URI.create(StringHelper.urlFormat(urlBuffer.toString()));
                 config = new MappingConfigHandler(o, method, nameBuffer.toString());
                 config.setPath(uri.getPath());
                 mapping.put(uri, config);
@@ -258,9 +258,11 @@ public class MappingConfigHandler {
      */
     public static Boolean isMapping(URI request){
 
+        String path = StringHelper.urlFormat(request.getPath());
+
         boolean flag = false;
         for(URI uri : mapping.keySet()){
-            if(StringUtils.equals(uri.getPath(),request.getPath())){
+            if(StringUtils.equals(uri.getPath(), path)){
                 flag = true;
                 break;
             }
@@ -277,6 +279,7 @@ public class MappingConfigHandler {
      */
     public static FullHttpResponse handlerMethod(String path, Map<String, Object> params) throws Exception {
 
+        path = StringHelper.urlFormat(path);
         URI requestUri = URI.create(path);
 
         // 默认返回 response

@@ -145,18 +145,16 @@ public class NettyClient {
     }
 
 
-    public void fileDownload(String url) {
-        try {
-            String fileName = StringHelper.getFileName(url);
+    public String fileDownload(String url) {
+        String fileName = StringHelper.getFileName(url);
+        FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
+        Channel channel = this.future.channel();
+        channel.attr(FILE_NAME).set(fileName);
+        NettyResponse<String> response = new NettyResponse<>();
+        channel.attr(NETTY_CLIENT_RESPONSE).set(response);
+        channel.writeAndFlush(request);
 
-            FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
-            Channel channel = this.future.channel();
-            channel.attr(FILE_NAME).set(fileName);
-            channel.writeAndFlush(request);
-            this.future.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        return response.get();
     }
 
 

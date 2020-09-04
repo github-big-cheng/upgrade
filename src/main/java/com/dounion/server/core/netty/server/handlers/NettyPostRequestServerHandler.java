@@ -163,7 +163,8 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
             Map<String, Object> params = JSON.parseObject(json, Map.class);
             this.params.putAll(params);
         } catch (Exception e) {
-            logger.error("parse error:{}", e);
+            //ignore. that's fine.
+//            logger.error("parse error:{}", e);
         }
     }
 

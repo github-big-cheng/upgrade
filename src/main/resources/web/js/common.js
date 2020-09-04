@@ -38,6 +38,10 @@ const CommonJS = {
         for(let i in rdata){
             arr.push({value:i,text:rdata[i]});
         }
+
+        this.sort(arr, function(o1, o2){
+            return o1.value > o2.value;
+        })
         // console.log(arr);
 
         $("#"+tmpl).tmpl(arr, {

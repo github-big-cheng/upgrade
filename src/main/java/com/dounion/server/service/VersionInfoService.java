@@ -10,6 +10,8 @@ public interface VersionInfoService {
 
     List<VersionInfo> list(VersionInfo query);
 
+    VersionInfo selectById(Integer id);
+
     void update(VersionInfo record);
 
     @Transactional

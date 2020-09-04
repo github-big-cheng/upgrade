@@ -30,7 +30,7 @@ public class RouteHandler {
     /**
      * 本地下载数
      */
-    private final static ConcurrentHashMap<String, AtomicInteger>
+    public final static ConcurrentHashMap<String, AtomicInteger>
             LOCAL_COUNTER_MAP = new ConcurrentHashMap<>();
 
     /**
@@ -38,7 +38,7 @@ public class RouteHandler {
      *      key:path
      *      value:routes
      */
-    private final static ConcurrentHashMap<String, List<DownloadRouteRecord>>
+    public final static ConcurrentHashMap<String, List<DownloadRouteRecord>>
             ROUTE_INFO_MAP = new ConcurrentHashMap<>();
 
 
@@ -47,7 +47,7 @@ public class RouteHandler {
      *  key:path
      *  value:queue
      */
-    private final static Map<String, BlockingQueue<String>> ROUTE_QUEUE_MAP = new HashMap<>();
+    public final static Map<String, BlockingQueue<String>> ROUTE_QUEUE_MAP = new HashMap<>();
 
 
     // ================================================ local count  ===================================================

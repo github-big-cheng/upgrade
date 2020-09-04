@@ -2,8 +2,14 @@ package com.dounion.server.task;
 
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
-import com.dounion.server.core.exception.SystemException;
+import com.dounion.server.core.exception.BusinessException;
+import com.dounion.server.core.helper.StringHelper;
+import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
+import com.dounion.server.entity.VersionInfo;
+import com.dounion.server.service.VersionInfoService;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -12,6 +18,9 @@ import org.springframework.util.CollectionUtils;
 @Task(Constant.TASK_DOWNLOAD)
 public class DownloadTask extends BaseTask {
 
+
+    @Autowired
+    private VersionInfoService versionInfoService;
 
     @Override
     public String getTaskName() {
@@ -23,10 +32,29 @@ public class DownloadTask extends BaseTask {
 
         if(CollectionUtils.isEmpty(super.params) ||
                             super.params.get("versionId")==null){
-            throw new SystemException("versionId is needed");
+            throw new BusinessException("versionId is needed");
         }
 
+        Integer id = (Integer) super.params.get("versionId");
+        VersionInfo versionInfo = versionInfoService.selectById(id);
+        if(versionInfo == null){
+            throw new BusinessException("【versionId:" + id + "】 not found, please check it");
+        }
 
+        // 根据版本记录表文件路径判断是否已下载
+        if(StringUtils.isNotBlank(versionInfo.getFilePath())){
+            logger.info("【】 file might having been download, task exit", this);
+            return;
+        }
 
+        String downloadUrl = Constant.URL_DOWNLOAD + versionInfo.getFileName();
+        String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl);
+        if(StringUtils.isBlank(filePath)){
+            throw new BusinessException(StringHelper.parse1("【{}】下载失败", downloadUrl));
+        }
+
+        // 更新文件路径
+        versionInfo.setFilePath(filePath);
+        versionInfoService.update(versionInfo);
     }
 }

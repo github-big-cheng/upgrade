@@ -169,7 +169,6 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             return;
         }
 
-
         RandomAccessFile raf;
         try {
             raf = new RandomAccessFile(file, "r");
@@ -178,6 +177,9 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             return;
         }
         long fileLength = raf.length();
+
+        // download count++
+        RouteHandler.countDown(request.uri());
 
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
         HttpUtil.setContentLength(response, fileLength);
@@ -210,6 +212,8 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             @Override
             public void operationComplete(ChannelProgressiveFuture future) {
                 logger.debug(future.channel() + " Transfer complete.");
+                // download count--
+                RouteHandler.reduction(request.uri());
             }
         });
 

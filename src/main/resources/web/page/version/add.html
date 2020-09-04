@@ -13,10 +13,6 @@
 			background-color: transparent;
 			text-align: right;
 		}
-
-		.pure-table input[type=text], .pure-table select{
-			width: 100%;
-		}
 	</style>
 </head>
 <body>
@@ -135,7 +131,7 @@
 		formData.append("versionNo", $('input[name=versionNo]').val());
 		formData.append("isForceUpdate", $('input[name=isForceUpdate]:checked').val());
 		formData.append("file", $('input[name=file]')[0].files[0]);
-		formData.append("addSource", $('input[name=addSource]:checked').val());
+		formData.append("addSource", $('input[name=addSource]').val());
 		formData.append("publishType", $('input[name=publishType]:checked').val());
 
 		$.ajax({

@@ -61,7 +61,10 @@ public class VersionController {
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(final VersionInfo record, File file){
 
-        record.setFilePath(file.getPath());
+        if(file != null){
+            record.setFilePath(file.getPath());
+            record.setFileSize(file.length());
+        }
         // 更新版本信息
         versionInfoService.updateVersion(record);
 

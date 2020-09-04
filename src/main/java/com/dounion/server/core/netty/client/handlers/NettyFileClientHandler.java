@@ -1,7 +1,9 @@
 package com.dounion.server.core.netty.client.handlers;
 
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.netty.client.NettyClient;
+import com.dounion.server.core.netty.client.NettyResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,6 +28,8 @@ public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObje
     private FileOutputStream fos = null;
     private int successCode = 200;
 
+    private NettyResponse<String> nettyResponse;
+
 
     /**
      * 判断是否是文件下载返回
@@ -43,6 +47,12 @@ public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObje
                     StringUtils.contains(contentType, Constant.CONTENT_TYPE_FILE);
     }
 
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        this.nettyResponse =
+                (NettyResponse<String>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
+    }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
@@ -93,6 +103,11 @@ public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObje
         }
 
         if (!reading) {
+            if(downloadFile!=null && downloadFile.exists()){
+                this.nettyResponse.setSuccess(downloadFile.getPath());
+            } else {
+                this.nettyResponse.setError(new SystemException("file 【" + fileName + "】 download failed"));
+            }
             if (null != fos) {
                 fos.flush();
                 fos.close();
@@ -120,6 +135,7 @@ public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObje
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.error("netty client error:{}", cause);
+        this.nettyResponse.setError(cause);
         ctx.channel().close();
     }
 

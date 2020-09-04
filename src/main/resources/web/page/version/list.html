@@ -33,15 +33,6 @@
     <table class="pure-table">
         <colgroup>
             <col width="5%">
-            <col width="12.5%">
-            <col width="7.5%">
-            <col width="7.5%">
-            <col width="17.5%">
-            <col width="10%">
-            <col width="10%">
-            <col width="10%">
-            <col width="15%">
-            <col width="5%">
         </colgroup>
         <thead>
             <tr>
@@ -50,6 +41,7 @@
                 <th>版本号</th>
                 <th>强制更新</th>
                 <th>文件名称</th>
+                <th>文件大小(MB)</th>
                 <th>版本状态</th>
                 <th>发布类型</th>
                 <th>版本来源</th>
@@ -76,6 +68,7 @@
         <td title="{%= versionNo %}">{%= versionNo %}</td>
         <td title="{%= $data.isForceUpdate=='1'?'是':'否' %}">{%= $data.isForceUpdate=='1'?'是':'否' %}</td>
         <td title="{%= filePath %}">{%= fileName %}</td>
+        <td title="{%= $item.fileSizeFormat($data.fileSize) %}">{%= $item.fileSizeFormat($data.fileSize) %}</td>
         <td title="{%= $data.status=='1'?'已发布':'已注销' %}">{%= $data.status=='1'?'已发布':'已注销' %}</td>
         <td title="{%= $data.publishType=='1'?'手动发布':'自动发布' %}">{%= $data.publishType=='1'?'手动发布':'自动发布' %}</td>
         <td title="{%= $data.addSource=='1'?'本地发布':'远程发布' %}">{%= $data.addSource=='1'?'本地发布':'远程发布' %}</td>
@@ -162,6 +155,12 @@
                         format : function (mapKey, val) {
                             let r = dict[mapKey]==null ? "" : dict[mapKey][val];
                             return r ? r : "";
+                        },
+                        fileSizeFormat : function(val){
+                            if(!val){
+                                return "";
+                            }
+                            return Number(val/1024/1024).toFixed(2);
                         }
                     }).appendTo($("#version_list_tbody"));
                 }
