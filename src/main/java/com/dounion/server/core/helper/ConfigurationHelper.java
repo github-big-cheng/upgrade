@@ -59,7 +59,7 @@ public class ConfigurationHelper extends PropertyPlaceholderConfigurer {
         if(!StringUtils.isNumeric(val)){
             return defVal;
         }
-        return getInt(val);
+        return getInt(key);
     }
 
 
@@ -71,6 +71,6 @@ public class ConfigurationHelper extends PropertyPlaceholderConfigurer {
         if(!StringUtils.isNumeric(val)){
             return defVal;
         }
-        return getLong(val);
+        return getLong(key);
     }
 }
