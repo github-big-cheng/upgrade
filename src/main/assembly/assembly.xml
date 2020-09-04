@@ -14,12 +14,23 @@
     </dependencySets>
     <fileSets>
         <fileSet>
-            <directory>target/classes</directory>
+            <directory>target</directory>
             <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>upgrade.jar</include>
+            </includes>
         </fileSet>
         <fileSet>
-            <directory>src/main/db</directory>
-            <outputDirectory>./</outputDirectory>
+            <directory>db</directory>
+            <outputDirectory>./db</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>conf</directory>
+            <outputDirectory>./conf</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>web</directory>
+            <outputDirectory>./web</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>

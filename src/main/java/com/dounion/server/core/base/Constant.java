@@ -44,8 +44,8 @@ public interface Constant {
     /**
      * 工作目录
      */
-//    String PATH_WORK = System.getProperty("user.dir") + File.separator;
-    String PATH_WORK = System.getProperty("user.dir") + File.separator + "src\\main\\resources\\";
+    String PATH_WORK = System.getProperty("user.dir") + File.separator;
+//    String PATH_WORK = System.getProperty("user.dir") + File.separator + "src\\main\\resources\\";
     /**
      * 配置文件路径
      */

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -22,6 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -38,9 +39,11 @@ public class BeanConfig {
 
     private final static Logger logger = LoggerFactory.getLogger(BeanConfig.class);
 
+    public final static String PATH_CONF = System.getProperty("user.dir") + File.separator + "conf" + File.separator;
+
     @Bean
     public ServiceInfo serverInfo() throws Exception{
-        Resource resource = new ClassPathResource("conf/serviceInfo.json");
+        Resource resource = new FileSystemResource(PATH_CONF + "serviceInfo.json");
         String fileContent = FileHelper.readFile(resource.getInputStream());
         ServiceInfo serviceInfo = JSONObject.parseObject(fileContent, ServiceInfo.class);
         logger.info("ServiceInfo load success : \r\n {}", serviceInfo);
@@ -50,7 +53,7 @@ public class BeanConfig {
     @Bean
     public ConfigurationHelper configBean(){
         ConfigurationHelper config = new ConfigurationHelper();
-        config.setLocation(new ClassPathResource("conf/system.properties"));
+        config.setLocation(new FileSystemResource(PATH_CONF + "system.properties"));
         return config;
     }
 

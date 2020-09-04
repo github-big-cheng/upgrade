@@ -188,7 +188,7 @@
                             <!-- 是否指定项目classpath下的依赖 -->
                             <addClasspath>true</addClasspath>
                             <!-- 指定依赖的时候声明前缀 -->
-                            <classpathPrefix>./</classpathPrefix>
+                            <classpathPrefix>./lib</classpathPrefix>
                         </manifest>
                         <!-- 打包后不包括pom的描述文件 -->
                         <addMavenDescriptor>false</addMavenDescriptor>
