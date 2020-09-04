@@ -1,7 +1,8 @@
 package com.dounion.server.core.netty.client;
 
+import com.dounion.server.core.netty.client.handlers.NettyFileClientHandler;
 import com.dounion.server.core.netty.client.handlers.NettyMessageClientHandler;
-import com.dounion.server.core.netty.server.handlers.NettyDownloadServerHandler;
+import com.dounion.server.core.netty.client.handlers.NettyNoMatchClientHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -20,8 +21,9 @@ public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 //                .addLast(new HttpObjectAggregator(1024 * 10 * 1024)) // 聚合
                 .addLast(new HttpContentDecompressor()) // 解压
                 .addLast(new ChunkedWriteHandler()) // 大数据
-                .addLast(new NettyDownloadServerHandler()) // 文件下载
+                .addLast(new NettyFileClientHandler()) // 文件下载
                 .addLast(new NettyMessageClientHandler()) // 普通请求
+                .addLast(new NettyNoMatchClientHandler()) // 未处理的响应
         ;
     }
 

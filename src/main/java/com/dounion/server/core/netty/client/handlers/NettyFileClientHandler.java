@@ -2,56 +2,40 @@ package com.dounion.server.core.netty.client.handlers;
 
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.exception.SystemException;
+import com.dounion.server.core.helper.StringHelper;
 import com.dounion.server.core.netty.client.NettyClient;
-import com.dounion.server.core.netty.client.NettyResponse;
+import com.dounion.server.eum.NettyRequestTypeEnum;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.LastHttpContent;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
 @ChannelHandler.Sharable
-public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
 
-    private Logger logger = LoggerFactory.getLogger(NettyFileClientHandler.class);
 
-    private HttpResponse response;
     private boolean reading = false;
     private String fileName;
     private File downloadFile = null;
     private FileOutputStream fos = null;
     private int successCode = 200;
 
-    private NettyResponse<String> nettyResponse;
-
 
     /**
      * 判断是否是文件下载返回
-     * @param msg
+     * @param ctx
      * @return
      */
-    private boolean isMatch(HttpObject msg){
-        String contentType = null;
-        if(msg instanceof HttpResponse){
-            this.response = (HttpResponse) msg;
-            contentType = response.headers().get(HttpHeaderNames.CONTENT_TYPE);
-        }
-
-        return this.response!=null &&
-                    StringUtils.contains(contentType, Constant.CONTENT_TYPE_FILE);
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-        this.nettyResponse =
-                (NettyResponse<String>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
+    protected boolean isMatch(ChannelHandlerContext ctx){
+        NettyRequestTypeEnum eum =
+                (NettyRequestTypeEnum) ctx.channel().attr(NettyClient.NETTY_CLIENT_REQUEST_TYPE).get();
+        return NettyRequestTypeEnum.FILE.equals(eum);
     }
 
     @Override
@@ -65,13 +49,17 @@ public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObje
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
 
         // 判断是否处理
-        if(!isMatch(msg)){
+        if(!isMatch(ctx)){
             ctx.fireChannelRead(msg);
             return;
         }
 
+        if(msg instanceof HttpResponse){
+            this.response = (HttpResponse) msg;
+        }
+
         if(this.fileName == null){
-            this.fileName = (String) ctx.channel().attr(NettyClient.FILE_NAME).get();
+            this.fileName = StringHelper.getFileName(this.request.uri());
         }
 
         if (msg instanceof HttpResponse) {
@@ -120,7 +108,7 @@ public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObje
 
     private void setDownLoadFile() throws Exception {
         if(null == fos) {
-            downloadFile = new File(Constant.PATH_DOWNLOAD + fileName);
+            downloadFile = new File(Constant.PATH_DOWNLOAD + "new\\" + fileName);
             if(!downloadFile.getParentFile().exists()){
                 downloadFile.getParentFile().mkdirs();
             }
@@ -130,14 +118,5 @@ public class NettyFileClientHandler extends SimpleChannelInboundHandler<HttpObje
             fos = new FileOutputStream(downloadFile);
         }
     }
-
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("netty client error:{}", cause);
-        this.nettyResponse.setError(cause);
-        ctx.channel().close();
-    }
-
 
 }

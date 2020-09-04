@@ -104,7 +104,7 @@ public interface Constant {
     /**
      * 路由后台任务
      */
-    String TASK_DOWNLOAD_ROUTE = "routeTask";
+    String TASK_ROUTE = "routeTask";
 
 
 

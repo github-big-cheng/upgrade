@@ -95,6 +95,9 @@ public class StringHelper {
             return null;
         }
 
+        path = StringUtils.replace(path, "/", File.separator);
+        path = StringUtils.replace(path, "\\", File.separator);
+
         int separatorIndex = path.lastIndexOf(File.separator);
         return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
     }

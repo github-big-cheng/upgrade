@@ -5,6 +5,7 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.helper.StringHelper;
+import com.dounion.server.eum.NettyRequestTypeEnum;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -38,7 +39,7 @@ public class NettyClient {
 
     // 工作组
     final static EventLoopGroup WORKER_GROUP = new NioEventLoopGroup(2);
-    public final static AttributeKey FILE_NAME = AttributeKey.newInstance("NETTY_CLIENT_FILE_NAME");
+    public final static AttributeKey NETTY_CLIENT_REQUEST_TYPE = AttributeKey.newInstance("NETTY_CLIENT_REQUEST_TYPE");
     public final static AttributeKey NETTY_CLIENT_REQUEST = AttributeKey.newInstance("NETTY_CLIENT_REQUEST");
     public final static AttributeKey NETTY_CLIENT_RESPONSE = AttributeKey.newInstance("NETTY_CLIENT_RESPONSE");
 
@@ -144,15 +145,24 @@ public class NettyClient {
         return head;
     }
 
+    public void close(){
+        if(this.future != null){
+            this.future.channel().close();
+        }
+    }
+
 
     public String fileDownload(String url) {
         String fileName = StringHelper.getFileName(url);
-        FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
         Channel channel = this.future.channel();
-        channel.attr(FILE_NAME).set(fileName);
+        // 设置请求类型
+        channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.FILE);
+        // 设置请求对象
+        FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
+        channel.attr(NETTY_CLIENT_REQUEST).set(request);
+        // 设置响应处理
         NettyResponse<String> response = new NettyResponse<>();
         channel.attr(NETTY_CLIENT_RESPONSE).set(response);
-        channel.writeAndFlush(request);
 
         return response.get();
     }
@@ -188,6 +198,7 @@ public class NettyClient {
         }
 
         NettyResponse<String> response = new NettyResponse<>();
+        this.future.channel().attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.MESSAGE);
         this.future.channel().attr(NETTY_CLIENT_RESPONSE).set(response);
         this.future.channel().attr(NETTY_CLIENT_REQUEST).set(request);
 

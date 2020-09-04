@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * 下载路由后台任务
  */
-@Task(Constant.TASK_DOWNLOAD_ROUTE)
+@Task(Constant.TASK_ROUTE)
 public class RouteTask extends BaseTask {
 
     @Autowired
@@ -52,8 +52,7 @@ public class RouteTask extends BaseTask {
             return;
         }
 
-        if(StringUtils.isNotBlank(serviceInfo.getMasterIp()) ||
-                serviceInfo.getMasterPort()==null){
+        if(StringUtils.isBlank(serviceInfo.getMasterIp()) || serviceInfo.getMasterPort()==null){
             logger.info("【{}】 master's ip and port not config, task will exists", this);
             return;
         }

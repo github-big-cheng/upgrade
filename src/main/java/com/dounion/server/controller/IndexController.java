@@ -124,7 +124,7 @@ public class IndexController {
             // 向主机刷新服务订阅信息
             TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
             if(serviceInfo.getStandByBlur()){
-                TaskHandler.callTask(Constant.TASK_DOWNLOAD_ROUTE);
+                TaskHandler.callTask(Constant.TASK_ROUTE);
             }
 
         } catch (IOException e) {
