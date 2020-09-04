@@ -40,7 +40,7 @@ public class PublishAutoTask extends BaseTask {
 
         // 推送前，生成个更新记录信息
         Map<String, Object> query = new HashMap<>();
-        query.put("maxCount", ConfigurationHelper.getInt("max_notify_count", 1));
+        query.put("maxCount", ConfigurationHelper.getInt(Constant.MAX_NOTIFY_COUNT, 1));
         List<Map<String, Object>> list = upgradeRecordService.publishListQuery(query);
         if(CollectionUtils.isEmpty(list)){
             logger.info("no publish record found");

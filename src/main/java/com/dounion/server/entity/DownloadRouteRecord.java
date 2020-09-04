@@ -20,6 +20,8 @@ public class DownloadRouteRecord extends BaseEntity {
 
     private String downloadPath; //下载路径
 
+    private Long registerTime; // 注册时间
+
     public Integer getId() {
         return id;
     }
@@ -82,5 +84,13 @@ public class DownloadRouteRecord extends BaseEntity {
 
     public void setDownloadPath(String downloadPath) {
         this.downloadPath = downloadPath == null ? null : downloadPath.trim();
+    }
+
+    public Long getRegisterTime() {
+        return registerTime;
+    }
+
+    public void setRegisterTime(Long registerTime) {
+        this.registerTime = registerTime;
     }
 }

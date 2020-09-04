@@ -27,7 +27,7 @@ public class TaskHandler implements Runnable {
     private static BlockingQueue<BaseTask> TASK_QUEUE = new LinkedBlockingQueue<>();
     // 线程池
     public static ExecutorService EXECUTOR_SERVICE =
-            Executors.newFixedThreadPool(ConfigurationHelper.getInt("max_task_thread_count", 5));
+            Executors.newFixedThreadPool(ConfigurationHelper.getInt(Constant.MAX_TASK_THREAD_COUNT, 5));
     // 任务ID生成器
     private static AtomicInteger TASK_ID = new AtomicInteger(0);
     // 任务控制集合

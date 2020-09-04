@@ -46,7 +46,7 @@ public class PublishManualTask extends BaseTask {
 
         UpgradeRecord query = new UpgradeRecord();
         query.setVersionId((Integer) super.params.get("versionId")); // 根据版本号查询
-        query.setNotifyCountStr(ConfigurationHelper.getString("max_notify_count", "1"));
+        query.setNotifyCountStr(ConfigurationHelper.getString(Constant.MAX_NOTIFY_COUNT, "1"));
         List<UpgradeRecord> records =
                 upgradeRecordService.selectEntityListBySelective(query);
         if(CollectionUtils.isEmpty(records)){

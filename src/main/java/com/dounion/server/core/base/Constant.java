@@ -6,6 +6,27 @@ import java.io.File;
 
 public interface Constant {
 
+    // ==========================================  配置相关 =============================================================
+
+    /**
+     * 最大本地下载数量
+     */
+    String MAX_TASK_THREAD_COUNT = "max_task_thread_count";
+    /**
+     * 订阅通知最大次数
+     */
+    String MAX_NOTIFY_COUNT = "max_notify_count";
+    /**
+     * 最大本地下载数量
+     */
+    String MAX_DOWNLOAD_COUNT = "max_download_count";
+
+    /**
+     * 分发注册路由最大活动时间
+     */
+    String MAX_DOWNLOAD_ROUTE_TIME = "max_download_route_time";
+
+
     // ==========================================  文件路径相关 ==========================================================
 
     /**

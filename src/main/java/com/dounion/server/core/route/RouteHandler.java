@@ -1,6 +1,7 @@
 package com.dounion.server.core.route;
 
 
+import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.entity.DownloadRouteRecord;
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +26,9 @@ public class RouteHandler {
     private static Object LOCK2 = new Object();
     private static Object LOCK3 = new Object();
 
-    final static Integer maxCount = ConfigurationHelper.getInt("max_download_count", -1);
+    final static Integer MAX_COUNT = ConfigurationHelper.getInt(Constant.MAX_DOWNLOAD_COUNT, -1);
+    final static Long MAX_ROUTE_TIME = ConfigurationHelper.getLong(Constant.MAX_DOWNLOAD_ROUTE_TIME, -1);
+
 
     /**
      * 本地下载数
@@ -47,7 +50,7 @@ public class RouteHandler {
      *  key:path
      *  value:queue
      */
-    public final static Map<String, BlockingQueue<String>> ROUTE_QUEUE_MAP = new HashMap<>();
+    public final static Map<String, BlockingQueue<DownloadRouteRecord>> ROUTE_QUEUE_MAP = new HashMap<>();
 
 
     // ================================================ local count  ===================================================
@@ -62,11 +65,11 @@ public class RouteHandler {
         AtomicInteger integer = LOCAL_COUNTER_MAP.get(path);
         if (integer == null) {
             synchronized (LOCK1) {
-                integer = LOCAL_COUNTER_MAP.get(path);
                 if (integer == null) {
                     integer = new AtomicInteger(0);
                     LOCAL_COUNTER_MAP.put(path, integer);
                 }
+                integer = LOCAL_COUNTER_MAP.get(path);
             }
         }
         return integer;
@@ -123,6 +126,7 @@ public class RouteHandler {
                     records = Collections.synchronizedList(new LinkedList<DownloadRouteRecord>());
                     ROUTE_INFO_MAP.put(path, records);
                 }
+                records = ROUTE_INFO_MAP.get(path);
             }
         }
 
@@ -159,46 +163,60 @@ public class RouteHandler {
      */
     public static String getNewUrl(String url) {
 
-        if (maxCount <= 0) {
+        if (MAX_COUNT <= 0) {
             // 小于等于0为不限制
             return null;
         }
 
         // 当前下载数未超过最大限制
-        if (getCount(url) < maxCount) {
+        if (getCount(url) < MAX_COUNT) {
             return null;
-        }
-
-        // 未配置
-        BlockingQueue<String> queue = ROUTE_QUEUE_MAP.get(url);
-        if(queue == null || StringUtils.isNotBlank(queue.poll())){
-            return queue.poll();
         }
 
         return routeQueueOperation(url);
     }
 
+    /**
+     * 路由处理
+     * @param url
+     * @return
+     */
     private static String routeQueueOperation(String url) {
 
-        BlockingQueue<String> queue = ROUTE_QUEUE_MAP.get(url);
+        BlockingQueue<DownloadRouteRecord> queue = ROUTE_QUEUE_MAP.get(url);
+
+        // queue 为 null 初始化数据
         if(queue == null){
             synchronized (LOCK3) {
                 if(queue == null){
                     queue = new LinkedBlockingQueue<>();
                     ROUTE_QUEUE_MAP.put(url, queue);
                 }
+                queue = ROUTE_QUEUE_MAP.get(url);
+            }
+
+            // 遍历添加队列
+            List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
+            if(CollectionUtils.isEmpty(records)){
+                return null;
+            }
+            for(DownloadRouteRecord route : records){
+                if(MAX_ROUTE_TIME > 0 && System.currentTimeMillis()-MAX_ROUTE_TIME<0){
+                    continue;
+                }
+                queue.add(route);
             }
         }
 
-        // 遍历添加队列
-        List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
-        if(CollectionUtils.isEmpty(records)){
+        DownloadRouteRecord record = queue.poll();
+        if(record == null){
             return null;
         }
-        for(DownloadRouteRecord route : records){
-            queue.add(route.getDownloadPath());
+
+        if(MAX_ROUTE_TIME>0 && System.currentTimeMillis()-MAX_ROUTE_TIME<=0){
+            return null;
         }
 
-        return queue.poll();
+        return record.getDownloadPath();
     }
 }

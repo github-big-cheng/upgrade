@@ -58,6 +58,8 @@ public class DownloadRouteRecordServiceImpl implements DownloadRouteRecordServic
             return;
         }
 
+        record.setRegisterTime(System.currentTimeMillis());
+
         // 插入新记录
 //        downloadRouteRecordMapper.insert(record);
         // 暂以内存处理

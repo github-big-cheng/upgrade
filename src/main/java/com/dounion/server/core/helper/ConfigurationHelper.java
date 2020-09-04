@@ -59,6 +59,18 @@ public class ConfigurationHelper extends PropertyPlaceholderConfigurer {
         if(!StringUtils.isNumeric(val)){
             return defVal;
         }
-        return Integer.parseInt(val);
+        return getInt(val);
+    }
+
+
+    public static Long getLong(String key) {
+        return Long.parseLong(getProperty(key));
+    }
+    public static Long getLong(String key, long defVal) {
+        String val = getProperty(key);
+        if(!StringUtils.isNumeric(val)){
+            return defVal;
+        }
+        return getLong(val);
     }
 }
