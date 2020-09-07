@@ -79,13 +79,13 @@ public class VersionController {
         boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");
         if(isRemotePublish){
             TaskHandler.callTaskChain(
-                new HashMap(){{ put("versionId", record.getId()); }},
+                new HashMap(){{ put("versionId", record.getId()); }}, // 版本ID
                 Constant.TASK_DOWNLOAD, Constant.TASK_DEPLOY
             );
         } else {
             // 文件下载
             TaskHandler.callTask(Constant.TASK_DEPLOY, new HashMap(){{
-                put("versionId", record.getId());
+                put("versionId", record.getId()); // 版本ID
             }});
         }
 

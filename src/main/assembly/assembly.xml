@@ -25,6 +25,10 @@
             <outputDirectory>./db</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>scripts</directory>
+            <outputDirectory>./scripts</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>conf</directory>
             <outputDirectory>./conf</outputDirectory>
         </fileSet>
