@@ -3,6 +3,7 @@ package com.dounion.server;
 import com.dounion.server.core.base.BeanConfig;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
+import com.dounion.server.core.deploy.DeployHandler;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.request.MappingConfigHandler;
@@ -25,6 +26,8 @@ public class Main {
             SpringApp.init(context);
             // 初始化路由表
             MappingConfigHandler.initialization();
+            // 初始化部署任务处理器
+            DeployHandler.initialization();
 
             ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
 

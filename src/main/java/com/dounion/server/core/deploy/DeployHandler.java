@@ -1,11 +1,16 @@
 package com.dounion.server.core.deploy;
 
+import com.dounion.server.core.deploy.annotation.Deploy;
+import com.dounion.server.core.helper.SpringApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -13,10 +18,47 @@ import java.util.concurrent.*;
  */
 public class DeployHandler {
 
+    // 私有化构造方法
+    private DeployHandler(){
+    }
+
 
     private static Logger logger = LoggerFactory.getLogger(DeployHandler.class);
 
     private final static ExecutorService POOL = Executors.newFixedThreadPool(3);
+
+
+    private final static Map<String, Object> DEPLOY_BEAN_MAP = new HashMap<>();
+
+    /**
+     * 初始化
+     */
+    public static void initialization(){
+        Map<String, Object> beanMap =
+                SpringApp.getInstance().getObjectByAnnotationType(Deploy.class);
+        if(CollectionUtils.isEmpty(beanMap)){
+            return;
+        }
+
+        Deploy deploy;
+        Object o;
+        for(String name : beanMap.keySet()){
+            o = beanMap.get(name);
+            deploy = o.getClass().getAnnotation(Deploy.class);
+            DEPLOY_BEAN_MAP.put(deploy.appType().getCode(), o);
+        }
+    }
+
+    /**
+     * 获取部署适配器
+     * @param appType
+     * @param <T>
+     * @return
+     */
+    public static <T> T getDeploy(String appType){
+        return (T) DEPLOY_BEAN_MAP.get(appType);
+    }
+
 
     /**
      * 执行脚本命令

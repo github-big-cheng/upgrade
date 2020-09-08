@@ -5,7 +5,7 @@ public class AppInfo {
     // 所属服务信息
     private ServiceInfo serviceInfo;
 
-    private String serviceType; // 服务类型
+    private String appType; // 服务类型
     private String versionNo; // 版本号
     private String workPath; // 工作路径
 
@@ -16,7 +16,7 @@ public class AppInfo {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("appInfo : {");
-        sb.append("serviceType:").append(this.getServiceType()).append(", \t")
+        sb.append("appType:").append(this.getAppType()).append(", \t")
           .append("versionNo:").append(this.versionNo).append(", \t")
           .append("workPath:").append(this.workPath)
         ;
@@ -35,12 +35,12 @@ public class AppInfo {
         return serviceInfo;
     }
 
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
+    public void setAppType(String appType) {
+        this.appType = appType;
     }
 
-    public String getServiceType() {
-        return serviceType;
+    public String getAppType() {
+        return appType;
     }
 
     public String getVersionNo() {

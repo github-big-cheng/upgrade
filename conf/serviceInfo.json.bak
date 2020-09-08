@@ -25,7 +25,7 @@
   "localServices": [
     {
       // 服务类型
-      "serviceType": "40100-140",
+      "appType": "40100-140",
       // 版本号
       "versionNo" : "1.0.0",
       // 工作目录
@@ -33,7 +33,7 @@
     },
     {
       // 服务类型
-      "serviceType": "40100-60",
+      "appType": "40100-60",
       // 版本号
       "versionNo" : "1.0.0",
       // 工作目录

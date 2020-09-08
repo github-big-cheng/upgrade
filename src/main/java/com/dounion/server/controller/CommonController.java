@@ -5,8 +5,8 @@ import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
 import com.dounion.server.eum.OsTypeEnum;
 import com.dounion.server.eum.ResponseTypeEnum;
-import com.dounion.server.eum.ServiceTypeEnum;
-import com.dounion.server.eum.UpgradeTypeEnum;
+import com.dounion.server.eum.AppTypeEnum;
+import com.dounion.server.eum.DeployTypeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +22,9 @@ public class CommonController {
     private final static Logger logger = LoggerFactory.getLogger(CommonController.class);
 
     final static Map<String, Object> DICT_MAP = new HashMap(){{
-        put("serviceType", ServiceTypeEnum.getMap());
+        put("appType", AppTypeEnum.getMap());
         put("osType", OsTypeEnum.getMap());
-        put("upgradeType", UpgradeTypeEnum.getMap());
+        put("deployType", DeployTypeEnum.getMap());
     }};
 
     /**

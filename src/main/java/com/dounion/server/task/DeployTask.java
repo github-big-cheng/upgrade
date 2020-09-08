@@ -65,7 +65,7 @@ public class DeployTask extends BaseTask {
         for(AppInfo appInfo : localServices){
 
             // find appType and check is it needed to deploy
-            if(!StringUtils.equals(appInfo.getServiceType(), versionInfo.getAppType())){
+            if(!StringUtils.equals(appInfo.getAppType(), versionInfo.getAppType())){
                 continue;
             }
 

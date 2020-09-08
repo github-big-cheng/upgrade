@@ -58,7 +58,7 @@ public class SubscribeTask extends BaseTask {
         List<AppInfo> appInfoList = serviceInfo.getLocalServiceList();
         if (!CollectionUtils.isEmpty(appInfoList)) {
             for (AppInfo appInfo : appInfoList) {
-                servicesSet.add(appInfo.getServiceType());
+                servicesSet.add(appInfo.getAppType());
             }
         }
 

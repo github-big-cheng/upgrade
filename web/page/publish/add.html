@@ -73,12 +73,12 @@
 
 
 <script id="option_tmpl" type="jquery/template">
-	<option value="{%= id%}">{%= $item.getDictType('serviceType', $data.appType) %} / {%= versionNo %}</option>
+	<option value="{%= id%}">{%= $item.getDictType('appType', $data.appType) %} / {%= versionNo %}</option>
 </script>
 <script id="version_info_tmpl" type="jquery/template">
 	<h2>版本详情</h2>
 	<ul class="my-list">
-		<li>版本类型：{%= $item.getDictType('serviceType', $data.appType)%}</li>
+		<li>版本类型：{%= $item.getDictType('appType', $data.appType)%}</li>
 		<li>版本号：{%= versionNo%}</li>
 		<li>文件名称：{%= fileName%}</li>
 		<li>文件路径：{%= filePath%}</li>

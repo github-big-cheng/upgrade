@@ -59,7 +59,7 @@
 	<tr>
         <td>{%= $item.getIndex() %}</td>
         <td title="{%= code %}">{%= code %}</td>
-        <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
+        <td title="{%= $item.format('appType', $data.appType) %}">{%= $item.format('appType', $data.appType) %}</td>
         <td title="{%= $item.format('osType', $data.osType) %}">{%= $item.format('osType', $data.osType) %}</td>
         <td title="{%= $data.isStandBy=='1'?'是':'否' %}">{%= $data.isStandBy=='1'?'是':'否' %}</td>
         <td title="{%= $data.publishUrl %}">{%= $data.publishUrl %}</td>

@@ -64,7 +64,7 @@
     {%= $item.addIndex() %}
 	<tr>
         <td style="text-align: center;">{%= $item.getIndex() %}</td>
-        <td title="{%= $item.format('serviceType', $data.appType) %}">{%= $item.format('serviceType', $data.appType) %}</td>
+        <td title="{%= $item.format('appType', $data.appType) %}">{%= $item.format('appType', $data.appType) %}</td>
         <td title="{%= versionNo %}">{%= versionNo %}</td>
         <td title="{%= $data.isForceUpdate=='1'?'是':'否' %}">{%= $data.isForceUpdate=='1'?'是':'否' %}</td>
         <td title="{%= filePath %}">{%= fileName %}</td>
@@ -90,8 +90,8 @@
             dict = data;
             let arr = [];
             arr.push({text:'全部', value: ''});
-            for(let k in dict['serviceType']){
-                arr.push({text:dict['serviceType'][k], value:k});
+            for(let k in dict['appType']){
+                arr.push({text:dict['appType'][k], value:k});
             }
             // console.log(arr);
             $("#app_type_select_tmpl").tmpl(arr).appendTo($("select[name=appType]"));

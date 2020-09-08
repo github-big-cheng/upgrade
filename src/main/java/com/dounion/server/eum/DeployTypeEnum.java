@@ -7,21 +7,21 @@ import java.util.Set;
 /**
  * 更新操作类型
  */
-public enum UpgradeTypeEnum {
+public enum DeployTypeEnum {
 
     TOMCAT("40700-10", "Tomcat"),
     MAIN("40700-20", "Main"),
     FILE("40700-30", "file")
     ;
 
-    UpgradeTypeEnum(String code, String desc) {
+    DeployTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
     private String code;
     private String desc;
-    private static Map<String, UpgradeTypeEnum> map;
+    private static Map<String, DeployTypeEnum> map;
 
     public String getCode() {
         return code;
@@ -44,7 +44,7 @@ public enum UpgradeTypeEnum {
         return this.code + "-" + this.desc;
     }
 
-    public boolean equals(UpgradeTypeEnum enu){
+    public boolean equals(DeployTypeEnum enu){
         return this.code.equals(enu.code);
     }
 
@@ -53,10 +53,10 @@ public enum UpgradeTypeEnum {
         return getMap().keySet();
     }
 
-    public static Map<String, UpgradeTypeEnum> getMap(){
+    public static Map<String, DeployTypeEnum> getMap(){
         if(map == null){
             map = new HashMap<>();
-            for(UpgradeTypeEnum eum : UpgradeTypeEnum.values()){
+            for(DeployTypeEnum eum : DeployTypeEnum.values()){
                 map.put(eum.code, eum);
             }
         }
