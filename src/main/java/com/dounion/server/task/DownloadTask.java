@@ -5,6 +5,7 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.exception.BusinessException;
 import com.dounion.server.core.helper.StringHelper;
 import com.dounion.server.core.netty.client.NettyClient;
+import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.VersionInfo;
 import com.dounion.server.service.VersionInfoService;
@@ -37,7 +38,7 @@ public class DownloadTask extends BaseTask {
             throw new BusinessException("versionId is needed");
         }
 
-        Integer id = (Integer) super.params.get("versionId");
+        final Integer id = (Integer) super.params.get("versionId");
         VersionInfo versionInfo = versionInfoService.selectById(id);
         if(versionInfo == null){
             throw new BusinessException("【versionId:" + id + "】 not found, please check it");
@@ -61,5 +62,18 @@ public class DownloadTask extends BaseTask {
         versionInfo.setFilePath(filePath);
         versionInfo.setFileSize(file.length());
         versionInfoService.update(versionInfo);
+
+        // 调用路由注册服务
+        TaskHandler.callTask(new RouteTask(){
+            @Override
+            public String getTaskName() {
+                return "部署后台任务-" + id ;
+            }
+
+            @Override
+            public boolean isLoop() {
+                return false;
+            }
+        });
     }
 }

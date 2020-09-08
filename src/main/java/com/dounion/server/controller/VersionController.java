@@ -72,8 +72,6 @@ public class VersionController {
         if(StringUtils.equals(record.getPublishType(), "2")){
             TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
         }
-        // 调度任务:本地部署
-        TaskHandler.callTask(Constant.TASK_DEPLOY);
 
         // 是否远程发布
         boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");

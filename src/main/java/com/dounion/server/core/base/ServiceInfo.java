@@ -34,6 +34,7 @@ public class ServiceInfo {
     // 是否主服务
     private String master;
 
+    // 忽略更新
     private String ignoreMode;
 
     // 上级服务地址

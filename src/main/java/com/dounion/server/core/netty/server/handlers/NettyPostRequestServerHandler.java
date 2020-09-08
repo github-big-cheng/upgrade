@@ -132,6 +132,9 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
                             if(file.exists()){
                                 file.delete();
                             }
+                            if(!file.getParentFile().exists()){
+                                file.getParentFile().mkdirs();
+                            }
                             fileUpload.renameTo(file); // enable to move into another
                             decoder.removeHttpDataFromClean(fileUpload); //remove
                             logger.debug("upload file: {}", file);

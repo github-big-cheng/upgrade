@@ -1,5 +1,6 @@
 package com.dounion.server.task;
 
+import com.alibaba.fastjson.JSON;
 import com.dounion.server.core.base.AppInfo;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
@@ -7,7 +8,7 @@ import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.dao.VersionInfoMapper;
 import com.dounion.server.deploy.app.AbstractScript;
-import com.dounion.server.deploy.app.AppScript;
+import com.dounion.server.deploy.app.impl.AppScript;
 import com.dounion.server.deploy.os.OperatingSystemFactory;
 import com.dounion.server.entity.VersionInfo;
 import org.apache.commons.lang.StringUtils;
@@ -48,14 +49,17 @@ public class DeployTask extends BaseTask {
         VersionInfo versionInfo = versionInfoMapper.selectByPrimaryKey(versionId);
         if(versionId == null){
             logger.error("【{}】 version has been expired, deploy task will be exit", this);
+            return;
         }
 
         // 获取本地服务列表
         List<AppInfo> localServices = serviceInfo.getLocalServiceList();
         if(CollectionUtils.isEmpty(localServices)){
-            logger.info("local service list is empty, deploy task exit");
+            logger.info("【{}】 local service list is empty, deploy task exit", this);
             return;
         }
+
+        super.setProgressTwentyFive(); // progress 25%
 
         // called scripts here
         for(AppInfo appInfo : localServices){
@@ -66,16 +70,33 @@ public class DeployTask extends BaseTask {
             }
 
             // check version
-            if(appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) >= 0){
-                logger.debug("【{}】 current version is {}, deploy version is {}, deploy task will be exit", this);
+            if(appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) > 0){
+                logger.debug("【{}】 current version is {}, deploy version is {}, deploy task will be exit",
+                        this, appInfo.getVersionNo(), versionInfo.getVersionNo());
                 break;
             }
 
             // deploy
             AbstractScript script = new AppScript();
             script.setOs(OperatingSystemFactory.build());
-            script.setParams(new String[]{appInfo.getWorkPath(), versionInfo.getFileName()});
+            script.setParams(
+                new String[]{
+                    versionInfo.getFilePath(),
+                    appInfo.getWorkPath(),
+                    versionInfo.getFileName()
+                }
+            );
             script.deploy();
+
+            super.setProgressNeelyComplete(); // progress 95%
+
+            // 发布完成更新serviceInfo 信息
+            appInfo.setVersionNo(versionInfo.getVersionNo());
+            serviceInfo.setLocalServices(JSON.toJSONString(localServices));
+            serviceInfo.toFile();
+
+            super.setProgressComplete(); // progress 100%
+
             break;
         }
     }

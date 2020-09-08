@@ -1,6 +1,9 @@
 package com.dounion.server.deploy.os;
 
 
+import com.dounion.server.deploy.os.impl.LinuxOperatingSystem;
+import com.dounion.server.deploy.os.impl.WindowsOperatingSystem;
+
 /**
  * 操作系统工厂类
  */
