@@ -5,10 +5,10 @@ import com.dounion.server.core.base.AppInfo;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
+import com.dounion.server.core.deploy.DeployHandler;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.dao.VersionInfoMapper;
 import com.dounion.server.deploy.app.AbstractScript;
-import com.dounion.server.deploy.app.impl.AppScript;
 import com.dounion.server.deploy.os.OperatingSystemFactory;
 import com.dounion.server.entity.VersionInfo;
 import org.apache.commons.lang.StringUtils;
@@ -77,7 +77,7 @@ public class DeployTask extends BaseTask {
             }
 
             // deploy
-            AbstractScript script = new AppScript();
+            AbstractScript script = DeployHandler.getDeploy(appInfo.getAppTypeEnum());
             script.setOs(OperatingSystemFactory.build());
             script.setParams(
                 new String[]{

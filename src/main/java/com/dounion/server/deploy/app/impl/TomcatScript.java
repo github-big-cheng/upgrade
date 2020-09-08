@@ -1,11 +1,13 @@
 package com.dounion.server.deploy.app.impl;
 
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.deploy.annotation.Deploy;
 import com.dounion.server.deploy.app.AbstractScript;
-import org.springframework.stereotype.Component;
+import com.dounion.server.eum.DeployTypeEnum;
 
-@Component("app")
-public class AppScript extends AbstractScript {
+
+@Deploy(deployType = DeployTypeEnum.TOMCAT)
+public class TomcatScript extends AbstractScript {
 
     @Override
     public String getWorkDirectory() {

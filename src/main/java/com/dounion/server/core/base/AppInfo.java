@@ -1,5 +1,7 @@
 package com.dounion.server.core.base;
 
+import com.dounion.server.eum.AppTypeEnum;
+
 public class AppInfo {
 
     // 所属服务信息
@@ -57,5 +59,9 @@ public class AppInfo {
 
     public void setWorkPath(String workPath) {
         this.workPath = workPath;
+    }
+
+    public AppTypeEnum getAppTypeEnum(){
+        return AppTypeEnum.getMap().get(this.appType);
     }
 }

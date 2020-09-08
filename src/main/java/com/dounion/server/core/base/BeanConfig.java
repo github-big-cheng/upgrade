@@ -33,7 +33,8 @@ import java.util.Properties;
         "com.dounion.server.dao",
         "com.dounion.server.service",
         "com.dounion.server.controller",
-        "com.dounion.server.task"
+        "com.dounion.server.task",
+        "com.dounion.server.deploy"
 })
 public class BeanConfig {
 
