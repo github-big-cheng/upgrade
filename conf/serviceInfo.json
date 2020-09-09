@@ -25,11 +25,11 @@
   "localServices": [
     {
       // 服务类型
-      "appType": "40100-140",
+      "appType": "40100-10",
       // 版本号
       "versionNo" : "1.0.0",
       // 工作目录
-      "workPath" : "/home/dounion/tomcat/tomcat-app-push"
+      "workPath" : "/home/dounion/tomcat/tomcat-appServer"
     },
     {
       // 服务类型

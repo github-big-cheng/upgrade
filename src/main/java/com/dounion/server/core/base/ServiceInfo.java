@@ -67,28 +67,28 @@ public class ServiceInfo {
         StringBuilder sb = new StringBuilder();
         sb.append("ServiceInfo :{");
 
-        sb.append("code:").append(this.code).append(", \t")
-            .append("name:").append(this.name).append(", \t")
-            .append("localIp:").append(this.localIp).append(", \t")
-            .append("port:").append(this.port).append(", \t")
-            .append("master:").append(this.getMaster()).append(", \t")
-            .append("masterIp:").append(this.masterIp).append(", \t")
-            .append("masterPort:").append(this.masterPort).append(", \t")
-            .append("osType:").append(this.getOsType()).append(", \t")
-            .append("standBy:").append(this.getStandBy()).append(", \t")
-            .append("publishPath:").append(this.getPublishPath()).append(", \t")
+        sb.append("\r\n\t code:").append(this.code).append(", \t")
+            .append("\r\n\t name:").append(this.name).append(", \t")
+            .append("\r\n\t localIp:").append(this.localIp).append(", \t")
+            .append("\r\n\t port:").append(this.port).append(", \t")
+            .append("\r\n\t master:").append(this.getMaster()).append(", \t")
+            .append("\r\n\t masterIp:").append(this.masterIp).append(", \t")
+            .append("\r\n\t masterPort:").append(this.masterPort).append(", \t")
+            .append("\r\n\t osType:").append(this.getOsType()).append(", \t")
+            .append("\r\n\t standBy:").append(this.getStandBy()).append(", \t")
+            .append("\r\n\t publishPath:").append(this.getPublishPath()).append(", \t")
         ;
 
         List<AppInfo> appList = this.getLocalServiceList();
         if(!CollectionUtils.isEmpty(appList)){
-            sb.append("\r\n localServices :[");
+            sb.append("\r\n\t localServices :[\r\n");
             for(AppInfo app : appList){
-                sb.append(app.toString()).append(",\t");
+                sb.append("\t\t").append(app.toString()).append(",\r\n");
             }
-            sb.append("}");
+            sb.append("\r\n\t]");
         }
 
-        sb.append("]");
+        sb.append("\r\n}");
         return sb.toString();
     }
 

@@ -46,10 +46,12 @@ public class NettyServer {
             f.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
-                    logger.info("==========================================================");
-                    logger.info("Server start up successfully, port bind with 【{}】", port);
-                    logger.info("Open your web browser and navigate to http://{}:{}/list", localIp, port);
-                    logger.info("==========================================================");
+                    logger.info("|--------------------------------------------------------------------|");
+                    logger.info("|++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++|");
+                    logger.info("|+ Server start up successfully, port bind with 【{}】    \t+|", port);
+                    logger.info("|+ Open your web browser and navigate to http://{}:{}/list +|", localIp, port);
+                    logger.info("|++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++|");
+                    logger.info("|--------------------------------------------------------------------|");
                 }
             });
 

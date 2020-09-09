@@ -19,9 +19,9 @@ public class AppInfo {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("appInfo : {");
-        sb.append("appType:").append(this.getAppType()).append(", \t")
-          .append("versionNo:").append(this.versionNo).append(", \t")
-          .append("workPath:").append(this.workPath)
+        sb.append("\r\n\t appType:").append(this.getAppType()).append(", \t")
+          .append("\r\n\t versionNo:").append(this.versionNo).append(", \t")
+          .append("\r\n\t workPath:").append(this.workPath)
         ;
         sb.append("}");
         return sb.toString();

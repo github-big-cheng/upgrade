@@ -119,7 +119,7 @@ public class DeployHandler {
                 BufferedReader br = new BufferedReader(isr);
                 String line;
                 while ((line = br.readLine()) != null) {
-                    logger.debug("{}:{}", this.type, line);
+                    logger.info("{}:{}", this.type, line);
                 }
             } catch (IOException e) {
                 logger.error("read {} error:{}", this.type, e);

@@ -89,5 +89,9 @@ td,th {
 }
 .bar-ul li {
     float: left;
-    width: 15%;
+    width: 25%;
+}
+.bar-ul li input,.bar-ul li select {
+    height: 25px;
+    width: 140px;
 }
