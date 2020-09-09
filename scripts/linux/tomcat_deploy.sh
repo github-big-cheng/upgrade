@@ -1,9 +1,26 @@
 #!/bin/bash
 
-# 打印参数
+# 参数校验
+
+if [ ! -n "$1" ]; then
+        echo "please have a parameter of new file name with full path ,such as /home/dounion/download/app.war"
+        exit
+fi
 echo "待更新的文件：【$1】"
+
+
+if [ ! -n "$2" ]; then
+        echo "please have a parameter of work path,such as /home/dounion/tomcat/tomcat-app"
+        exit
+fi
 echo "工作目录路径：【$2】"
+
+if [ ! -n "$3" ]; then
+        echo "please have a parameter of old file name,such as app.war"
+        exit
+fi
 echo "操作的文件名：【$3】"
+
 
 
 
