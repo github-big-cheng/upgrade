@@ -24,7 +24,6 @@
 		</layout>
 	</appender>
 
-
 	<logger name="com.dounion.server.dao">
 		<level value="DEBUG"/>
 	</logger>
@@ -34,7 +33,7 @@
 		<level value="INFO"/>
 	</root>
 	<category name="com.dounion.server">
-		<level value="DEBUG"/>
+		<level value="INFO"/>
 		<appender-ref ref="CONSOLE"/>
 		<appender-ref ref="FILE"/>
 	</category>

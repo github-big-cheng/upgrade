@@ -27,6 +27,14 @@
         <fileSet>
             <directory>scripts</directory>
             <outputDirectory>./scripts</outputDirectory>
+            <includes>
+                <include>linux/*.sh</include>
+                <include>windows/*.sh</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>scripts/run</directory>
+            <outputDirectory>./</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>conf</directory>
