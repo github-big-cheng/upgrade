@@ -70,6 +70,14 @@ public enum AppTypeEnum {
         this.desc = desc;
     }
 
+    public DeployTypeEnum getDeployType() {
+        return deployType;
+    }
+
+    public void setDeployType(DeployTypeEnum deployType) {
+        this.deployType = deployType;
+    }
+
     @Override
     public String toString() {
         return this.code + "-" + this.desc;

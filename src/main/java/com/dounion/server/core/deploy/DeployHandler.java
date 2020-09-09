@@ -2,7 +2,6 @@ package com.dounion.server.core.deploy;
 
 import com.dounion.server.core.deploy.annotation.Deploy;
 import com.dounion.server.core.helper.SpringApp;
-import com.dounion.server.eum.AppTypeEnum;
 import com.dounion.server.eum.DeployTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +57,8 @@ public class DeployHandler {
      * @param <T>
      * @return
      */
-    public static <T> T getDeploy(AppTypeEnum appType){
-        return (T) DEPLOY_BEAN_MAP.get(appType);
+    public static <T> T getDeploy(DeployTypeEnum deployType){
+        return (T) DEPLOY_BEAN_MAP.get(deployType);
     }
 
 

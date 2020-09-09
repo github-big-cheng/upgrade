@@ -77,7 +77,7 @@ public class DeployTask extends BaseTask {
             }
 
             // deploy
-            AbstractScript script = DeployHandler.getDeploy(appInfo.getAppTypeEnum());
+            AbstractScript script = DeployHandler.getDeploy(appInfo.getDeployTypeEnum());
             script.setOs(OperatingSystemFactory.build());
             script.setParams(
                 new String[]{

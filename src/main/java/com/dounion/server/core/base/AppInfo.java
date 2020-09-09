@@ -1,6 +1,7 @@
 package com.dounion.server.core.base;
 
 import com.dounion.server.eum.AppTypeEnum;
+import com.dounion.server.eum.DeployTypeEnum;
 
 public class AppInfo {
 
@@ -61,7 +62,8 @@ public class AppInfo {
         this.workPath = workPath;
     }
 
-    public AppTypeEnum getAppTypeEnum(){
-        return AppTypeEnum.getMap().get(this.appType);
+    public DeployTypeEnum getDeployTypeEnum(){
+        AppTypeEnum appTypeEnum = AppTypeEnum.getMap().get(this.appType);
+        return appTypeEnum==null ? null : appTypeEnum.getDeployType();
     }
 }
