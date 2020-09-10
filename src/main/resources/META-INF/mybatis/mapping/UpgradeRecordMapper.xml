@@ -11,6 +11,7 @@
     <result column="VERSION_ID" property="versionId" jdbcType="INTEGER" />
     <result column="APP_TYPE" property="appType" jdbcType="VARCHAR" />
     <result column="VERSION_NO" property="versionNo" jdbcType="VARCHAR" />
+    <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
     <result column="FILE_SIZE" property="fileSize" jdbcType="INTEGER" />
     <result column="FILE_MD5" property="fileMd5" jdbcType="VARCHAR" />
     <result column="IS_FORCE_UPDATE" property="isForceUpdate" jdbcType="VARCHAR" />
@@ -32,8 +33,9 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    ID, SUBSCRIBE_ID, CODE, `NAME`, PUBLISH_URL, VERSION_ID, APP_TYPE, VERSION_NO, FILE_SIZE,
-    FILE_MD5, IS_FORCE_UPDATE, PUBLISH_TYPE, NOTIFY_STATUS, NOTIFY_COUNT, NOTIFY_TIME,
+    ID, SUBSCRIBE_ID, CODE, `NAME`, PUBLISH_URL, VERSION_ID, APP_TYPE, VERSION_NO,
+    FILE_NAME, FILE_SIZE, FILE_MD5, IS_FORCE_UPDATE, PUBLISH_TYPE,
+    NOTIFY_STATUS, NOTIFY_COUNT, NOTIFY_TIME,
     DOWNLOAD_STATUS, DOWNLOAD_TIME, UPGRADE_STATUS, UPGRADE_TIME
   </sql>
 
@@ -61,6 +63,7 @@
         #{versionId,jdbcType=INTEGER},
         #{appType,jdbcType=VARCHAR},
         #{versionNo,jdbcType=VARCHAR},
+        #{fileName,jdbcType=VARCHAR},
         #{fileSize,jdbcType=INTEGER},
         #{fileMd5,jdbcType=VARCHAR},
         #{isForceUpdate,jdbcType=VARCHAR},
@@ -100,6 +103,9 @@
       </if>
       <if test="versionNo != null" >
         VERSION_NO,
+      </if>
+      <if test="fileName != null" >
+        FILE_NAME,
       </if>
       <if test="fileSize != null" >
         FILE_SIZE,
@@ -159,6 +165,9 @@
       </if>
       <if test="versionNo != null" >
         #{versionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
       </if>
       <if test="fileSize != null" >
         #{fileSize,jdbcType=INTEGER},
@@ -220,6 +229,9 @@
       <if test="versionNo != null" >
         VERSION_NO = #{versionNo,jdbcType=VARCHAR},
       </if>
+      <if test="fileName != null" >
+        FILE_NAME = #{fileName,jdbcType=VARCHAR},
+      </if>
       <if test="fileSize != null" >
         FILE_SIZE = #{fileSize,jdbcType=INTEGER},
       </if>
@@ -266,6 +278,7 @@
       VERSION_ID = #{versionId,jdbcType=INTEGER},
       APP_TYPE = #{appType,jdbcType=VARCHAR},
       VERSION_NO = #{versionNo,jdbcType=VARCHAR},
+      FILE_NAME = #{fileName,jdbcType=VARCHAR},
       FILE_SIZE = #{fileSize,jdbcType=INTEGER},
       FILE_MD5 = #{fileMd5,jdbcType=VARCHAR},
       IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR},
@@ -305,6 +318,9 @@
       </if>
       <if test="versionNo != null" >
         AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="fileName != null" >
+        AND FILE_NAME = #{fileName,jdbcType=VARCHAR}
       </if>
       <if test="fileSize != null" >
         AND FILE_SIZE = #{fileSize,jdbcType=INTEGER}
@@ -364,6 +380,9 @@
       </if>
       <if test="versionNo != null" >
         AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="fileName != null" >
+        AND FILE_NAME = #{fileName,jdbcType=VARCHAR}
       </if>
       <if test="fileSize != null" >
         AND FILE_SIZE = #{fileSize,jdbcType=INTEGER}

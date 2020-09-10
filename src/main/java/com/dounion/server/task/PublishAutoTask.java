@@ -71,6 +71,9 @@ public class PublishAutoTask extends BaseTask {
                     record.setVersionId((Integer) item.get("VERSION_ID"));
                     record.setAppType((String) item.get("APP_TYPE"));
                     record.setVersionNo((String) item.get("VERSION_NO"));
+                    record.setFileName((String) item.get("FILE_NAME"));
+                    record.setFileSize((Long) item.get("FILE_SIZE"));
+                    record.setFileMd5((String) item.get("FILE_MD5"));
                     record.setPublishType((String) item.get("PUBLISH_TYPE"));
                     record.setNotifyCount(0);
                     upgradeRecordService.insert(record);
@@ -82,6 +85,7 @@ public class PublishAutoTask extends BaseTask {
                 Map<String, Object> params = new HashMap<>();
                 params.put("versionNo", item.get("VERSION_NO")); // 版本号
                 params.put("appType", item.get("APP_TYPE")); // 应用类型
+                params.put("fileName", item.get("FILE_NAME")); // 文件名称
                 params.put("fileSize", item.get("FILE_SIZE")); // 文件大小
                 params.put("fileMd5", item.get("FILE_MD5")); // 文件MD5
                 params.put("isForceUpdate", item.get("IS_FORCE_UPDATE")); // 是否强制更新

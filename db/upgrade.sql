@@ -47,6 +47,7 @@ CREATE TABLE T_UPGRADE_RECORD
     VERSION_ID      INTEGER,      -- 版本ID
     APP_TYPE        VARCHAR(15),  -- 应用类型
     VERSION_NO      VARCHAR(15),  -- 版本号
+    FILE_NAME       VARCAHR(50),  -- 文件名称
     FILE_SIZE       BIGINT,       -- 文件大小
     FILE_MD5        VARCAHR(40),  -- 文件MD5
     IS_FORCE_UPDATE CHAR(1),      -- 是否强制更新 1-是 0-否

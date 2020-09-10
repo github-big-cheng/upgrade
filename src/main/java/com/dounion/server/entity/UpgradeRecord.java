@@ -22,6 +22,8 @@ public class UpgradeRecord extends BaseEntity {
 
     private String appType; // 应用类型
 
+    private String fileName; // 文件名称
+
     private Long fileSize; // 文件大小
 
     private String fileMd5; // 文件MD5
@@ -208,6 +210,13 @@ public class UpgradeRecord extends BaseEntity {
         this.upgradeTime = upgradeTime;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public Long getFileSize() {
         return fileSize;

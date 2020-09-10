@@ -62,8 +62,15 @@ public class VersionController {
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(final VersionInfo record, File file){
 
-        // 远程发布没有file
-        if(file != null){
+        // 是否远程发布
+        boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");
+        if(!isRemotePublish){
+            // 本地上传 检查文件
+            if(file == null){
+                return ResponseBuilder.buildError("请上传文件");
+            }
+
+            // 初始化文件信息
             record.setFilePath(file.getPath()); // 文件路径
             record.setFileSize(file.length()); // 文件大小
             record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
@@ -76,8 +83,6 @@ public class VersionController {
             TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
         }
 
-        // 是否远程发布
-        boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");
         if(isRemotePublish){
             TaskHandler.callTaskChain(
                 new HashMap(){{ put("versionId", record.getId()); }}, // 版本ID

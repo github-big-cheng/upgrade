@@ -73,6 +73,7 @@ public class PublishManualTask extends BaseTask {
                 Map<String, Object> params = new HashMap<>();
                 params.put("versionNo", record.getVersionNo()); // 版本号
                 params.put("appType", record.getAppType()); // 应用类型
+                params.put("fileName", record.getFileName()); // 文件名称
                 params.put("fileSize", record.getFileSize()); // 文件大小
                 params.put("fileMd5", record.getFileMd5()); // 文件MD5
                 params.put("isForceUpdate", record.getIsForceUpdate()); // 是否强制更新
