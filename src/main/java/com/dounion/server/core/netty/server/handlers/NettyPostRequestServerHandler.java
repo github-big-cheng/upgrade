@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,26 +82,32 @@ public class NettyPostRequestServerHandler extends NettyHttpRequestServerHandler
             return;
         }
 
-        // url参数转换
-        if(msg instanceof HttpRequest){
-            super.convertUrlParams();
-        }
+        try {
+            // url参数转换
+            if(msg instanceof HttpRequest){
+                super.convertUrlParams();
+            }
 
-        if(decoder != null){
-            if(msg instanceof HttpContent){
-                HttpContent chunk = (HttpContent) msg;
-                writeJson(chunk);
-                decoder.offer(chunk);
-                writeChunk();
-                if (chunk instanceof LastHttpContent) {
+            if(decoder != null){
+                if(msg instanceof HttpContent){
+                    HttpContent chunk = (HttpContent) msg;
+                    writeJson(chunk);
+                    decoder.offer(chunk);
+                    writeChunk();
+                    if (chunk instanceof LastHttpContent) {
+                        writeResponse(ctx);
+                    }
+                }
+            } else {
+                if(msg instanceof LastHttpContent){
                     writeResponse(ctx);
+                    return;
                 }
             }
-        } else {
-            if(msg instanceof LastHttpContent){
-                writeResponse(ctx);
-                return;
-            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            ReferenceCountUtil.release(msg);
         }
 
     }

@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 
 @ChannelHandler.Sharable
 public class NettyMessageClientHandler extends AbstractNettyClientHandler<String> {
@@ -26,24 +27,30 @@ public class NettyMessageClientHandler extends AbstractNettyClientHandler<String
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
 
-        if(this.nettyResponse == null){
-            this.nettyResponse =
-                    (NettyResponse<String>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
-        }
+        try {
+            if(this.nettyResponse == null){
+                this.nettyResponse =
+                        (NettyResponse<String>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
+            }
 
-        if (msg instanceof HttpResponse) {
-            HttpResponse response = (HttpResponse) msg;
-            if(!HttpResponseStatus.OK.equals(response.status())){
-                this.nettyResponse.setError(new SystemException("netty client no response"));
-                return;
+            if (msg instanceof HttpResponse) {
+                HttpResponse response = (HttpResponse) msg;
+                if(!HttpResponseStatus.OK.equals(response.status())){
+                    this.nettyResponse.setError(new SystemException("netty client no response"));
+                    return;
+                }
             }
-        }
-        if (msg instanceof HttpContent) {
-            HttpContent content = (HttpContent) msg;
-            result.append(content.content().toString(CharsetUtil.UTF_8));
-            if (content instanceof LastHttpContent) {
-                this.nettyResponse.setSuccess(result.toString());
+            if (msg instanceof HttpContent) {
+                HttpContent content = (HttpContent) msg;
+                result.append(content.content().toString(CharsetUtil.UTF_8));
+                if (content instanceof LastHttpContent) {
+                    this.nettyResponse.setSuccess(result.toString());
+                }
             }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            ReferenceCountUtil.release(msg);
         }
     }
 

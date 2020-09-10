@@ -2,6 +2,7 @@ package com.dounion.server.core.netty.server.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +24,17 @@ public class NettyNotFoundServerHandler extends NettyHttpRequestServerHandler {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject httpObject) throws Exception {
 
-        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
-        HttpUtil.setContentLength(response, 0);
-        // you can response a 404.html by String or File here
+        try {
+            FullHttpResponse response =
+                    new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
+            HttpUtil.setContentLength(response, 0);
+            // you can response a 404.html by String or File here
 
-        ctx.writeAndFlush(response);
+            ctx.writeAndFlush(response);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            ReferenceCountUtil.release(httpObject);
+        }
     }
 }

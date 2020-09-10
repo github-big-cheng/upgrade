@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +36,18 @@ public class NettyGetRequestServerHandler extends NettyHttpRequestServerHandler 
             return;
         }
 
-        if(msg instanceof HttpRequest){
-            super.convertUrlParams();
-        }
+        try {
+            if(msg instanceof HttpRequest){
+                super.convertUrlParams();
+            }
 
-        if(msg instanceof LastHttpContent){
-            super.writeResponse(ctx);
+            if(msg instanceof LastHttpContent){
+                super.writeResponse(ctx);
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            ReferenceCountUtil.release(msg);
         }
     }
 }
