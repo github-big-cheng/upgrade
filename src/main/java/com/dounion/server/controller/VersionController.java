@@ -71,6 +71,7 @@ public class VersionController {
             }
 
             // 初始化文件信息
+            record.setFileName(file.getName()); // 文件名称
             record.setFilePath(file.getPath()); // 文件路径
             record.setFileSize(file.length()); // 文件大小
             record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
@@ -84,12 +85,12 @@ public class VersionController {
         }
 
         if(isRemotePublish){
+            // 文件下载
             TaskHandler.callTaskChain(
                 new HashMap(){{ put("versionId", record.getId()); }}, // 版本ID
                 Constant.TASK_DOWNLOAD, Constant.TASK_DEPLOY
             );
         } else {
-            // 文件下载
             TaskHandler.callTask(Constant.TASK_DEPLOY, new HashMap(){{
                 put("versionId", record.getId()); // 版本ID
             }});
