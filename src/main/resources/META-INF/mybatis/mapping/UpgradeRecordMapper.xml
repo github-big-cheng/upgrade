@@ -11,6 +11,8 @@
     <result column="VERSION_ID" property="versionId" jdbcType="INTEGER" />
     <result column="APP_TYPE" property="appType" jdbcType="VARCHAR" />
     <result column="VERSION_NO" property="versionNo" jdbcType="VARCHAR" />
+    <result column="FILE_SIZE" property="fileSize" jdbcType="INTEGER" />
+    <result column="FILE_MD5" property="fileMd5" jdbcType="VARCHAR" />
     <result column="IS_FORCE_UPDATE" property="isForceUpdate" jdbcType="VARCHAR" />
     <result column="PUBLISH_TYPE" property="publishType" jdbcType="VARCHAR" />
     <result column="NOTIFY_STATUS" property="notifyStatus" jdbcType="VARCHAR" />
@@ -30,13 +32,14 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    ID, SUBSCRIBE_ID, CODE, `NAME`, PUBLISH_URL, VERSION_ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE,
-    PUBLISH_TYPE, NOTIFY_STATUS, NOTIFY_COUNT, NOTIFY_TIME, DOWNLOAD_STATUS, DOWNLOAD_TIME,
-    UPGRADE_STATUS, UPGRADE_TIME
+    ID, SUBSCRIBE_ID, CODE, `NAME`, PUBLISH_URL, VERSION_ID, APP_TYPE, VERSION_NO, FILE_SIZE,
+    FILE_MD5, IS_FORCE_UPDATE, PUBLISH_TYPE, NOTIFY_STATUS, NOTIFY_COUNT, NOTIFY_TIME,
+    DOWNLOAD_STATUS, DOWNLOAD_TIME, UPGRADE_STATUS, UPGRADE_TIME
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select<include refid="Base_Column_List" />
+    select
+    <include refid="Base_Column_List" />
     from T_UPGRADE_RECORD
     where ID = #{id,jdbcType=INTEGER}
   </select>
@@ -48,7 +51,7 @@
 
   <insert id="insert" parameterType="com.dounion.server.entity.UpgradeRecord" >
     insert into T_UPGRADE_RECORD (
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
     ) values (
         #{id,jdbcType=INTEGER},
         #{subscribeId,jdbcType=INTEGER},
@@ -58,6 +61,8 @@
         #{versionId,jdbcType=INTEGER},
         #{appType,jdbcType=VARCHAR},
         #{versionNo,jdbcType=VARCHAR},
+        #{fileSize,jdbcType=INTEGER},
+        #{fileMd5,jdbcType=VARCHAR},
         #{isForceUpdate,jdbcType=VARCHAR},
         #{publishType,jdbcType=VARCHAR},
         #{notifyStatus,jdbcType=VARCHAR},
@@ -66,8 +71,7 @@
         #{downloadStatus,jdbcType=VARCHAR},
         #{downloadTime,jdbcType=VARCHAR},
         #{upgradeStatus,jdbcType=VARCHAR},
-        #{upgradeTime,jdbcType=VARCHAR}
-    )
+        #{upgradeTime,jdbcType=VARCHAR})
   </insert>
 
   <insert id="insertSelective" parameterType="com.dounion.server.entity.UpgradeRecord" >
@@ -96,6 +100,12 @@
       </if>
       <if test="versionNo != null" >
         VERSION_NO,
+      </if>
+      <if test="fileSize != null" >
+        FILE_SIZE,
+      </if>
+      <if test="fileMd5 != null" >
+        FILE_MD5,
       </if>
       <if test="isForceUpdate != null" >
         IS_FORCE_UPDATE,
@@ -149,6 +159,12 @@
       </if>
       <if test="versionNo != null" >
         #{versionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null" >
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileMd5 != null" >
+        #{fileMd5,jdbcType=VARCHAR},
       </if>
       <if test="isForceUpdate != null" >
         #{isForceUpdate,jdbcType=VARCHAR},
@@ -204,6 +220,12 @@
       <if test="versionNo != null" >
         VERSION_NO = #{versionNo,jdbcType=VARCHAR},
       </if>
+      <if test="fileSize != null" >
+        FILE_SIZE = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileMd5 != null" >
+        FILE_MD5 = #{fileMd5,jdbcType=VARCHAR},
+      </if>
       <if test="isForceUpdate != null" >
         IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR},
       </if>
@@ -244,6 +266,8 @@
       VERSION_ID = #{versionId,jdbcType=INTEGER},
       APP_TYPE = #{appType,jdbcType=VARCHAR},
       VERSION_NO = #{versionNo,jdbcType=VARCHAR},
+      FILE_SIZE = #{fileSize,jdbcType=INTEGER},
+      FILE_MD5 = #{fileMd5,jdbcType=VARCHAR},
       IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR},
       PUBLISH_TYPE = #{publishType,jdbcType=VARCHAR},
       NOTIFY_STATUS = #{notifyStatus,jdbcType=VARCHAR},
@@ -281,6 +305,12 @@
       </if>
       <if test="versionNo != null" >
         AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="fileSize != null" >
+        AND FILE_SIZE = #{fileSize,jdbcType=INTEGER}
+      </if>
+      <if test="fileMd5 != null" >
+        AND FILE_MD5 = #{fileMd5,jdbcType=VARCHAR}
       </if>
       <if test="isForceUpdate != null" >
         AND IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR}
@@ -335,6 +365,12 @@
       <if test="versionNo != null" >
         AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
       </if>
+      <if test="fileSize != null" >
+        AND FILE_SIZE = #{fileSize,jdbcType=INTEGER}
+      </if>
+      <if test="fileMd5 != null" >
+        AND FILE_MD5 = #{fileMd5,jdbcType=VARCHAR}
+      </if>
       <if test="isForceUpdate != null" >
         AND IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR}
       </if>
@@ -373,6 +409,8 @@
                A.IS_FORCE_UPDATE,
                A.FILE_NAME,
                A.FILE_PATH,
+               A.FILE_SIZE,
+               A.FILE_MD5,
                A.ADD_SOURCE,
                A.PUBLISH_TYPE,
                A.PUBLISH_DATE,

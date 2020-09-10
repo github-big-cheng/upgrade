@@ -1,9 +1,11 @@
 package com.dounion.server.core.helper;
 
 import com.dounion.server.core.exception.SystemException;
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.security.MessageDigest;
 
 public class FileHelper {
 
@@ -137,6 +139,29 @@ public class FileHelper {
         Files.copy(from.toPath(), to.toPath());
 
         return realPath;
+    }
+
+
+    /**
+     * 获取一个文件的md5值(可处理大文件)
+     * @return md5 value
+     */
+    public static String getFileMD5(File file) {
+
+        try (
+            FileInputStream fileInputStream = new FileInputStream(file)
+        ){
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = fileInputStream.read(buffer)) != -1) {
+                md5.update(buffer, 0, length);
+            }
+            return new String(Hex.encodeHex(md5.digest()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

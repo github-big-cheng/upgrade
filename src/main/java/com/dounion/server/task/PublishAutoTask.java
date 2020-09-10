@@ -82,6 +82,8 @@ public class PublishAutoTask extends BaseTask {
                 Map<String, Object> params = new HashMap<>();
                 params.put("versionNo", item.get("VERSION_NO")); // 版本号
                 params.put("appType", item.get("APP_TYPE")); // 应用类型
+                params.put("fileSize", item.get("FILE_SIZE")); // 文件大小
+                params.put("fileMd5", item.get("FILE_MD5")); // 文件MD5
                 params.put("isForceUpdate", item.get("IS_FORCE_UPDATE")); // 是否强制更新
                 params.put("addSource", "2"); // 远程发布
 

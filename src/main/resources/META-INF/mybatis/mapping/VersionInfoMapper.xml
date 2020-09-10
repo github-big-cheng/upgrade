@@ -10,6 +10,7 @@
     <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
     <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR" />
     <result column="FILE_SIZE" property="fileSize" jdbcType="BIGINT" />
+    <result column="FILE_MD5" property="fileMd5" jdbcType="VARCHAR" />
     <result column="STATUS" property="status" jdbcType="VARCHAR" />
     <result column="ADD_SOURCE" property="addSource" jdbcType="VARCHAR" />
     <result column="PUBLISH_TYPE" property="publishType" jdbcType="VARCHAR" />
@@ -17,7 +18,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE, FILE_NAME, FILE_PATH, FILE_SIZE,
+    ID, APP_TYPE, VERSION_NO, IS_FORCE_UPDATE, FILE_NAME, FILE_PATH, FILE_SIZE, FILE_MD5,
     STATUS, ADD_SOURCE, PUBLISH_TYPE, PUBLISH_DATE
   </sql>
 
@@ -43,6 +44,7 @@
         #{fileName,jdbcType=VARCHAR},
         #{filePath,jdbcType=VARCHAR},
         #{fileSize,jdbcType=BIGINT},
+        #{fileMd5,jdbcType=VARCHAR},
         #{status,jdbcType=VARCHAR},
         #{addSource,jdbcType=VARCHAR},
         #{publishType,jdbcType=VARCHAR},
@@ -73,6 +75,9 @@
       </if>
       <if test="fileSize != null" >
         FILE_SIZE,
+      </if>
+      <if test="fileMd5 != null" >
+        FILE_MD5,
       </if>
       <if test="status != null" >
         STATUS,
@@ -108,6 +113,9 @@
       </if>
       <if test="fileSize != null" >
         #{fileSize,jdbcType=BIGINT},
+      </if>
+      <if test="fileMd5 != null" >
+        #{fileMd5,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
         #{status,jdbcType=VARCHAR},
@@ -145,6 +153,9 @@
       <if test="fileSize != null" >
         FILE_SIZE = #{fileSize,jdbcType=VARCHAR},
       </if>
+      <if test="fileMd5 != null" >
+        FILE_MD5 = #{fileMd5,jdbcType=VARCHAR},
+      </if>
       <if test="status != null" >
         STATUS = #{status,jdbcType=VARCHAR},
       </if>
@@ -169,6 +180,7 @@
       FILE_NAME = #{fileName,jdbcType=VARCHAR},
       FILE_PATH = #{filePath,jdbcType=VARCHAR},
       FILE_SIZE = #{fileSize,jdbcType=VARCHAR},
+      FILE_MD5 = #{fileMd5,jdbcType=VARCHAR},
       STATUS = #{status,jdbcType=VARCHAR},
       ADD_SOURCE = #{addSource,jdbcType=VARCHAR},
       PUBLISH_TYPE = #{publishType,jdbcType=VARCHAR},
@@ -198,6 +210,9 @@
       </if>
       <if test="fileSize != null" >
         AND FILE_SIZE = #{fileSize,jdbcType=VARCHAR}
+      </if>
+      <if test="fileMd5 != null" >
+        AND FILE_MD5 = #{fileMd5,jdbcType=VARCHAR}
       </if>
       <if test="status != null" >
         AND STATUS = #{status,jdbcType=VARCHAR}
@@ -235,6 +250,9 @@
       </if>
       <if test="fileSize != null" >
         AND FILE_SIZE = #{fileSize,jdbcType=VARCHAR}
+      </if>
+      <if test="fileMd5 != null" >
+        AND FILE_MD5 = #{fileMd5,jdbcType=VARCHAR}
       </if>
       <if test="status != null" >
         AND STATUS = #{status,jdbcType=VARCHAR}

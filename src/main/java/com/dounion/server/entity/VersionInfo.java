@@ -19,6 +19,8 @@ public class VersionInfo extends BaseEntity {
 
     private Long fileSize; // 文件大小
 
+    private String fileMd5; // 文件MD5
+
     private String status; // 版本状态 1-正常 2-已注销
 
     private String addSource; // 版本来源 1-本地发布 2-远程发布
@@ -84,6 +86,14 @@ public class VersionInfo extends BaseEntity {
 
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
+    }
+
+    public String getFileMd5() {
+        return fileMd5;
+    }
+
+    public void setFileMd5(String fileMd5) {
+        this.fileMd5 = fileMd5;
     }
 
     public String getStatus() {

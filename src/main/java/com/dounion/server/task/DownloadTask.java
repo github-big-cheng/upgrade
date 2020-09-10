@@ -3,6 +3,7 @@ package com.dounion.server.task;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.exception.BusinessException;
+import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.helper.StringHelper;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.TaskHandler;
@@ -54,8 +55,22 @@ public class DownloadTask extends BaseTask {
         String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl);
 
         File file = new File(filePath);
+        // 检查文件是否下载成功
         if(!file.exists()){
             throw new BusinessException(StringHelper.parse1("【{}】下载失败", downloadUrl));
+        }
+        // 文件大小检查
+        if(file.length() != versionInfo.getFileSize()){
+            logger.error("【{}】 file size check failed, expect 【{}】, but 【{}】",
+                    this, versionInfo.getFileSize(), file.length());
+            throw new BusinessException(StringHelper.parse1("【{}】文件MD5值校验失败", downloadUrl));
+        }
+        // 检查文件MD5值
+        String fileMd5 = FileHelper.getFileMD5(file);
+        if(!StringUtils.equals(fileMd5, versionInfo.getFileMd5())){
+            logger.error("【{}】 MD5 check failed, expect 【{}】, but 【{}】",
+                    this, versionInfo.getFileMd5(), fileMd5);
+            throw new BusinessException(StringHelper.parse1("【{}】文件MD5值校验失败", downloadUrl));
         }
 
         // 更新文件路径

@@ -1,6 +1,7 @@
 package com.dounion.server.controller;
 
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
@@ -61,9 +62,11 @@ public class VersionController {
     @ResponseType(ResponseTypeEnum.JSON)
     public Object addJson(final VersionInfo record, File file){
 
+        // 远程发布没有file
         if(file != null){
-            record.setFilePath(file.getPath());
-            record.setFileSize(file.length());
+            record.setFilePath(file.getPath()); // 文件路径
+            record.setFileSize(file.length()); // 文件大小
+            record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
         }
         // 更新版本信息
         versionInfoService.updateVersion(record);

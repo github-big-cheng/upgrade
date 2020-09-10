@@ -73,6 +73,8 @@ public class PublishManualTask extends BaseTask {
                 Map<String, Object> params = new HashMap<>();
                 params.put("versionNo", record.getVersionNo()); // 版本号
                 params.put("appType", record.getAppType()); // 应用类型
+                params.put("fileSize", record.getFileSize()); // 文件大小
+                params.put("fileMd5", record.getFileMd5()); // 文件MD5
                 params.put("isForceUpdate", record.getIsForceUpdate()); // 是否强制更新
                 params.put("publishType", "2"); // 发布类型 默认自动发布
                 params.put("addSource", "2"); // 远程发布

@@ -22,6 +22,10 @@ public class UpgradeRecord extends BaseEntity {
 
     private String appType; // 应用类型
 
+    private Long fileSize; // 文件大小
+
+    private String fileMd5; // 文件MD5
+
     private String isForceUpdate; // 是否强制更新 1-是 0-否
 
     private String publishType; // 发布类型 1-手动发布 2-自动发布
@@ -202,5 +206,22 @@ public class UpgradeRecord extends BaseEntity {
 
     public void setUpgradeTime(String upgradeTime) {
         this.upgradeTime = upgradeTime;
+    }
+
+
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public String getFileMd5() {
+        return fileMd5;
+    }
+
+    public void setFileMd5(String fileMd5) {
+        this.fileMd5 = fileMd5;
     }
 }
