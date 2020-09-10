@@ -45,11 +45,13 @@ public interface Constant {
      * 工作目录
      */
     String PATH_WORK = System.getProperty("user.dir") + File.separator;
-//    String PATH_WORK = System.getProperty("user.dir") + File.separator + "src\\main\\resources\\";
+    //    String PATH_WORK = System.getProperty("user.dir") + File.separator + "src\\main\\resources\\";
+    File PATH_WORK_FILE = new File(PATH_WORK);
     /**
      * 配置文件路径
      */
-    String PATH_CONF = PATH_WORK + "conf" + File.separator;
+//    String PATH_CONF = PATH_WORK + "conf" + File.separator;
+    String PATH_CONF = PATH_WORK_FILE.getParent() + File.separator + "conf" + File.separator;
     /**
      * 静态文件路径
      */
@@ -65,7 +67,7 @@ public interface Constant {
     /**
      * 下载路径
      */
-    String PATH_SCRIPT = PATH_WORK + "scripts" + File.separator;;
+    String PATH_SCRIPT = PATH_WORK + "scripts" + File.separator;
 
 
     // ==========================================  请求地址相关 ==========================================================

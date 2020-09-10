@@ -30,10 +30,9 @@ public abstract class AbstractNettyClientHandler<V> extends SimpleChannelInbound
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
         // 初始化响应
-        if(this.nettyResponse == null){
-            this.nettyResponse =
-                    (NettyResponse<V>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
-        }
+        this.nettyResponse =
+                (NettyResponse<V>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
+        logger.debug("nettyResponse: {}", this.nettyResponse);
 
         // 初始化请求对象
         this.request = (HttpRequest) ctx.channel().attr(NettyClient.NETTY_CLIENT_REQUEST).get();

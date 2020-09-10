@@ -133,4 +133,12 @@ public class IndexController {
         return ResponseBuilder.buildSuccess(message);
     }
 
+
+    @RequestMapping("/subscribe")
+    @ResponseType(ResponseTypeEnum.JSON)
+    public Object subscribe(){
+        TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
+        return ResponseBuilder.buildSuccess();
+    }
+
 }

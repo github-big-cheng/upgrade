@@ -57,19 +57,22 @@ fi
 
 
 
+# 复制新包
+cp -a "$1"  "$2"/
+
+
 # 备份文件夹
 bak_dir="$2"/"$3"
 if [ -d "$bak_dir" ]; then
+  cd "$2"
   dt=$(date +%Y%m%d%H%M)
-  tar -cvf "$bak_dir.$dt.tar"  "$bak_dir"
+  tar -cvf "$3.$dt.tar"  "$3"
+  # 删除旧包
+  rm -rf "$bak_dir"
 fi
 
 
 
-# 删除旧包
-rm -rf "$bak_dir"
-# 复制新包
-cp -a "$1"  "$2"/ 
 # 解压
 cd "$2"
 unzip "$2"/"$3".zip 

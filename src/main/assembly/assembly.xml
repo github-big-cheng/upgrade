@@ -22,7 +22,7 @@
         </fileSet>
         <fileSet>
             <directory>db</directory>
-            <outputDirectory>./db</outputDirectory>
+            <outputDirectory>./upgrade_db</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>scripts</directory>

@@ -4,7 +4,6 @@ package com.dounion.server.core.netty.client;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
-import com.dounion.server.core.helper.StringHelper;
 import com.dounion.server.eum.NettyRequestTypeEnum;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -153,7 +152,6 @@ public class NettyClient {
 
 
     public String fileDownload(String url) {
-        String fileName = StringHelper.getFileName(url);
         Channel channel = this.future.channel();
         // 设置请求类型
         channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.FILE);
@@ -197,10 +195,13 @@ public class NettyClient {
             }
         }
 
+        Channel channel = this.future.channel();
+
+
         NettyResponse<String> response = new NettyResponse<>();
-        this.future.channel().attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.MESSAGE);
-        this.future.channel().attr(NETTY_CLIENT_RESPONSE).set(response);
-        this.future.channel().attr(NETTY_CLIENT_REQUEST).set(request);
+        channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.MESSAGE);
+        channel.attr(NETTY_CLIENT_RESPONSE).set(response);
+        channel.attr(NETTY_CLIENT_REQUEST).set(request);
 
         // 阻塞获取结果
         String result = response.get();

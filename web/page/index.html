@@ -21,6 +21,7 @@
 <body>
 
 	<h1>当前主机： <span id="localIp"></span>:<span id="port"></span></h1>
+	<a class="subscribe-btn">订阅</a> &nbsp;&nbsp;
 	<a href="/index/download.file">下载</a> &nbsp;&nbsp;
 <!--	<a class="update-btn">更新</a>-->
 <!--	<input type="file" name="file"/>-->
@@ -126,7 +127,23 @@
 				}
 			}
 		});
-	})
+	});
+
+    $("a.subscribe-btn").on('click', function (e) {
+		e.preventDefault();
+
+		$.ajax({
+			url: '/index/subscribe.json',
+			dataType:'json',
+			type:'POST',
+			success: function (rdata) {
+				console.log(rdata);
+				if(rdata){
+					alert(rdata.message);
+				}
+			}
+		});
+	});
 
 
     const ids = ["code", "localIp", "port", "masterIp", "masterPort", "publishPath"];
