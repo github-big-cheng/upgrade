@@ -94,5 +94,6 @@ public class SubscribeTask extends BaseTask {
 
         logger.info("【{}】, result is 【{}】", this, result);
 
+        this.setProgressComplete(); // progress 100%
     }
 }

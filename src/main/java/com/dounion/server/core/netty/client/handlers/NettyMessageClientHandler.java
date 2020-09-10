@@ -2,6 +2,7 @@ package com.dounion.server.core.netty.client.handlers;
 
 import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.netty.client.NettyClient;
+import com.dounion.server.core.netty.client.NettyResponse;
 import com.dounion.server.eum.NettyRequestTypeEnum;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,6 +25,11 @@ public class NettyMessageClientHandler extends AbstractNettyClientHandler<String
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
+
+        if(this.nettyResponse == null){
+            this.nettyResponse =
+                    (NettyResponse<String>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
+        }
 
         if (msg instanceof HttpResponse) {
             HttpResponse response = (HttpResponse) msg;

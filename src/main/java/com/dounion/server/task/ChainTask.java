@@ -30,9 +30,9 @@ public class ChainTask extends BaseTask {
             logger.warn("【{}】 taskNames check failed", this);
             return;
         }
-        Integer delay = (Integer) params.get(Constant.TASK_CHAIN_DELAY);
+        Long delay = (Long) params.get(Constant.TASK_CHAIN_DELAY);
         if (delay == null) {
-            delay = 0;
+            delay = 0l;
         }
 
         this.setProgressJustStart(); // progress
