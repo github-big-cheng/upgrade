@@ -2,10 +2,13 @@ package com.dounion.server.core.task;
 
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.helper.SpringApp;
+import com.dounion.server.core.helper.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -146,7 +149,7 @@ public class TaskHandler implements Runnable {
      * @return
      */
     public static Integer callTask(BaseTask task, long delay) {
-        return callTask(task, null, delay);
+        return callTask(task, task.getParams(), delay);
     }
 
 
@@ -191,8 +194,9 @@ public class TaskHandler implements Runnable {
      * @return
      */
     public static Integer callTask(BaseTask task) {
-        return callTask(task, null);
+        return callTask(task, task.getParams());
     }
+
 
     /**
      * 调用后台任务
@@ -216,7 +220,7 @@ public class TaskHandler implements Runnable {
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Future callTaskBlock(final BaseTask task, Map<String, Object> params, final long delay) {
+    public static Future callTaskBlock(BaseTask task, Map<String, Object> params, final long delay) {
 
         if(task == null){
             logger.warn("task 【{}】 not config, please check it...");
@@ -226,24 +230,17 @@ public class TaskHandler implements Runnable {
         Integer id = TASK_ID.addAndGet(1);
         task.setTaskId(id);
         task.setParams(params);
+
+        final BaseTask taskF = task;
+
         THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){
             @Override
             protected BaseTask initialValue() {
-                return task;
+                return taskF;
             }
         });
 
-        return EXECUTOR_SERVICE.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                TASK_QUEUE.add(task);
-            }
-        });
+        return EXECUTOR_SERVICE.submit(task);
     }
 
 
@@ -269,6 +266,33 @@ public class TaskHandler implements Runnable {
      * @param delay
      *          The <code>delay</code> not only delay the chain task submit times now,
      *          it also delay every task's interval times.
+     * @param tasks
+     */
+    public static Integer callTaskChain(Map<String, Object> params, final long delay, BaseTask... tasks) {
+        if(tasks==null || tasks.length==0){
+            logger.warn("task chain submit failed, taskNames must not be empty");
+            return null;
+        }
+        if(tasks.length == 1){
+            logger.warn("call TaskHandler.callTask() will be much more quickly then this one");
+        }
+
+        if(params == null){
+            params = new HashMap<>();
+        }
+        params.put(Constant.TASK_CHAIN_NAMES, CollectionUtils.arrayToList(tasks));
+        params.put(Constant.TASK_CHAIN_DELAY, delay);
+
+        return callTask(Constant.TASK_CHAIN, params, delay);
+    }
+
+
+    /**
+     * 任务链
+     * @param params
+     * @param delay
+     *          The <code>delay</code> not only delay the chain task submit times now,
+     *          it also delay every task's interval times.
      * @param taskNames
      */
     public static Integer callTaskChain(Map<String, Object> params, final long delay, String... taskNames) {
@@ -283,11 +307,23 @@ public class TaskHandler implements Runnable {
         if(params == null){
             params = new HashMap<>();
         }
+
+        BaseTask[] taskArr = new BaseTask[taskNames.length];
+        BaseTask task;
+        for(int i=0; i<taskNames.length; i++){
+            task = SpringApp.getInstance().getBean(taskNames[i]);
+            if(task == null){
+                throw new SystemException(StringHelper.parse1("bean 【{}】 not found", taskNames[i]));
+            }
+            taskArr[i] = (task);
+        }
+
         params.put(Constant.TASK_CHAIN_NAMES, taskNames);
         params.put(Constant.TASK_CHAIN_DELAY, delay);
 
-        return callTask(Constant.TASK_CHAIN, params, delay);
+        return callTaskChain(params, delay, taskArr);
     }
+
 
 
     /**

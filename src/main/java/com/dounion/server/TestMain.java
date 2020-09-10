@@ -26,7 +26,9 @@ public class TestMain {
 //        transactionTest();
 //        pageTest();
 
-        taskTest();
+//        taskTest();
+
+        chainTaskTest();
 
         while(true) {
 
@@ -68,6 +70,37 @@ public class TestMain {
         }
 
         TaskHandler.interrupted(id1);
+    }
+    
+    
+    public static void chainTaskTest(){
+        TaskHandler.callTaskChain(null, 0, new TestTask("1"), new TestTask("2"));
+        System.out.println(TaskHandler.getTaskList());
+    }
+
+
+    public static class TestTask extends BaseTask {
+
+
+        public TestTask(String taskName) {
+            this.taskName = taskName;
+        }
+
+        private String taskName;
+
+        @Override
+        public String getTaskName() {
+            return taskName;
+        }
+
+        @Override
+        protected void execute() throws Exception {
+            System.out.println(this + "我开始执行");
+
+            Thread.sleep(3000l);
+
+            System.out.println(this + "执行完了");
+        }
     }
 
 }

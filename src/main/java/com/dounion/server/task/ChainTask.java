@@ -5,7 +5,9 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.helper.DataHelper;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.core.task.annotation.Task;
+import org.springframework.util.CollectionUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -25,8 +27,8 @@ public class ChainTask extends BaseTask {
     protected void execute() throws ExecutionException, InterruptedException {
         Map<String, Object> params = super.getParams();
 
-        String[] taskNames = (String[]) params.get(Constant.TASK_CHAIN_NAMES);
-        if (taskNames == null || taskNames.length == 0) {
+        List<BaseTask> tasks = (List<BaseTask>) params.get(Constant.TASK_CHAIN_NAMES);
+        if (CollectionUtils.isEmpty(tasks)) {
             logger.warn("【{}】 taskNames check failed", this);
             return;
         }
@@ -37,11 +39,14 @@ public class ChainTask extends BaseTask {
 
         this.setProgressJustStart(); // progress
 
-        for (int i=0; i<taskNames.length; i++) {
-            Future<Integer> task = TaskHandler.callTaskBlock(taskNames[i], params, delay);
-            Integer id = task.get();
-            this.setProgress(DataHelper.percent(taskNames.length, (i+1)));
+        int i = 0;
+        for (BaseTask task : tasks) {
+            Future<Integer> future = TaskHandler.callTaskBlock(task, params, delay);
+            Integer id = future.get();
+            this.setProgress(DataHelper.percent(tasks.size(), (i+1)));
             logger.debug("【{}】 completed, sub 【{}】", this, TaskHandler.getTask(id));
+
+            i++;
         }
     }
 }

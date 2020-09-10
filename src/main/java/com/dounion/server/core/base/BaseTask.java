@@ -188,7 +188,9 @@ public abstract class BaseTask implements Callable<Integer> {
             this.setProgressNeelyComplete();
 
             // 调用回调方法
-            this.callback.doSomething();
+            if(this.callback != null){
+                this.callback.doSomething();
+            }
 
             // 设置完成
             this.setProgressComplete();

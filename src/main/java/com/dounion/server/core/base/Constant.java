@@ -50,8 +50,8 @@ public interface Constant {
     /**
      * 配置文件路径
      */
-//    String PATH_CONF = PATH_WORK + "conf" + File.separator;
-    String PATH_CONF = PATH_WORK_FILE.getParent() + File.separator + "conf" + File.separator;
+    String PATH_CONF = PATH_WORK + "conf" + File.separator;
+//    String PATH_CONF = PATH_WORK_FILE.getParent() + File.separator + "conf" + File.separator;
     /**
      * 静态文件路径
      */
