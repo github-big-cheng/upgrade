@@ -69,9 +69,11 @@ public class DeployTask extends BaseTask {
                 continue;
             }
 
+            // 远程发布且版本号等于或低于当前版本则不发布
             // check version
-            if(appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) >= 0){
-                logger.debug("【{}】 current version is {}, deploy version is {}, deploy task will be exit",
+            if(StringUtils.equals(versionInfo.getAddSource(), "2") &&
+                    appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) >= 0){
+                logger.debug("【{}】 Remote publish ! Current version is {}, deploy version is {}, deploy task will be exit",
                         this, appInfo.getVersionNo(), versionInfo.getVersionNo());
                 break;
             }

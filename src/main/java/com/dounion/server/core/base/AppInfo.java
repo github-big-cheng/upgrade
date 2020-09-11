@@ -23,7 +23,7 @@ public class AppInfo {
           .append("\r\n\t versionNo:").append(this.versionNo).append(", \t")
           .append("\r\n\t workPath:").append(this.workPath)
         ;
-        sb.append("}");
+        sb.append("\r\n}");
         return sb.toString();
     }
 

@@ -52,24 +52,36 @@ public class SubscribeTask extends BaseTask {
             return;
         }
 
-        Set<String> servicesSet = new HashSet<>();
+        Map<String, String> servicesMap = new HashMap<>();
+
+        // 查询向当前主机被订阅的服务列表(去重)
+        SubscribeInfo query = new SubscribeInfo();
+        query.setStatus("1");
+        List<Map<String, String>> subscribeList = subscribeService.currentServiceSubscribeQuery(query);
+        if (!CollectionUtils.isEmpty(subscribeList)) {
+            for(Map<String, String> item : subscribeList){
+                servicesMap.putAll(item);
+            }
+        }
 
         // 本地服务列表
         List<AppInfo> appInfoList = serviceInfo.getLocalServiceList();
         if (!CollectionUtils.isEmpty(appInfoList)) {
             for (AppInfo appInfo : appInfoList) {
-                servicesSet.add(appInfo.getAppType());
+                servicesMap.put(appInfo.getAppType(), appInfo.getVersionNo());
             }
         }
 
-
-        // 查询向当前主机被订阅的服务列表(去重)
-        SubscribeInfo query = new SubscribeInfo();
-        query.setStatus("1");
-        List<String> subscribeList = subscribeService.currentServiceSubscribeQuery(query);
-        if (!CollectionUtils.isEmpty(subscribeList)) {
-            servicesSet.addAll(subscribeList);
+        // 封装应用类型及版本号
+        StringBuffer appTypeSb = new StringBuffer();
+        StringBuffer versionNosSb = new StringBuffer();
+        for(String appType : servicesMap.keySet()){
+            appTypeSb.append(appType).append(",");
+            versionNosSb.append(servicesMap.get(appType)).append(",");
         }
+        appTypeSb.setLength(appTypeSb.length()-1);
+        versionNosSb.setLength(versionNosSb.length()-1);
+
 
         if (super.isInterrupted()) {
             logger.info("subscribe task 【{}】 has been interrupted, it will be exit...", this.taskId);
@@ -84,7 +96,8 @@ public class SubscribeTask extends BaseTask {
         params.put("code", serviceInfo.getCode());
         params.put("name", serviceInfo.getName());
         params.put("osType", serviceInfo.getOsType());
-        params.put("appType", StringUtils.join(servicesSet, ","));
+        params.put("appType", appTypeSb.toString()); // 应用类型
+        params.put("versionNo", versionNosSb.toString()); // 版本号
         params.put("isStandBy", serviceInfo.getStandBy());
         params.put("publishUrl", serviceInfo.getPublishPath());
 

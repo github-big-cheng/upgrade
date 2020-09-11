@@ -241,8 +241,8 @@
   </select>
 
 
-  <select id="currentServiceSubscribeQuery" parameterType="com.dounion.server.entity.SubscribeInfo" resultType="java.lang.String">
-    SELECT DISTINCT APP_TYPE
+  <select id="currentServiceSubscribeQuery" parameterType="com.dounion.server.entity.SubscribeInfo" resultType="java.util.HashMap">
+    SELECT DISTINCT APP_TYPE, VERSION_NO
     FROM T_UPGRADE_SUBSCRIBE_INFO
     WHERE STATUS = '1'
   </select>

@@ -13,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SubscribeServiceImpl implements SubscribeService {
@@ -78,7 +79,7 @@ public class SubscribeServiceImpl implements SubscribeService {
      * @return
      */
     @Override
-    public List<String> currentServiceSubscribeQuery(SubscribeInfo query) {
+    public List<Map<String, String>> currentServiceSubscribeQuery(SubscribeInfo query) {
         return subscribeInfoMapper.currentServiceSubscribeQuery(query);
     }
 

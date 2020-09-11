@@ -3,6 +3,7 @@ package com.dounion.server.service;
 import com.dounion.server.entity.SubscribeInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SubscribeService {
 
@@ -10,7 +11,7 @@ public interface SubscribeService {
 
     void addSubscribe(SubscribeInfo record);
 
-    List<String> currentServiceSubscribeQuery(SubscribeInfo query);
+    List<Map<String, String>> currentServiceSubscribeQuery(SubscribeInfo query);
 
     void deleteBySelective(SubscribeInfo record);
 }

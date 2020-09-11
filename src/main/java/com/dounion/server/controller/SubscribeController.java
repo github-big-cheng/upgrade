@@ -66,15 +66,23 @@ public class SubscribeController {
     }
 
 
-
+    /**
+     * 取消远程订阅
+     * @return
+     */
     @RequestMapping("/unSubscribe.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object unSubscribe(){
-        TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
+        TaskHandler.callTask(Constant.TASK_UN_SUBSCRIBE);
         return ResponseBuilder.buildSuccess("已提交取消订阅任务");
     }
 
 
+    /**
+     * 本地订阅列表撤销
+     * @param code
+     * @return
+     */
     @RequestMapping("/cancel.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object cancelJson(String code){

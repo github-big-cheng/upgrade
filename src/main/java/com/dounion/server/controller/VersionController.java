@@ -14,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -81,7 +83,19 @@ public class VersionController {
             record.setFilePath(file.getPath()); // 文件路径
             record.setFileSize(file.length()); // 文件大小
             record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
+        } else {
+
+            // 远程发布检查 检查本地版本号
+            VersionInfo query = new VersionInfo();
+            query.setAppType(record.getAppType());
+            List<VersionInfo> list = versionInfoService.list(query);
+            if(!CollectionUtils.isEmpty(list) &&
+                    list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){
+                return ResponseBuilder.buildSuccess("接收发布成功，但版本过低已忽略");
+            }
+
         }
+
         // 更新版本信息
         final int versionId = versionInfoService.updateVersion(record);
         logger.debug("new version id is 【{}】", versionId);

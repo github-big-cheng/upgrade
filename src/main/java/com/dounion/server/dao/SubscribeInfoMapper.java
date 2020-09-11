@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository("subscribeInfoMapper")
 public class SubscribeInfoMapper extends BaseDao<SubscribeInfo> {
@@ -27,7 +28,7 @@ public class SubscribeInfoMapper extends BaseDao<SubscribeInfo> {
      * @param record
      * @return
      */
-    public List<String> currentServiceSubscribeQuery(SubscribeInfo record){
+    public List<Map<String, String>> currentServiceSubscribeQuery(SubscribeInfo record){
         return sql.selectList(this.getNamespace() + ".currentServiceSubscribeQuery", record);
     }
 
