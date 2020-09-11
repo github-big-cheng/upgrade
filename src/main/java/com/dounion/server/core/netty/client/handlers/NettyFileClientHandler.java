@@ -109,7 +109,7 @@ public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
 
     private void setDownLoadFile() throws Exception {
         if (null == fos) {
-            downloadFile = new File(Constant.PATH_DOWNLOAD + "new\\" + fileName);
+            downloadFile = new File(Constant.PATH_DOWNLOAD + fileName);
             if (!downloadFile.getParentFile().exists()) {
                 downloadFile.getParentFile().mkdirs();
             }

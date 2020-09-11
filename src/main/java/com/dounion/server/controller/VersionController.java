@@ -84,16 +84,17 @@ public class VersionController {
             record.setFileSize(file.length()); // 文件大小
             record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
         } else {
-
-            // 远程发布检查 检查本地版本号
-            VersionInfo query = new VersionInfo();
-            query.setAppType(record.getAppType());
-            List<VersionInfo> list = versionInfoService.list(query);
-            if(!CollectionUtils.isEmpty(list) &&
-                    list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){
-                return ResponseBuilder.buildSuccess("接收发布成功，但版本过低已忽略");
+            // 非强制更新
+            if(!StringUtils.equals(record.getIsForceUpdate(), "1")){
+                // 远程发布检查 检查本地版本号
+                VersionInfo query = new VersionInfo();
+                query.setAppType(record.getAppType());
+                List<VersionInfo> list = versionInfoService.list(query);
+                if(!CollectionUtils.isEmpty(list) &&
+                        list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){
+                    return ResponseBuilder.buildSuccess("接收发布成功，但版本过低已忽略");
+                }
             }
-
         }
 
         // 更新版本信息

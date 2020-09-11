@@ -7,6 +7,7 @@ import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.core.task.annotation.Task;
 import org.springframework.util.CollectionUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -40,8 +41,11 @@ public class ChainTask extends BaseTask {
         this.setProgressJustStart(); // progress
 
         int i = 0;
+        Map<String, Object> temp;
         for (BaseTask task : tasks) {
-            Future<Integer> future = TaskHandler.callTaskBlock(task, params, delay);
+            temp = new HashMap<>();
+            temp.putAll(params);
+            Future<Integer> future = TaskHandler.callTaskBlock(task, temp, delay);
             Integer id = future.get();
             this.setProgress(DataHelper.percent(tasks.size(), (i+1)));
             logger.debug("【{}】 completed, sub 【{}】", this, TaskHandler.getTask(id));

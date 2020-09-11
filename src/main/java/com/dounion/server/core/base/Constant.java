@@ -21,6 +21,10 @@ public interface Constant {
      */
     String CONF_DOWNLOAD_MAX_COUNT = "download.max_download_count";
     /**
+     * 文件下载最大等待时间
+     */
+    String CONF_DOWNLOAD_MAX_WAIT = "download.max_wait_time";
+    /**
      * 分发注册路由最大活动时间
      */
     String CONF_DOWNLOAD_MAX_ROUTE_TIME = "download.max_route_active_time";
@@ -154,6 +158,7 @@ public interface Constant {
     // ==========================================  http请求相关 ==========================================================
 
     String HTTP_SCHEMA_HTTP = "http://";
+    String HTTP_SCHEMA_HTTPS = "https://";
     String HTTP_METHOD = "HTTP_METHOD";
     String HTTP_METHOD_GET = "GET";
     String HTTP_METHOD_POST = "POST";

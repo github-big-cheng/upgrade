@@ -3,6 +3,7 @@ package com.dounion.server.core.netty.client;
 
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
+import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.eum.NettyRequestTypeEnum;
 import io.netty.bootstrap.Bootstrap;
@@ -181,8 +182,9 @@ public class NettyClient {
         // 设置请求对象
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
         channel.attr(NETTY_CLIENT_REQUEST).set(request);
-        // 设置响应处理 文件放宽等待时间 15分钟
-        NettyResponse<String> response = new NettyResponse<>(15 * 60 * 1000l);
+        // 设置响应处理 文件放宽等待时间 默认20分钟
+        Long maxDownloadTime = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_WAIT, 20 * 60 * 1000l);
+        NettyResponse<String> response = new NettyResponse<>(maxDownloadTime);
         channel.attr(NETTY_CLIENT_RESPONSE).set(response);
 
         return response.get();
