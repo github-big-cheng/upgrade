@@ -46,6 +46,10 @@ public class TaskHandler implements Runnable {
         EXECUTOR_SERVICE.submit(new TaskHandler());
     }
 
+
+    /**
+     * 后台任务-主线程
+     */
     @Override
     public void run() {
         try {
@@ -57,6 +61,7 @@ public class TaskHandler implements Runnable {
                     continue;
                 }
 
+                // 定时任务处理
                 if(task.isLoop()){
                     // 保证loop task 单例运行
                     BaseTask temp = LOOP_TASK_MAP.get(task.getTaskName());
@@ -66,22 +71,8 @@ public class TaskHandler implements Runnable {
                     LOOP_TASK_MAP.put(task.getTaskName(), task);
                 }
 
-                task.setCallback(new BaseTask.Callback() {
-                    @Override
-                    public void doSomething() {
-                        // 任务结束，移除对应的任务线程变量
-                        ThreadLocal<BaseTask> threadLocal = THREAD_LOCAL_MAP.get(task.getTaskId());
-                        BaseTask task1 = threadLocal.get();
-                        if(task1 !=null && !task.isLoop()){
-                            threadLocal.remove();
-                            THREAD_LOCAL_MAP.remove(task.getTaskId());
-                        }
-                    }
-                });
-
                 Future future = EXECUTOR_SERVICE.submit(task);
                 task.setFuture(future);
-
             }
         } catch (Exception e) {
             logger.error("TaskHandler run error:{}", e);
@@ -130,6 +121,7 @@ public class TaskHandler implements Runnable {
             }
         });
 
+
         return taskF;
     }
 
@@ -168,7 +160,7 @@ public class TaskHandler implements Runnable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                TASK_QUEUE.add(taskF);
+                TASK_QUEUE.add(taskF); // 通过队列添加的方式，可以添加task到任务管理中
             }
         });
         taskF.setFuture(future);

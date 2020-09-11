@@ -98,7 +98,7 @@ public abstract class BaseTask implements Callable<Integer> {
      * progress 10%
      */
     protected void setProgressJustStart(){
-        this.setProgress(new BigDecimal(10));
+        this.setProgress(BigDecimal.TEN);
     }
 
     /**
