@@ -48,7 +48,7 @@ public class ChainTask extends BaseTask {
             Future<Integer> future = TaskHandler.callTaskBlock(task, temp, delay);
             Integer id = future.get();
             this.setProgress(DataHelper.percent(tasks.size(), (i+1)));
-            logger.debug("【{}】 completed, sub 【{}】", this, TaskHandler.getTask(id));
+            logger.debug("Chain task completed, sub task is 【{}】", this, task.getTaskName());
 
             i++;
         }
