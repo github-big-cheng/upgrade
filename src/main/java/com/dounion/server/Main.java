@@ -32,9 +32,9 @@ public class Main {
             ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
 
             // 订阅更新服务
-            TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 5000);
+            TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 10000);
             // 分发下载路由注册服务
-            TaskHandler.callTask(Constant.TASK_ROUTE, 10000);
+            TaskHandler.callTask(Constant.TASK_ROUTE, 20000);
 
 
             // 启动服务端

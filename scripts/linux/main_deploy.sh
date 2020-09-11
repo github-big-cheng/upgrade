@@ -85,6 +85,6 @@ if [ ! -d "$bak_dir" ]; then
 	exit 5
 fi
 #启应用
-sh "$bak_dir"/"$shell_name" &
+nohup sh "$bak_dir"/"$shell_name" &
 
 

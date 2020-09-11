@@ -10,7 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,9 +37,9 @@ public class TaskHandler implements Runnable {
     // 任务ID生成器
     private static AtomicInteger TASK_ID = new AtomicInteger(0);
     // 任务控制集合
-    private final static Map<Integer, ThreadLocal<BaseTask>> THREAD_LOCAL_MAP = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<Integer, ThreadLocal<BaseTask>> THREAD_LOCAL_MAP = new ConcurrentHashMap<>();
     // 循环执行任务单例控制
-    private final static ConcurrentHashMap<String, BaseTask> LOOP_TASK_MAP = new ConcurrentHashMap<>();
+    public final static ConcurrentHashMap<String, BaseTask> LOOP_TASK_MAP = new ConcurrentHashMap<>();
 
     static {
         // 创建后台任务处理器
@@ -76,12 +79,58 @@ public class TaskHandler implements Runnable {
                     }
                 });
 
-                EXECUTOR_SERVICE.submit(task);
+                Future future = EXECUTOR_SERVICE.submit(task);
+                task.setFuture(future);
 
             }
         } catch (Exception e) {
             logger.error("TaskHandler run error:{}", e);
         }
+    }
+
+    // ===============================================  BaseTask对象处理  ================================================
+
+
+    /**
+     *
+     * @return
+     */
+    public static BaseTask taskInit(BaseTask task, Map<String, Object> params){
+
+        if(task == null){
+            return null;
+        }
+
+        final BaseTask taskF = task;
+
+        // 生成任务ID
+        Integer id = TASK_ID.addAndGet(1);
+        taskF.setTaskId(id);
+        // 运行参数处理
+        if(params == null){
+            params = new HashMap<>();
+        }
+        if(taskF.getParams() != null){
+            taskF.getParams().putAll(params);
+        } else {
+            taskF.setParams(params);
+        }
+
+        // 设置ThreadLocal 清理
+        task.setCallback(new BaseTask.Callback() {
+            @Override
+            public void doSomething() {
+                // 任务结束，移除对应的任务线程变量
+                ThreadLocal<BaseTask> threadLocal = THREAD_LOCAL_MAP.get(taskF.getTaskId());
+                BaseTask task1 = threadLocal.get();
+                if(task1 !=null && !taskF.isLoop()){
+                    threadLocal.remove();
+                    THREAD_LOCAL_MAP.remove(taskF.getTaskId());
+                }
+            }
+        });
+
+        return taskF;
     }
 
 
@@ -95,24 +144,23 @@ public class TaskHandler implements Runnable {
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Integer callTask(final BaseTask task, Map<String, Object> params, final long delay) {
+    public static Integer callTask(BaseTask task, Map<String, Object> params, final long delay) {
 
         if(task == null){
             logger.warn("task 【{}】 not config, please check it...");
             return null;
         }
 
-        Integer id = TASK_ID.addAndGet(1);
-        task.setTaskId(id);
-        task.setParams(params);
-        THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){
+        final BaseTask taskF = taskInit(task, params);
+
+        THREAD_LOCAL_MAP.put(taskF.getTaskId(), new ThreadLocal<BaseTask>(){
             @Override
             protected BaseTask initialValue() {
-                return task;
+                return taskF;
             }
         });
 
-        EXECUTOR_SERVICE.submit(new Runnable() {
+        Future future = EXECUTOR_SERVICE.submit(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -120,11 +168,12 @@ public class TaskHandler implements Runnable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                TASK_QUEUE.add(task);
+                TASK_QUEUE.add(taskF);
             }
         });
+        taskF.setFuture(future);
 
-        return id;
+        return taskF.getTaskId();
     }
 
 
@@ -227,20 +276,24 @@ public class TaskHandler implements Runnable {
             return null;
         }
 
-        Integer id = TASK_ID.addAndGet(1);
-        task.setTaskId(id);
-        task.setParams(params);
+        final BaseTask taskF = taskInit(task, params);
 
-        final BaseTask taskF = task;
-
-        THREAD_LOCAL_MAP.put(id, new ThreadLocal<BaseTask>(){
+        THREAD_LOCAL_MAP.put(taskF.getTaskId(), new ThreadLocal<BaseTask>(){
             @Override
             protected BaseTask initialValue() {
                 return taskF;
             }
         });
 
-        return EXECUTOR_SERVICE.submit(task);
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Future future = EXECUTOR_SERVICE.submit(taskF);
+        taskF.setFuture(future);
+        return taskF.getFuture();
     }
 
 
@@ -332,7 +385,7 @@ public class TaskHandler implements Runnable {
      * @param taskNames
      */
     public static Integer callTaskChain(Map<String, Object> params, String... taskNames) {
-        return callTaskChain(params, 0, taskNames);
+        return callTaskChain(params, 1000l, taskNames);
     }
 
     /**
@@ -340,7 +393,7 @@ public class TaskHandler implements Runnable {
      * @param taskNames
      */
     public static Integer callTaskChain(String... taskNames) {
-        return callTaskChain(null, 0, taskNames);
+        return callTaskChain(null, 1000l, taskNames);
     }
 
 
@@ -349,6 +402,9 @@ public class TaskHandler implements Runnable {
      * 获取具体任务对象，可能已执行完毕被删除
      */
     public static BaseTask getTask(Integer id) {
+        if(id == null){
+            return null;
+        }
         return THREAD_LOCAL_MAP.get(id)==null ? null : THREAD_LOCAL_MAP.get(id).get();
     }
 
@@ -374,6 +430,27 @@ public class TaskHandler implements Runnable {
             tasks.add(THREAD_LOCAL_MAP.get(id).get());
         }
         return tasks;
+    }
+
+
+    /**
+     * 按名称唤醒sleep中的线程
+     *  Thread.sleep方法需要被 try catch
+     *      try {
+     *          Thread.sleep(delay);
+     *      } catch (InterruptedException e) {
+     *          e.printStackTrace();
+     *      }
+     * @param taskName
+     * @return
+     */
+    public static boolean wakeUp(String taskName){
+        BaseTask task = LOOP_TASK_MAP.get(taskName);
+        if(task == null){
+            return false;
+        }
+
+        return task.wakeUp();
     }
 
 }

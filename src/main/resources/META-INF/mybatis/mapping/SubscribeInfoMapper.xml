@@ -7,6 +7,7 @@
     <result column="CODE" jdbcType="VARCHAR" property="code" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="APP_TYPE" jdbcType="VARCHAR" property="appType" />
+    <result column="VERSION_NO" property="versionNo" jdbcType="VARCHAR" />
     <result column="OS_TYPE" jdbcType="VARCHAR" property="osType" />
     <result column="IS_STAND_BY" jdbcType="VARCHAR" property="isStandBy" />
     <result column="PUBLISH_URL" jdbcType="VARCHAR" property="publishUrl" />
@@ -15,7 +16,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    ID, CODE, `NAME`, APP_TYPE, OS_TYPE, IS_STAND_BY, PUBLISH_URL, STATUS, SUBSCRIBE_TIME
+    ID, CODE, `NAME`, APP_TYPE, VERSION_NO, OS_TYPE, IS_STAND_BY, PUBLISH_URL, STATUS, SUBSCRIBE_TIME
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -34,15 +35,16 @@
     insert into T_UPGRADE_SUBSCRIBE_INFO (
         <include refid="Base_Column_List" />
     ) values (
-      #{id,jdbcType=INTEGER},
-      #{code,jdbcType=VARCHAR},
-      #{name,jdbcType=VARCHAR},
-      #{appType,jdbcType=VARCHAR},
-      #{osType,jdbcType=VARCHAR},
-      #{isStandBy,jdbcType=VARCHAR},
-      #{publishUrl,jdbcType=VARCHAR},
-      #{status,jdbcType=VARCHAR},
-      #{subscribeTime,jdbcType=VARCHAR}
+        #{id,jdbcType=INTEGER},
+        #{code,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR},
+        #{appType,jdbcType=VARCHAR},
+        #{versionNo,jdbcType=VARCHAR},
+        #{osType,jdbcType=VARCHAR},
+        #{isStandBy,jdbcType=VARCHAR},
+        #{publishUrl,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},
+        #{subscribeTime,jdbcType=VARCHAR}
     )
   </insert>
 
@@ -61,6 +63,9 @@
       </if>
       <if test="appType != null">
         APP_TYPE,
+      </if>
+      <if test="versionNo != null" >
+        VERSION_NO,
       </if>
       <if test="osType != null">
         OS_TYPE,
@@ -90,6 +95,9 @@
       </if>
       <if test="appType != null">
         #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="versionNo != null" >
+        #{versionNo,jdbcType=VARCHAR},
       </if>
       <if test="osType != null">
         #{osType,jdbcType=VARCHAR},
@@ -121,6 +129,9 @@
       <if test="appType != null">
         APP_TYPE = #{appType,jdbcType=VARCHAR},
       </if>
+      <if test="versionNo != null" >
+        VERSION_NO = #{versionNo,jdbcType=VARCHAR},
+      </if>
       <if test="osType != null">
         OS_TYPE = #{osType,jdbcType=VARCHAR},
       </if>
@@ -145,6 +156,7 @@
     set CODE = #{code,jdbcType=VARCHAR},
       `NAME` = #{name,jdbcType=VARCHAR},
       APP_TYPE = #{appType,jdbcType=VARCHAR},
+      VERSION_NO = #{versionNo,jdbcType=VARCHAR},
       OS_TYPE = #{osType,jdbcType=VARCHAR},
       IS_STAND_BY = #{isStandBy,jdbcType=VARCHAR},
       PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR},
@@ -166,6 +178,9 @@
       </if>
       <if test="appType != null">
         AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="versionNo != null">
+        AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
       </if>
       <if test="osType != null">
         AND OS_TYPE = #{osType,jdbcType=VARCHAR}
@@ -198,6 +213,9 @@
       <if test="appType != null">
         AND APP_TYPE = #{appType,jdbcType=VARCHAR}
       </if>
+      <if test="versionNo != null">
+        AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
       <if test="osType != null">
         AND OS_TYPE = #{osType,jdbcType=VARCHAR}
       </if>
@@ -212,6 +230,12 @@
       </if>
       <if test="subscribeTime != null">
         AND SUBSCRIBE_TIME = #{subscribeTime,jdbcType=VARCHAR}
+      </if>
+      <if test="notInServiceTypes != null">
+        AND APP_TYPE NOT IN
+        <foreach item="item" index="index" collection="notInServiceTypes.split(',')"  open="(" separator="," close=")">
+          #{item}
+        </foreach>
       </if>
     </trim>
   </select>

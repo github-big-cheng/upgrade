@@ -344,7 +344,6 @@ public class MappingConfigHandler {
 
         if(error != null){
             response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
-            buf = Unpooled.copiedBuffer(error.getMessage(), CharsetUtil.UTF_8);
         }
 
         return response.replace(buf);

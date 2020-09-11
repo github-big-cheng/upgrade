@@ -51,8 +51,11 @@ public class DownloadRouteRecordServiceImpl implements DownloadRouteRecordServic
         VersionInfo versionQuery = new VersionInfo();
         versionQuery.setAppType(record.getAppType());
         List<VersionInfo> versionInfos = versionInfoMapper.selectListBySelective(versionQuery);
-        if(CollectionUtils.isEmpty(versionInfos) ||
-                !StringUtils.equals(versionInfos.get(0).getVersionNo(), record.getVersionNo())){
+        if(CollectionUtils.isEmpty(versionInfos)){
+            logger.info("version not found 【{}】", record.getAppType());
+            return;
+        }
+        if(!StringUtils.equals(versionInfos.get(0).getVersionNo(), record.getVersionNo())) {
             logger.info("versionNo is [{}], current version is [{}] ,version check not access, exit",
                     record.getVersionNo(), versionInfos.get(0).getVersionNo());
             return;

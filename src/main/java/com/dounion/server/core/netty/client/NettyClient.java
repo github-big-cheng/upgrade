@@ -50,6 +50,8 @@ public class NettyClient {
     private NettyClient(String ip, int port, boolean isMaster) {
 
         this.isMaster = isMaster;
+        this.ip = ip;
+        this.port = port;
 
         bootstrap = new Bootstrap();
         bootstrap.group(WORKER_GROUP)
@@ -59,12 +61,24 @@ public class NettyClient {
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                 .handler(new NettyClientInitializer());
 
+        this.connect(ip, port);
+    }
+
+    public void connect(String ip, int port) {
         this.future = bootstrap.connect(ip, port);
     }
 
+    private String ip;
+    private int port;
     private boolean isMaster;
     private Bootstrap bootstrap;
     private ChannelFuture future;
+
+
+    @Override
+    public String toString() {
+        return "[ ip:" + this.ip + ", port:" + this.port + ", isMaster:" + this.isMaster + "]";
+    }
 
     /**
      * 获取NettyClient
@@ -97,6 +111,12 @@ public class NettyClient {
     public static NettyClient getMasterInstance() {
 
         if(masterInstance != null){
+            // 已完成，重新连接
+            if(masterInstance.future.isSuccess()){
+                masterInstance.future.channel().close();
+                masterInstance.connect(masterInstance.ip, masterInstance.port);
+            }
+
             return masterInstance;
         }
 
@@ -152,14 +172,17 @@ public class NettyClient {
 
 
     public String fileDownload(String url) {
+
+        logger.debug("【{}】 fileDownload execute...url:【{}】", this, url);
+
         Channel channel = this.future.channel();
         // 设置请求类型
         channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.FILE);
         // 设置请求对象
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
         channel.attr(NETTY_CLIENT_REQUEST).set(request);
-        // 设置响应处理
-        NettyResponse<String> response = new NettyResponse<>();
+        // 设置响应处理 文件放宽等待时间 15分钟
+        NettyResponse<String> response = new NettyResponse<>(15 * 60 * 1000l);
         channel.attr(NETTY_CLIENT_RESPONSE).set(response);
 
         return response.get();
@@ -170,6 +193,8 @@ public class NettyClient {
 
         String url = params.get(Constant.HTTP_URL);
         Assert.notNull(url, "url can not be null,please check it");
+
+        logger.debug("【{}】 doHttpRequest execute...url:【{}】,params【{}】", this, url, params);
 
         // 请求方式
         HttpMethod httpMethod = HttpMethod.valueOf(params.get(Constant.HTTP_METHOD));

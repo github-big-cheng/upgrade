@@ -45,13 +45,14 @@ public interface Constant {
      * 工作目录
      */
     String PATH_WORK = System.getProperty("user.dir") + File.separator;
-    //    String PATH_WORK = System.getProperty("user.dir") + File.separator + "src\\main\\resources\\";
     File PATH_WORK_FILE = new File(PATH_WORK);
     /**
      * 配置文件路径
      */
-    String PATH_CONF = PATH_WORK + "conf" + File.separator;
-//    String PATH_CONF = PATH_WORK_FILE.getParent() + File.separator + "conf" + File.separator;
+    // 本地运行
+//    String PATH_CONF = PATH_WORK + "conf" + File.separator;
+    // 服务器打包
+    String PATH_CONF = PATH_WORK_FILE.getParent() + File.separator + "conf" + File.separator;
     /**
      * 静态文件路径
      */

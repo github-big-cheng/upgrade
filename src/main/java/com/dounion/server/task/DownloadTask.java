@@ -53,7 +53,12 @@ public class DownloadTask extends BaseTask {
 
         String downloadUrl = Constant.URL_DOWNLOAD + versionInfo.getFileName();
         String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl);
+        logger.debug("filePath is 【{}】", filePath);
 
+        // 检查文件是否下载成功
+        if(StringUtils.isBlank(filePath)){
+            throw new BusinessException(StringHelper.parse1("【{}】下载失败", downloadUrl));
+        }
         File file = new File(filePath);
         // 检查文件是否下载成功
         if(!file.exists()){
@@ -76,19 +81,12 @@ public class DownloadTask extends BaseTask {
         // 更新文件路径
         versionInfo.setFilePath(filePath);
         versionInfo.setFileSize(file.length());
+        versionInfo.setFileMd5(fileMd5);
         versionInfoService.update(versionInfo);
 
-        // 调用路由注册服务
-        TaskHandler.callTask(new RouteTask(){
-            @Override
-            public String getTaskName() {
-                return "部署后台任务-" + id ;
-            }
+        super.setProgressComplete(); // progress 100%
 
-            @Override
-            public boolean isLoop() {
-                return false;
-            }
-        });
+        // 调用路由注册服务
+        TaskHandler.wakeUp(Constant.TASK_ROUTE);
     }
 }

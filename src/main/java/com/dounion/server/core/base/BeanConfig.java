@@ -40,10 +40,12 @@ public class BeanConfig {
 
     private final static Logger logger = LoggerFactory.getLogger(BeanConfig.class);
 
-//    private final static String PATH_CONF =
-//            new File(System.getProperty("user.dir")).getParent() + File.separator + "conf" + File.separator;
+    // 服务器打包
     private final static String PATH_CONF =
-            System.getProperty("user.dir") + File.separator + "conf" + File.separator;
+            new File(System.getProperty("user.dir")).getParent() + File.separator + "conf" + File.separator;
+    // 本地运行
+//    private final static String PATH_CONF =
+//            System.getProperty("user.dir") + File.separator + "conf" + File.separator;
 
     @Bean
     public ServiceInfo serverInfo() throws Exception{

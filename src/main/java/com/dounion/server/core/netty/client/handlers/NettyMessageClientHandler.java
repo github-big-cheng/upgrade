@@ -27,37 +27,33 @@ public class NettyMessageClientHandler extends AbstractNettyClientHandler<String
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
 
-        try {
-            if(this.nettyResponse == null){
-                this.nettyResponse =
-                        (NettyResponse<String>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
-            }
-
-            if (msg instanceof HttpResponse) {
-                HttpResponse response = (HttpResponse) msg;
-                if(!HttpResponseStatus.OK.equals(response.status())){
-                    this.nettyResponse.setError(new SystemException("netty client no response"));
-                    return;
-                }
-            }
-            if (msg instanceof HttpContent) {
-                HttpContent content = (HttpContent) msg;
-                result.append(content.content().toString(CharsetUtil.UTF_8));
-                if (content instanceof LastHttpContent) {
-                    this.nettyResponse.setSuccess(result.toString());
-                }
-            }
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            ReferenceCountUtil.release(msg);
+        if (this.nettyResponse == null) {
+            this.nettyResponse =
+                    (NettyResponse<String>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
         }
+
+        if (msg instanceof HttpResponse) {
+            HttpResponse response = (HttpResponse) msg;
+            if (!HttpResponseStatus.OK.equals(response.status())) {
+                this.nettyResponse.setError(new SystemException("netty client no response"));
+                return;
+            }
+        }
+        if (msg instanceof HttpContent) {
+            HttpContent content = (HttpContent) msg;
+            result.append(content.content().toString(CharsetUtil.UTF_8));
+            if (content instanceof LastHttpContent) {
+                this.nettyResponse.setSuccess(result.toString());
+            }
+        }
+
+        ReferenceCountUtil.retain(msg);
+
     }
 
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
         ctx.channel().close();
     }
 }

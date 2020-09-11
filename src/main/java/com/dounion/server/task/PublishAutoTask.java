@@ -11,7 +11,6 @@ import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.service.UpgradeRecordService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -43,7 +42,7 @@ public class PublishAutoTask extends BaseTask {
         query.put("maxCount", ConfigurationHelper.getInt(Constant.CONF_PUBLISH_MAX_NOTIFY_COUNT, 1));
         List<Map<String, Object>> list = upgradeRecordService.publishListQuery(query);
         if(CollectionUtils.isEmpty(list)){
-            logger.info("no publish record found");
+            logger.info("【{}】 no publish record found, task will exit", this);
             return;
         }
 
@@ -72,7 +71,7 @@ public class PublishAutoTask extends BaseTask {
                     record.setAppType((String) item.get("APP_TYPE"));
                     record.setVersionNo((String) item.get("VERSION_NO"));
                     record.setFileName((String) item.get("FILE_NAME"));
-                    record.setFileSize((Long) item.get("FILE_SIZE"));
+                    record.setFileSize(Long.valueOf((Integer) item.get("FILE_SIZE")));
                     record.setFileMd5((String) item.get("FILE_MD5"));
                     record.setPublishType((String) item.get("PUBLISH_TYPE"));
                     record.setNotifyCount(0);
@@ -101,12 +100,12 @@ public class PublishAutoTask extends BaseTask {
 
                 Map<String, Object> rst = JSON.parseObject(result, Map.class);
                 record.setNotifyStatus("0");
-                if(rst != null && StringUtils.equals((String) rst.get("code"), "0")){
+                if(rst != null && (Integer) rst.get("code") == 0){
                     record.setNotifyStatus("1");
                 }
 
             } catch (Exception e) {
-                logger.error("record publish failed..{}", item);
+                logger.error("record 【{}】 publish failed..,{}", item, e);
             } finally {
                 if(record != null && record.getId()!=null){
                     upgradeRecordService.updateBySelective(record);

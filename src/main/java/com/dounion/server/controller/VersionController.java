@@ -10,15 +10,20 @@ import com.dounion.server.entity.VersionInfo;
 import com.dounion.server.eum.ResponseTypeEnum;
 import com.dounion.server.service.VersionInfoService;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/version")
 public class VersionController {
+
+    private final static Logger logger = LoggerFactory.getLogger(VersionController.class);
 
     @Autowired
     private VersionInfoService versionInfoService;
@@ -60,10 +65,11 @@ public class VersionController {
      */
     @RequestMapping("/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object addJson(final VersionInfo record, File file){
+    public Object addJson(VersionInfo record, File file){
 
         // 是否远程发布
         boolean isRemotePublish = StringUtils.equals(record.getAddSource(), "2");
+        logger.debug("is current mode remote publish {}", isRemotePublish);
         if(!isRemotePublish){
             // 本地上传 检查文件
             if(file == null){
@@ -77,23 +83,22 @@ public class VersionController {
             record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
         }
         // 更新版本信息
-        versionInfoService.updateVersion(record);
+        final int versionId = versionInfoService.updateVersion(record);
+        logger.debug("new version id is 【{}】", versionId);
 
         // 自动发布 - 调度任务:发布通知
         if(StringUtils.equals(record.getPublishType(), "2")){
             TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
         }
 
+        Map<String, Object> taskParams = new HashMap<>();
+        taskParams.put("versionId", versionId);
+
         if(isRemotePublish){
             // 文件下载
-            TaskHandler.callTaskChain(
-                new HashMap(){{ put("versionId", record.getId()); }}, // 版本ID
-                Constant.TASK_DOWNLOAD, Constant.TASK_DEPLOY
-            );
+            TaskHandler.callTaskChain(taskParams, Constant.TASK_DOWNLOAD, Constant.TASK_DEPLOY);
         } else {
-            TaskHandler.callTask(Constant.TASK_DEPLOY, new HashMap(){{
-                put("versionId", record.getId()); // 版本ID
-            }});
+            TaskHandler.callTask(Constant.TASK_DEPLOY, taskParams);
         }
 
         return ResponseBuilder.buildSuccess();

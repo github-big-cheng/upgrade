@@ -36,7 +36,7 @@ public class VersionInfoServiceImpl implements VersionInfoService {
 
     @Transactional
     @Override
-    public void updateVersion(VersionInfo record) {
+    public int updateVersion(VersionInfo record) {
 
         // 删除已有版本信息
         VersionInfo delete = new VersionInfo();
@@ -47,5 +47,6 @@ public class VersionInfoServiceImpl implements VersionInfoService {
         record.setStatus("1");
         record.setPublishDate(DateHelper.format(new Date()));
         versionInfoMapper.insert(record);
+        return record.getId();
     }
 }

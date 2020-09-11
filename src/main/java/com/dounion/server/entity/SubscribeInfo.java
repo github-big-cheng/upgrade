@@ -12,6 +12,8 @@ public class SubscribeInfo extends BaseEntity {
 
     private String appType; // 应用类型
 
+    private String versionNo; // 当前版本号
+
     private String osType; // 操作系统类型
 
     private String isStandBy; // 是否提供分发下载服务 1-是 0-否
@@ -24,6 +26,8 @@ public class SubscribeInfo extends BaseEntity {
 
     // 查询条件
     private String codes;
+    // serviceCodes
+    private String notInServiceTypes;
 
     public Integer getId() {
         return id;
@@ -55,6 +59,14 @@ public class SubscribeInfo extends BaseEntity {
 
     public void setAppType(String appType) {
         this.appType = appType == null ? null : appType.trim();
+    }
+
+    public String getVersionNo() {
+        return versionNo;
+    }
+
+    public void setVersionNo(String versionNo) {
+        this.versionNo = versionNo;
     }
 
     public String getOsType() {
@@ -103,5 +115,13 @@ public class SubscribeInfo extends BaseEntity {
 
     public void setCodes(String codes) {
         this.codes = codes;
+    }
+
+    public String getNotInServiceTypes() {
+        return notInServiceTypes;
+    }
+
+    public void setNotInServiceTypes(String notInServiceTypes) {
+        this.notInServiceTypes = notInServiceTypes;
     }
 }

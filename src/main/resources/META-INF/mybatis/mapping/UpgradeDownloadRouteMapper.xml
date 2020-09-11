@@ -29,7 +29,8 @@
     where ID = #{id,jdbcType=INTEGER}
   </delete>
   
-  <insert id="insert" parameterType="com.dounion.server.entity.DownloadRouteRecord" >
+  <insert id="insert" parameterType="com.dounion.server.entity.DownloadRouteRecord"
+          useGeneratedKeys="true" keyProperty="id">
     insert into T_UPGRADE_DOWNLOAD_ROUTE (
         <include refid="Base_Column_List"/>
     ) values (
@@ -44,7 +45,8 @@
     )
   </insert>
   
-  <insert id="insertSelective" parameterType="com.dounion.server.entity.DownloadRouteRecord" >
+  <insert id="insertSelective" parameterType="com.dounion.server.entity.DownloadRouteRecord"
+          useGeneratedKeys="true" keyProperty="id">
     insert into T_UPGRADE_DOWNLOAD_ROUTE
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -28,25 +29,45 @@ public class SubscribeServiceImpl implements SubscribeService {
     @Override
     public void addSubscribe(SubscribeInfo record) {
 
-        String[] services = StringUtils.split(record.getAppType(), ",");
-        if(services==null || services.length==0){
+        String[] appTypes = StringUtils.split(record.getAppType(), ",");
+        if(appTypes==null || appTypes.length==0){
             return;
         }
 
-        // 删除指定库点下所有订阅记录
+        // 移除本次未注册的服务
         SubscribeInfo delete = new SubscribeInfo();
         delete.setCode(record.getCode());
+        delete.setNotInServiceTypes(record.getAppType());
         subscribeInfoMapper.deleteBySelective(delete);
 
+        // 订阅时间
         String time = DateHelper.format(new Date());
-        SubscribeInfo temp;
-        for(String service : services){
-            temp = new SubscribeInfo();
-            BeanUtils.copyProperties(record, temp);
-            temp.setAppType(service);
-            temp.setStatus("1");
-            temp.setSubscribeTime(time);
-            subscribeInfoMapper.insert(temp);
+
+        // 遍历处理订阅记录
+        for(String appType : appTypes){
+
+            // 查询指定版本是否已订阅指定库点下所有订阅记录
+            SubscribeInfo query = new SubscribeInfo();
+            query.setCode(record.getCode());
+            query.setAppType(appType);
+            List<SubscribeInfo> list = subscribeInfoMapper.selectListBySelective(query);
+
+            SubscribeInfo temp;
+            if(!CollectionUtils.isEmpty(list)){
+                // 已存在记录
+                temp = list.get(0);
+                record.setId(temp.getId());
+                record.setAppType(appType);
+                subscribeInfoMapper.updateByPrimaryKeySelective(record);
+            } else {
+                temp = new SubscribeInfo();
+                BeanUtils.copyProperties(record, temp);
+                temp.setAppType(appType);
+                temp.setStatus("1");
+                temp.setSubscribeTime(time);
+                subscribeInfoMapper.insert(temp);
+            }
+
         }
     }
 

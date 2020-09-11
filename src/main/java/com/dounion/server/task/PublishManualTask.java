@@ -12,7 +12,6 @@ import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.service.UpgradeRecordService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -89,7 +88,7 @@ public class PublishManualTask extends BaseTask {
                 logger.info("manual publish task result:【{}】", result);
 
                 Map<String, Object> rst = JSON.parseObject(result, Map.class);
-                if(rst != null && StringUtils.equals((String) rst.get("code"), "0")){
+                if(rst != null && (Integer) rst.get("code") == 0){
                     record.setNotifyStatus("1");
                 }
 

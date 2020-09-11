@@ -166,8 +166,16 @@
                     <overwrite>true</overwrite>
                 </configuration>
                 <executions>
+<!--                    <execution>-->
+<!--                        <id>Generate MyBatis Artifacts</id>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
                     <execution>
                         <id>Generate MyBatis Artifacts</id>
+                        <!--<phase>package</phase>-->
+                        <phase>deploy</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>

@@ -51,7 +51,8 @@
     where ID = #{id,jdbcType=INTEGER}
   </delete>
 
-  <insert id="insert" parameterType="com.dounion.server.entity.UpgradeRecord" >
+  <insert id="insert" parameterType="com.dounion.server.entity.UpgradeRecord"
+            useGeneratedKeys="true" keyProperty="id">
     insert into T_UPGRADE_RECORD (
         <include refid="Base_Column_List" />
     ) values (
@@ -64,7 +65,7 @@
         #{appType,jdbcType=VARCHAR},
         #{versionNo,jdbcType=VARCHAR},
         #{fileName,jdbcType=VARCHAR},
-        #{fileSize,jdbcType=INTEGER},
+        #{fileSize,jdbcType=BIGINT},
         #{fileMd5,jdbcType=VARCHAR},
         #{isForceUpdate,jdbcType=VARCHAR},
         #{publishType,jdbcType=VARCHAR},
@@ -77,7 +78,8 @@
         #{upgradeTime,jdbcType=VARCHAR})
   </insert>
 
-  <insert id="insertSelective" parameterType="com.dounion.server.entity.UpgradeRecord" >
+  <insert id="insertSelective" parameterType="com.dounion.server.entity.UpgradeRecord"
+            useGeneratedKeys="true" keyProperty="id">
     insert into T_UPGRADE_RECORD
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -170,7 +172,7 @@
         #{fileName,jdbcType=VARCHAR},
       </if>
       <if test="fileSize != null" >
-        #{fileSize,jdbcType=INTEGER},
+        #{fileSize,jdbcType=BIGINT},
       </if>
       <if test="fileMd5 != null" >
         #{fileMd5,jdbcType=VARCHAR},
@@ -233,7 +235,7 @@
         FILE_NAME = #{fileName,jdbcType=VARCHAR},
       </if>
       <if test="fileSize != null" >
-        FILE_SIZE = #{fileSize,jdbcType=INTEGER},
+        FILE_SIZE = #{fileSize,jdbcType=BIGINT},
       </if>
       <if test="fileMd5 != null" >
         FILE_MD5 = #{fileMd5,jdbcType=VARCHAR},
@@ -279,7 +281,7 @@
       APP_TYPE = #{appType,jdbcType=VARCHAR},
       VERSION_NO = #{versionNo,jdbcType=VARCHAR},
       FILE_NAME = #{fileName,jdbcType=VARCHAR},
-      FILE_SIZE = #{fileSize,jdbcType=INTEGER},
+      FILE_SIZE = #{fileSize,jdbcType=BIGINT},
       FILE_MD5 = #{fileMd5,jdbcType=VARCHAR},
       IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR},
       PUBLISH_TYPE = #{publishType,jdbcType=VARCHAR},
@@ -323,7 +325,7 @@
         AND FILE_NAME = #{fileName,jdbcType=VARCHAR}
       </if>
       <if test="fileSize != null" >
-        AND FILE_SIZE = #{fileSize,jdbcType=INTEGER}
+        AND FILE_SIZE = #{fileSize,jdbcType=BIGINT}
       </if>
       <if test="fileMd5 != null" >
         AND FILE_MD5 = #{fileMd5,jdbcType=VARCHAR}
@@ -385,7 +387,7 @@
         AND FILE_NAME = #{fileName,jdbcType=VARCHAR}
       </if>
       <if test="fileSize != null" >
-        AND FILE_SIZE = #{fileSize,jdbcType=INTEGER}
+        AND FILE_SIZE = #{fileSize,jdbcType=BIGINT}
       </if>
       <if test="fileMd5 != null" >
         AND FILE_MD5 = #{fileMd5,jdbcType=VARCHAR}

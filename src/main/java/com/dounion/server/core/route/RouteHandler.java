@@ -139,6 +139,10 @@ public class RouteHandler {
      */
     public static void routeCancel(String path, String host) {
         List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(path);
+        if(CollectionUtils.isEmpty(records)){
+            return;
+        }
+
         int removeInx = -1;
         for(int i=0; i<records.size(); i++){
             if(StringUtils.equals(records.get(i).getHost(), host)){

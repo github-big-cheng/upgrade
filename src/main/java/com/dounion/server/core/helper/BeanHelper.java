@@ -37,7 +37,7 @@ public class BeanHelper {
             descriptor = propertyDescriptors[i];
             propertyName = descriptor.getName();
             fieldType = descriptor.getPropertyType();
-            paraValueStr = (String) map.get(propertyName);
+            paraValueStr = map.get(propertyName)==null ? null : String.valueOf(map.get(propertyName));
             if (StringUtils.isEmpty(paraValueStr)) {
                 continue;
             }

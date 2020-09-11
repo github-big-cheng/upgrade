@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * 抽象任务
@@ -20,6 +21,7 @@ public abstract class BaseTask implements Callable<Integer> {
     protected Map<String, Object> params; // 额外参数
     private Callback callback; // 回调函数
     private boolean interrupt = false; // 中断标识
+    private Future<Integer> future;
 
     // 页面展示
     private String taskName;
@@ -74,6 +76,14 @@ public abstract class BaseTask implements Callable<Integer> {
 
     public long getCostTime() {
         return costTime;
+    }
+
+    public Future<Integer> getFuture() {
+        return future;
+    }
+
+    public void setFuture(Future<Integer> future) {
+        this.future = future;
     }
 
     public BigDecimal getProgress() {
@@ -144,6 +154,7 @@ public abstract class BaseTask implements Callable<Integer> {
                 + ", progress=" + this.getProgress()
                 + ", isLoop=" + this.isLoop()
                 + ", loopDelay=" + this.getLoopDelay()
+                + ", params=" + this.params
                 + "}";
     }
 
@@ -154,6 +165,16 @@ public abstract class BaseTask implements Callable<Integer> {
     public boolean interrupted(){
         return interrupt = true;
     }
+
+
+    /**
+     * 唤醒sleep中的任务
+     * @return
+     */
+    public boolean wakeUp(){
+        return this.getFuture().cancel(true);
+    }
+
 
     /**
      * 当前任务是否被要求中断

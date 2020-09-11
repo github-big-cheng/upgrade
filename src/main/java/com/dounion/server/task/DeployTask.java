@@ -47,7 +47,7 @@ public class DeployTask extends BaseTask {
 
         Integer versionId = (Integer) super.params.get("versionId");
         VersionInfo versionInfo = versionInfoMapper.selectByPrimaryKey(versionId);
-        if(versionId == null){
+        if(versionInfo == null){
             logger.error("【{}】 version has been expired, deploy task will be exit", this);
             return;
         }
@@ -70,7 +70,7 @@ public class DeployTask extends BaseTask {
             }
 
             // check version
-            if(appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) > 0){
+            if(appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) >= 0){
                 logger.debug("【{}】 current version is {}, deploy version is {}, deploy task will be exit",
                         this, appInfo.getVersionNo(), versionInfo.getVersionNo());
                 break;

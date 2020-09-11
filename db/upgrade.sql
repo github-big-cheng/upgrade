@@ -10,6 +10,7 @@ CREATE TABLE T_UPGRADE_SUBSCRIBE_INFO
     CODE           VARCHAR(10),  -- 库点代码
     NAME           VARCHAR(70),  -- 库点名称
     APP_TYPE       VARCHAR(15),  -- 应用类型
+    VERSION_NO     VARCHAR(15),  -- 版本号
     OS_TYPE        VARCHAR(15),  -- 操作系统类型
     IS_STAND_BY    CHAR(1),      -- 是否提供分发下载服务 1-是 0-否
     PUBLISH_URL    VARCAHR(100), -- 通知地址
