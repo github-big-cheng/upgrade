@@ -1,1 +1,43 @@
-{"code":"dounion118","ignoreMode":"1","localIp":"127.0.0.1","localServices":"[{\"appType\":\"40100-10\",\"deployTypeEnum\":\"TOMCAT\",\"versionNo\":\"1.0.0\",\"workPath\":\"/home/dounion/tomcat/tomcat-appServer\"},{\"appType\":\"40100-60\",\"deployTypeEnum\":\"MAIN\",\"versionNo\":\"1.0.0\",\"workPath\":\"E:\\\\upgrade\\\\nnlk118\\\\dosmart-controller\"}]","master":"1","masterBlur":true,"masterIp":"120.77.63.203","masterPort":8001,"name":"测试118","osType":"40300-20","port":8001,"publishPath":"http://127.0.0.1:8001/version/add.json","standBy":"1","standByBlur":true}
+{
+  // 库点代码
+  "code": "dounion118",
+  // 库点名称
+  "name": "测试118",
+  // 当前主机IP
+  "localIp": "127.0.0.1",
+  // 服务端口
+  "port": 8001,
+  // 忽略模式 非强制更新不更新
+  "ignoreMode": "1",
+  // 是否是master
+  "master": "1",
+  // 上级服务器IP
+  "masterIp" : "127.0.0.1",
+  // 上级服务器IP
+  "masterPort" : 8001,
+  // 操作系统
+  "osType": "40300-20",
+  // 是否提供分发下载服务
+  "standBy": "1",
+  // 发布回调地址 未配置则默认 http://local_ip:port/version/add.json
+  "publishPath": "",
+  // 本地注册的服务
+  "localServices": [
+    {
+      // 服务类型
+      "appType": "40100-140",
+      // 版本号
+      "versionNo" : "1.0.0",
+      // 工作目录
+      "workPath" : "E:\\upgrade\\nnlk118\\app"
+    },
+    {
+      // 服务类型
+      "appType": "40100-60",
+      // 版本号
+      "versionNo" : "1.0.0",
+      // 工作目录
+      "workPath" : "E:\\upgrade\\nnlk118\\dosmart-controller"
+    }
+  ]
+}

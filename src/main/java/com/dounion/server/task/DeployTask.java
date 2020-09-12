@@ -53,7 +53,7 @@ public class DeployTask extends BaseTask {
         }
 
         // 获取本地服务列表
-        List<AppInfo> localServices = serviceInfo.getLocalServiceList();
+        List<AppInfo> localServices = serviceInfo.getLocalServices();
         if(CollectionUtils.isEmpty(localServices)){
             logger.info("【{}】 local service list is empty, deploy task exit", this);
             return;
@@ -94,7 +94,6 @@ public class DeployTask extends BaseTask {
 
             // 发布完成更新serviceInfo 信息
             appInfo.setVersionNo(versionInfo.getVersionNo());
-            serviceInfo.setLocalServices(JSON.toJSONString(localServices));
             serviceInfo.toFile();
 
             super.setProgressComplete(); // progress 100%

@@ -109,7 +109,7 @@ public class IndexController {
             ServiceInfo newInfo = JSONObject.parseObject(Files.readAllBytes(file.toPath()), ServiceInfo.class);
 
             if(!StringUtils.equals(serviceInfo.getLocalIp(), newInfo.getLocalIp()) ||
-                    serviceInfo.getPort() != newInfo.getPort()){
+                    !serviceInfo.getPort().equals(newInfo.getPort())){
                 message = "警告：文件已更新，修改IP或PORT需要重启服务";
             }
 
@@ -119,7 +119,6 @@ public class IndexController {
             BeanUtils.copyProperties(newInfo, serviceInfo);
             serviceInfo.setMaster(newInfo.getMaster());
             serviceInfo.setStandBy(newInfo.getStandBy());
-            serviceInfo.reloadLocalService();
 
             // 向主机刷新服务订阅信息
             TaskHandler.callTask(Constant.TASK_SUBSCRIBE);

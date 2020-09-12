@@ -1,9 +1,7 @@
 package com.dounion.server.core.base;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dounion.server.core.helper.FileHelper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceInfo {
@@ -46,9 +43,6 @@ public class ServiceInfo {
     // 操作系统类型
     private String osType;
 
-    // 本地注册的服务
-    private String localServices;
-
     // 是否提供分发下载服务
     private String standBy;
 
@@ -56,8 +50,7 @@ public class ServiceInfo {
     private String publishPath;
 
     // 本地注册服务列表
-    @JSONField(serialize = false)
-    private List<AppInfo> localServiceList;
+    private List<AppInfo> localServices;
 
 
     // ============================= extended method  ==============================
@@ -79,7 +72,7 @@ public class ServiceInfo {
             .append("\r\n\t publishPath:").append(this.getPublishPath()).append(", \t")
         ;
 
-        List<AppInfo> appList = this.getLocalServiceList();
+        List<AppInfo> appList = this.getLocalServices();
         if(!CollectionUtils.isEmpty(appList)){
             sb.append("\r\n\t localServices :[\r\n");
             for(AppInfo app : appList){
@@ -109,31 +102,10 @@ public class ServiceInfo {
     }
 
 
-    /**
-     * 获取本地服务列表
-     * @return
-     */
-    public List<AppInfo> getLocalServiceList() {
-        if(this.localServiceList == null){
-            this.localServiceList = new ArrayList<>();
-            JSONArray array = JSON.parseArray(this.localServices);
-            for(int i=0; i<array.size(); i++){
-                this.localServiceList.add(array.getObject(i, AppInfo.class));
-            }
-        }
-        return localServiceList;
-    }
-
-    /**
-     * 重新加载本地服务列表
-     */
-    public void reloadLocalService(){
-        this.localServiceList = null;
-    }
-
     public void toFile(){
         try {
-            FileHelper.writeFile(Constant.PATH_CONF + Constant.FILE_JSON_CONFIG_NAME, JSONObject.toJSONString(this));
+            String jsonString = JSON.toJSONString(this, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+            FileHelper.writeFile(Constant.PATH_CONF + Constant.FILE_JSON_CONFIG_NAME, jsonString);
         } catch (IOException e) {
             logger.error("ServiceInfo write to file error: {}", e);
         }
@@ -234,12 +206,11 @@ public class ServiceInfo {
         this.publishPath = publishPath;
     }
 
-    public String getLocalServices() {
-        this.getLocalServiceList();
+    public List<AppInfo> getLocalServices() {
         return localServices;
     }
 
-    public void setLocalServices(String localServices) {
+    public void setLocalServices(List<AppInfo> localServices) {
         this.localServices = localServices;
     }
 }

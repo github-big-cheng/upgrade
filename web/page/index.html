@@ -21,10 +21,10 @@
 <body>
 
 	<h1>当前主机： <span id="localIp"></span>:<span id="port"></span></h1>
-	<a class="subscribe-btn">订阅</a> &nbsp;&nbsp;
-	<a href="/index/download.file">下载</a> &nbsp;&nbsp;
-<!--	<a class="update-btn">更新</a>-->
-<!--	<input type="file" name="file"/>-->
+	<a class="subscribe-btn">订阅</a> <br/>
+	<a href="/index/download.file">下载</a> <br/>
+	<a class="update-btn">更新</a>
+	<input type="file" name="file"/>
 	<hr/>
 	<ul class="my-list">
 		<li>库点代码：<span id="code"></span></li>
@@ -85,11 +85,8 @@
 				console.log(rdata);
 				if(rdata && rdata.code=='0'){
 					fillInfo(rdata.data);
-					let list = rdata.data.localServiceList;
-					if(!list){
-						list = JSON.parse(rdata.data.localServices);
-					}
-					fillTable(list)
+					let list = rdata.data.localServices;
+					fillTable(list);
 				}
 			}
 		});

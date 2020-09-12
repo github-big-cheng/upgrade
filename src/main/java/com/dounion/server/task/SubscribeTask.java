@@ -65,7 +65,7 @@ public class SubscribeTask extends BaseTask {
         }
 
         // 本地服务列表
-        List<AppInfo> appInfoList = serviceInfo.getLocalServiceList();
+        List<AppInfo> appInfoList = serviceInfo.getLocalServices();
         if (!CollectionUtils.isEmpty(appInfoList)) {
             for (AppInfo appInfo : appInfoList) {
                 servicesMap.put(appInfo.getAppType(), appInfo.getVersionNo());

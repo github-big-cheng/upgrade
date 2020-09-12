@@ -1,11 +1,13 @@
 package com.dounion.server.core.base;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.dounion.server.eum.AppTypeEnum;
 import com.dounion.server.eum.DeployTypeEnum;
 
 public class AppInfo {
 
     // 所属服务信息
+    @JSONField(serialize = false, deserialize = false)
     private ServiceInfo serviceInfo;
 
     private String appType; // 服务类型
@@ -20,7 +22,7 @@ public class AppInfo {
         StringBuilder sb = new StringBuilder();
         sb.append("appInfo : {");
         sb.append("\r\n\t appType:").append(this.getAppType()).append(", \t")
-          .append("\r\n\t versionNo:").append(this.versionNo).append(", \t")
+          .append("\r\n\t ve rsionNo:").append(this.versionNo).append(", \t")
           .append("\r\n\t workPath:").append(this.workPath)
         ;
         sb.append("\r\n}");
@@ -62,6 +64,7 @@ public class AppInfo {
         this.workPath = workPath;
     }
 
+    @JSONField(deserialize = false)
     public DeployTypeEnum getDeployTypeEnum(){
         AppTypeEnum appTypeEnum = AppTypeEnum.getMap().get(this.appType);
         return appTypeEnum==null ? null : appTypeEnum.getDeployType();

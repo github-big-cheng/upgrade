@@ -33,13 +33,34 @@ public class TestMain {
 //        taskTest();
 //        chainTaskTest();
 //        taskWakeUpTest();
-        nettyClientTest();
+//        nettyClientTest();
+
+        // 下载内存测试
+        downloadMemoryTest();
 
         while(true) {
 
         }
     }
 
+
+    public static void downloadMemoryTest(){
+
+        BaseTask task = new TestTask("download"){
+            @Override
+            protected void execute() throws Exception {
+                NettyClient client = NettyClient.getMasterInstance();
+                String fileName = client.fileDownload(Constant.URL_DOWNLOAD + "123.rar");
+                System.out.println(fileName);
+            }
+        };
+        BaseTask[] tasks = new BaseTask[10];
+        for(int i=0; i<10; i++){
+            tasks[i] = task;
+        }
+
+        TaskHandler.callTaskChain(null, 5000, tasks);
+    }
 
     public static void nettyClientTest(){
 

@@ -32,14 +32,9 @@ for /f "delims=  tokens=1" %%a in ('netstat -aon ^| findstr "%port%" ^|findstr "
 		set a2=%%b
 		for /f "tokens=2 delims=:" %%c in ("!a2!") do (
 			set a3=%%c
-			
 			if %port%==!a3! (
-				
 				set isCanUse=1
-			
-			
 			)
-
 		)
 		if !isCanUse!==1 (
 		
