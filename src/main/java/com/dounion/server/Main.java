@@ -38,7 +38,7 @@ public class Main {
 
 
             // 启动服务端
-            new NettyServer(serviceInfo).startUp();
+            NettyServer.startUp();
 
 
         } catch (Exception e) {

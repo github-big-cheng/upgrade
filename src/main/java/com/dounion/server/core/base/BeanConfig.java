@@ -53,6 +53,8 @@ public class BeanConfig {
         String fileContent = FileHelper.readFile(resource.getInputStream());
         ServiceInfo serviceInfo = JSONObject.parseObject(fileContent, ServiceInfo.class);
         logger.info("ServiceInfo load success : \r\n {}", serviceInfo);
+        // 设置运行时端口
+        serviceInfo.setRunningPort(serviceInfo.getPort());
         return serviceInfo;
     }
 

@@ -1,6 +1,9 @@
 package com.dounion.server.core.netty.server;
 
 import com.dounion.server.core.base.ServiceInfo;
+import com.dounion.server.core.helper.SpringApp;
+import com.dounion.server.core.netty.client.NettyClient;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -19,43 +22,55 @@ import org.springframework.util.Assert;
  */
 public class NettyServer {
 
-    private Logger logger = LoggerFactory.getLogger(NettyServer.class);
+    private final static Logger logger = LoggerFactory.getLogger(NettyServer.class);
 
-    private ServiceInfo serviceInfo;
-
-    public NettyServer(ServiceInfo serviceInfo) {
-        Assert.notNull(serviceInfo.getPort(), "port must be define");
-        this.serviceInfo = serviceInfo;
+    private NettyServer(){
     }
 
-    public void startUp(){
+    private ServerBootstrap bootstrap;
+    private ChannelFuture future;
+
+
+    private static NettyServer nettyServer = new NettyServer();
+
+    public static NettyServer getInstance(){
+        return nettyServer;
+    }
+
+
+    public static void startUp(){
+
+        ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
+        Assert.notNull(serviceInfo, "serviceInfo didn't init");
+        Assert.notNull(serviceInfo.getPort(), "port must be define");
+
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(8);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup)
+            nettyServer.bootstrap = new ServerBootstrap();
+            nettyServer.bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new NettyServerInitializer())
                 ;
 
-            final String localIp = this.serviceInfo.getLocalIp();
-            final int port = this.serviceInfo.getPort();
+            final String localIp = serviceInfo.getLocalIp();
+            final int port = serviceInfo.getPort();
 
-            ChannelFuture f = bootstrap.bind(this.serviceInfo.getPort());
-            f.addListener(new GenericFutureListener<Future<? super Void>>() {
+            nettyServer.future = nettyServer.bootstrap.bind(serviceInfo.getPort());
+            nettyServer.future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
                     logger.info("|--------------------------------------------------------------------|");
                     logger.info("|++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++|");
-                    logger.info("|+ Server start up successfully, port bind with 【{}】    \t+|", port);
+                    logger.info("|+ Server start up successfully, port bind with 【{}】             +|", port);
                     logger.info("|+ Open your web browser and navigate to http://{}:{}/list +|", localIp, port);
                     logger.info("|++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++|");
                     logger.info("|--------------------------------------------------------------------|");
                 }
             });
 
-            f.channel().closeFuture().syncUninterruptibly();
+            nettyServer.future.channel().closeFuture().syncUninterruptibly();
 
         } catch (Exception e) {
             logger.error("Netty Server error:{}", e);
@@ -63,6 +78,14 @@ public class NettyServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+
+    public static void restart(){
+        if(nettyServer.future != null){
+            nettyServer.future.channel().close();
+        }
+        startUp();
     }
 
 }

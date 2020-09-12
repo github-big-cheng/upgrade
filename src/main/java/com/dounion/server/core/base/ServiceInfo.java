@@ -1,13 +1,12 @@
 package com.dounion.server.core.base;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.dounion.server.core.helper.FileHelper;
+import com.dounion.server.core.helper.StringHelper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,36 +52,17 @@ public class ServiceInfo {
     private List<AppInfo> localServices;
 
 
+
+    // 启动时保存的原端口--防止修改端口
+    @JSONField(serialize = false, deserialize = false)
+    private Integer runningPort;
+
+
     // ============================= extended method  ==============================
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("ServiceInfo :{");
-
-        sb.append("\r\n\t code:").append(this.code).append(", \t")
-            .append("\r\n\t name:").append(this.name).append(", \t")
-            .append("\r\n\t localIp:").append(this.localIp).append(", \t")
-            .append("\r\n\t port:").append(this.port).append(", \t")
-            .append("\r\n\t master:").append(this.getMaster()).append(", \t")
-            .append("\r\n\t masterIp:").append(this.masterIp).append(", \t")
-            .append("\r\n\t masterPort:").append(this.masterPort).append(", \t")
-            .append("\r\n\t osType:").append(this.getOsType()).append(", \t")
-            .append("\r\n\t standBy:").append(this.getStandBy()).append(", \t")
-            .append("\r\n\t publishPath:").append(this.getPublishPath()).append(", \t")
-        ;
-
-        List<AppInfo> appList = this.getLocalServices();
-        if(!CollectionUtils.isEmpty(appList)){
-            sb.append("\r\n\t localServices :[\r\n");
-            for(AppInfo app : appList){
-                sb.append("\t\t").append(app.toString()).append(",\r\n");
-            }
-            sb.append("\r\n\t]");
-        }
-
-        sb.append("\r\n}");
-        return sb.toString();
+        return "ServiceInfo :" + StringHelper.jsonFormatString(this);
     }
 
     /**
@@ -104,7 +84,7 @@ public class ServiceInfo {
 
     public void toFile(){
         try {
-            String jsonString = JSON.toJSONString(this, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue);
+            String jsonString = StringHelper.jsonFormatString(this);
             FileHelper.writeFile(Constant.PATH_CONF + Constant.FILE_JSON_CONFIG_NAME, jsonString);
         } catch (IOException e) {
             logger.error("ServiceInfo write to file error: {}", e);
@@ -212,5 +192,14 @@ public class ServiceInfo {
 
     public void setLocalServices(List<AppInfo> localServices) {
         this.localServices = localServices;
+    }
+
+
+    public Integer getRunningPort() {
+        return runningPort;
+    }
+
+    public void setRunningPort(Integer runningPort) {
+        this.runningPort = runningPort;
     }
 }

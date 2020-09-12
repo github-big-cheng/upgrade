@@ -244,6 +244,7 @@ public class MappingConfigHandler {
     public static Boolean isMapping(String url){
         URI request;
         try {
+            url = StringHelper.urlFormat(url);
             request = new URI(url);
         } catch (URISyntaxException e) {
             return false;

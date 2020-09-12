@@ -1,5 +1,7 @@
 package com.dounion.server.core.helper;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -194,6 +196,16 @@ public class StringHelper {
      */
     public static String parse1(String text, Object... args) {
         return parse("{", "}", text, args);
+    }
+
+
+    /**
+     * 格式化json输出
+     * @param json
+     * @return
+     */
+    public static String jsonFormatString(Object json){
+        return JSON.toJSONString(json, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.DisableCircularReferenceDetect);
     }
 
 }

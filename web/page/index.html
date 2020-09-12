@@ -23,8 +23,8 @@
 	<h1>当前主机： <span id="localIp"></span>:<span id="port"></span></h1>
 	<a class="subscribe-btn">订阅</a> <br/>
 	<a href="/index/download.file">下载</a> <br/>
-	<a class="update-btn">更新</a>
-	<input type="file" name="file"/>
+	<a class="update-btn">更新</a> &nbsp;&nbsp;&nbsp; <input type="file" name="file"/> <br/>
+	<a class="restart-btn">重启</a>
 	<hr/>
 	<ul class="my-list">
 		<li>库点代码：<span id="code"></span></li>
@@ -126,11 +126,14 @@
 		});
 	});
 
+    /**
+	 * 订阅服务
+	 */
     $("a.subscribe-btn").on('click', function (e) {
 		e.preventDefault();
 
 		$.ajax({
-			url: '/index/subscribe.json',
+			url: '/subscribe.json',
 			dataType:'json',
 			type:'POST',
 			success: function (rdata) {
@@ -140,6 +143,31 @@
 				}
 			}
 		});
+	});
+	/**
+	 * 重启服务
+	 */
+	$("a.restart-btn").on('click', function (e) {
+		e.preventDefault();
+
+		if(confirm("重启前请检查是否又在执行的后台任务，确认重启吗？")){
+			$.ajax({
+				url: '/restart.json',
+				dataType:'json',
+				type:'POST',
+				success: function (rdata) {
+					console.log(rdata);
+					if(rdata){
+						alert(rdata.message);
+						if(rdata.code == '0'){
+							setTimeout(function(){
+								window.location.href = rdata.data;
+							}, 5000);
+						}
+					}
+				}
+			});
+		}
 	});
 
 

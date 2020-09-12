@@ -426,6 +426,19 @@ public class TaskHandler implements Runnable {
 
 
     /**
+     * 获取定时任务列表
+     * @return
+     */
+    public static List<BaseTask> getLoopTaskList(){
+        List<BaseTask> tasks = new ArrayList<>();
+        for(String name : LOOP_TASK_MAP.keySet()){
+            tasks.add(LOOP_TASK_MAP.get(name));
+        }
+        return tasks;
+    }
+
+
+    /**
      * 按名称唤醒sleep中的线程
      *  Thread.sleep方法需要被 try catch
      *      try {

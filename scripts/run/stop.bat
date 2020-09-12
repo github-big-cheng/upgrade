@@ -20,8 +20,13 @@ echo  　　　　┗┓┓┏━┳┓┏┛
 echo  　　　　　┃┫┫　┃┫┫
 echo  　　　　　┗┻┛　┗┻┛
 echo  ━━━━━━━━━━━━
+
+
 :start1
-set /p port=请输入需要关闭的端口号：
+set port=%1
+if "%port%"=="" (
+	set /p port=请输入需要关闭的端口号：
+)
 setlocal enabledelayedexpansion
 set queryResult=0
 for /f "delims=  tokens=1" %%a in ('netstat -aon ^| findstr "%port%" ^|findstr "LISTENING"') do (
@@ -44,14 +49,17 @@ for /f "delims=  tokens=1" %%a in ('netstat -aon ^| findstr "%port%" ^|findstr "
 			for /f "tokens=5 delims= " %%d in ("!a1!") do (
 				set killPid=%%d
 				for /f "tokens=1 delims= " %%e in ('tasklist^|findstr  !killPid!') do (
-					set /p isConfirm=确认关闭%%e进程吗^?^(不了解的进程请不要乱关闭^)^(Y^/N^)： 
+					set isConfirm=Y
+					if "%1"=="" (
+						set /p isConfirm=确认关闭%%e进程吗^?^(不了解的进程请不要乱关闭^)^(Y^/N^)： 
+					)
 					set alreadyKilled=0
 					if !isConfirm!==y (
-						taskkill /f /t /im  %%e
+						taskkill /f  /im  %%e
 						set alreadyKilled=1
 					)
 					if !isConfirm!==Y (
-						taskkill /f /t /im  %%e
+						taskkill /f  /im  %%e
 						set alreadyKilled=1
 					)
 					if !alreadyKilled!==0 (
@@ -74,5 +82,3 @@ for /f "delims=  tokens=1" %%a in ('netstat -aon ^| findstr "%port%" ^|findstr "
 if !queryResult!==0 (
 		echo 未找到对应进程
 	)
-goto start1
-pause

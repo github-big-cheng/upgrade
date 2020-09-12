@@ -1,19 +1,27 @@
 package com.dounion.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
+import com.dounion.server.core.deploy.DeployHandler;
 import com.dounion.server.core.helper.SpringApp;
+import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.request.MappingConfigHandler;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
 import com.dounion.server.core.task.TaskHandler;
+import com.dounion.server.deploy.app.AbstractScript;
+import com.dounion.server.deploy.os.OperatingSystem;
+import com.dounion.server.deploy.os.OperatingSystemFactory;
+import com.dounion.server.deploy.os.impl.WindowsOperatingSystem;
 import com.dounion.server.eum.ResponseTypeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
@@ -29,29 +37,35 @@ public class IndexController {
 
     private final static Logger logger = LoggerFactory.getLogger(IndexController.class);
 
+
+    @Autowired
+    private ServiceInfo serviceInfo;
+
     /**
      * 功能列表页
+     *
      * @return
      */
     @RequestMapping(name = "功能列表", value = "/list")
-    public String list(){
+    public String list() {
         return "list.html";
     }
 
 
     /**
      * 查询当前所有功能信息
+     *
      * @return
      */
     @RequestMapping(value = "/list.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object listJson(){
+    public Object listJson() {
         Map<URI, Object> result = new HashMap<>();
         result.putAll(MappingConfigHandler.mapping);
         // 下载地址
         try {
             final URI uri = new URI(Constant.URL_DOWNLOAD);
-            result.put(uri, new HashMap(){{
+            result.put(uri, new HashMap() {{
                 put("desc", "下载文件列表");
                 put("path", uri.getPath());
             }});
@@ -63,22 +77,24 @@ public class IndexController {
 
     /**
      * 首页
+     *
      * @return
      */
-    @RequestMapping(name="首页", value = "/index")
-    public String index(){
+    @RequestMapping(name = "首页", value = "/index")
+    public String index() {
         return "index.html";
     }
 
 
     /**
      * 获取当前主机信息
+     *
      * @return
      */
     @RequestMapping("/index.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object indexJson(){
-        return ResponseBuilder.buildSuccess(SpringApp.getInstance().getBean(ServiceInfo.class));
+    public Object indexJson() {
+        return ResponseBuilder.buildSuccess(serviceInfo);
     }
 
     /**
@@ -97,7 +113,7 @@ public class IndexController {
     @ResponseType(ResponseTypeEnum.JSON)
     public Object updateJSON(File file) {
 
-        if(file == null){
+        if (file == null) {
             return ResponseBuilder.buildError("文件上传失败");
         }
 
@@ -108,8 +124,8 @@ public class IndexController {
             // 获取上传文件信息
             ServiceInfo newInfo = JSONObject.parseObject(Files.readAllBytes(file.toPath()), ServiceInfo.class);
 
-            if(!StringUtils.equals(serviceInfo.getLocalIp(), newInfo.getLocalIp()) ||
-                    !serviceInfo.getPort().equals(newInfo.getPort())){
+            if (!StringUtils.equals(serviceInfo.getLocalIp(), newInfo.getLocalIp()) ||
+                    !serviceInfo.getPort().equals(newInfo.getPort())) {
                 message = "警告：文件已更新，修改IP或PORT需要重启服务";
             }
 
@@ -122,7 +138,7 @@ public class IndexController {
 
             // 向主机刷新服务订阅信息
             TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
-            if(serviceInfo.getStandByBlur()){
+            if (serviceInfo.getStandByBlur()) {
                 TaskHandler.callTask(Constant.TASK_ROUTE);
             }
 
@@ -133,9 +149,49 @@ public class IndexController {
     }
 
 
-    @RequestMapping("/subscribe")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object subscribe(){
+    @RequestMapping(value = "/restart.json")
+    public Object restart() {
+
+        String url = "http://" + serviceInfo.getLocalIp() + ":" + serviceInfo.getPort() + Constant.URL_INDEX;
+
+        TaskHandler.callTask(new BaseTask() {
+            @Override
+            public String getTaskName() {
+                return "重启后台服务";
+            }
+
+            @Override
+            protected void execute() throws Exception {
+
+                OperatingSystem operatingSystem = OperatingSystemFactory.build();
+                if(operatingSystem instanceof WindowsOperatingSystem){
+                    // windows 暂不支持进程重启
+                    NettyServer.restart();
+                } else {
+                    AbstractScript script = new AbstractScript() {
+                        @Override
+                        protected String[] command() {
+                            return new String[]{
+                                    this.os.getScriptCallMethod() +
+                                            "run" + this.os.getScriptSuffix(),
+                                    "" + serviceInfo.getRunningPort()
+                            };
+                        }
+                    };
+                    script.setOs(operatingSystem);
+                    script.deploy();
+                }
+            }
+        }, 5000l);
+
+        return ResponseBuilder.buildSuccess("重启后台任务已提交，预计5秒后重启", url);
+    }
+
+
+    @RequestMapping(value = "/subscribe.json")
+    @ResponseType(ResponseTypeEnum.JSON)
+    public Object subscribe() {
         TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
         return ResponseBuilder.buildSuccess();
     }

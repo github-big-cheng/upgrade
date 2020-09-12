@@ -52,6 +52,8 @@ public class SubscribeTask extends BaseTask {
             return;
         }
 
+        this.setProgressTwentyFive();
+
         Map<String, String> servicesMap = new HashMap<>();
 
         // 查询向当前主机被订阅的服务列表(去重)

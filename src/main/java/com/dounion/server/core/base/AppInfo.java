@@ -1,6 +1,7 @@
 package com.dounion.server.core.base;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.dounion.server.core.helper.StringHelper;
 import com.dounion.server.eum.AppTypeEnum;
 import com.dounion.server.eum.DeployTypeEnum;
 
@@ -19,14 +20,7 @@ public class AppInfo {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("appInfo : {");
-        sb.append("\r\n\t appType:").append(this.getAppType()).append(", \t")
-          .append("\r\n\t ve rsionNo:").append(this.versionNo).append(", \t")
-          .append("\r\n\t workPath:").append(this.workPath)
-        ;
-        sb.append("\r\n}");
-        return sb.toString();
+        return "appInfo : " + StringHelper.jsonFormatString(this);
     }
 
 
