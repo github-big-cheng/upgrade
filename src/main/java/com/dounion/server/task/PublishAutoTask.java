@@ -97,8 +97,9 @@ public class PublishAutoTask extends BaseTask {
                 // 通知发布
                 String publishUrl = (String) item.get("PUBLISH_URL");
                 String message = JSONObject.toJSONString(params);
-                String result = NettyClient.getInstance(publishUrl)
-                        .doHttpRequest(NettyClient.buildPostMap(Constant.URL_PUBLISH, message));
+                NettyClient client = NettyClient.getInstance(publishUrl);
+                String result = client.doHttpRequest(NettyClient.buildPostMap(Constant.URL_PUBLISH, message));
+                client.close();
 
                 logger.info("publish task result:【{}】", result);
 

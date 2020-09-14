@@ -91,6 +91,7 @@ public class VersionController {
                 List<VersionInfo> list = versionInfoService.list(query);
                 if(!CollectionUtils.isEmpty(list) &&
                         list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){
+                    logger.info("接收发布成功，但版本过低已忽略");
                     return ResponseBuilder.buildSuccess("接收发布成功，但版本过低已忽略");
                 }
             }

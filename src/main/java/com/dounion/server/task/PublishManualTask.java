@@ -82,8 +82,9 @@ public class PublishManualTask extends BaseTask {
                 // 通知发布
                 String publishUrl = record.getSubscribe().getPublishUrl();
                 String message = JSONObject.toJSONString(params);
-                String result = NettyClient.getInstance(publishUrl)
-                        .doHttpRequest(NettyClient.buildPostMap(Constant.URL_PUBLISH, message));
+                NettyClient client = NettyClient.getInstance(publishUrl);
+                String result = client.doHttpRequest(NettyClient.buildPostMap(Constant.URL_PUBLISH, message));
+                client.close();
 
                 logger.info("manual publish task result:【{}】", result);
 

@@ -119,13 +119,15 @@ const CommonJS = {
      */
     ajaxCallback : function(rdata, _cb){
         console.log(rdata);
+        let message = "请求异常，请联系管理员";
         if(rdata){
-            alert(rdata.message);
+            message = rdata.message ? rdata.message : message;
+            alert(message);
             if(rdata.code == "0"){
                 _cb(rdata.data);
             }
         } else {
-            alert("请求异常，请联系管理员");
+            alert(message);
         }
     }
 

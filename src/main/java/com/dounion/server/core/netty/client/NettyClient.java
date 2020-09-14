@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ import java.util.Map;
  * 简易netty客户端
  * 需请求的主机一般只有对应的master主机
  */
-public class NettyClient {
+public class NettyClient implements Closeable {
 
     private final static Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
@@ -174,68 +175,80 @@ public class NettyClient {
 
     public String fileDownload(String url) {
 
-        logger.debug("【{}】 fileDownload execute...url:【{}】", this, url);
+        try {
+            logger.debug("【{}】 fileDownload execute...url:【{}】", this, url);
 
-        Channel channel = this.future.channel();
-        // 设置请求类型
-        channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.FILE);
-        // 设置请求对象
-        FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
-        channel.attr(NETTY_CLIENT_REQUEST).set(request);
-        // 设置响应处理 文件放宽等待时间 默认20分钟
-        Long maxDownloadTime = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_WAIT, 20 * 60 * 1000l);
-        NettyResponse<String> response = new NettyResponse<>(maxDownloadTime);
-        channel.attr(NETTY_CLIENT_RESPONSE).set(response);
+            Channel channel = this.future.channel();
+            // 设置请求类型
+            channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.FILE);
+            // 设置请求对象
+            FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
+            channel.attr(NETTY_CLIENT_REQUEST).set(request);
+            // 设置响应处理 文件放宽等待时间 默认20分钟
+            Long maxDownloadTime = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_WAIT, 20 * 60 * 1000l);
+            NettyResponse<String> response = new NettyResponse<>(maxDownloadTime);
+            channel.attr(NETTY_CLIENT_RESPONSE).set(response);
 
-        return response.get();
+            return response.get();
+        } finally {
+            if(!masterInstance.equals(this)){
+                this.close();
+            }
+        }
     }
 
 
     public String doHttpRequest(Map<Object, String> params){
 
-        String url = params.get(Constant.HTTP_URL);
-        Assert.notNull(url, "url can not be null,please check it");
+        try {
+            String url = params.get(Constant.HTTP_URL);
+            Assert.notNull(url, "url can not be null,please check it");
 
-        logger.debug("【{}】 doHttpRequest execute...url:【{}】,params【{}】", this, url, params);
+            logger.debug("【{}】 doHttpRequest execute...url:【{}】,params【{}】", this, url, params);
 
-        // 请求方式
-        HttpMethod httpMethod = HttpMethod.valueOf(params.get(Constant.HTTP_METHOD));
-        if(httpMethod == null){
-            httpMethod = HttpMethod.GET;
-        }
+            // 请求方式
+            HttpMethod httpMethod = HttpMethod.valueOf(params.get(Constant.HTTP_METHOD));
+            if(httpMethod == null){
+                httpMethod = HttpMethod.GET;
+            }
 
-        // 请求报文
-        String message = params.get(Constant.HTTP_MESSAGE);
-        if(org.apache.commons.lang.StringUtils.isBlank(message)){
-            message = "";
-        }
-        ByteBuf buf = Unpooled.copiedBuffer(message, CharsetUtil.UTF_8);
+            // 请求报文
+            String message = params.get(Constant.HTTP_MESSAGE);
+            if(StringUtils.isBlank(message)){
+                message = "";
+            }
+            ByteBuf buf = Unpooled.copiedBuffer(message, CharsetUtil.UTF_8);
 
-        // 创建request对象
-        FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, httpMethod, url, buf);
-        HttpUtil.setContentLength(request, request.content().readableBytes());
+            // 创建request对象
+            FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, httpMethod, url, buf);
+            HttpUtil.setContentLength(request, request.content().readableBytes());
 
-        // 请求头其他参数 content/cookie 等
-        for(Object key : params.keySet()){
-            if(key instanceof AsciiString){
-                request.headers().set((AsciiString) key, params.get(key));
+            // 请求头其他参数 content/cookie 等
+            for(Object key : params.keySet()){
+                if(key instanceof AsciiString){
+                    request.headers().set((AsciiString) key, params.get(key));
+                }
+            }
+
+            Channel channel = this.future.channel();
+
+
+            NettyResponse<String> response = new NettyResponse<>();
+            channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.MESSAGE);
+            channel.attr(NETTY_CLIENT_RESPONSE).set(response);
+            channel.attr(NETTY_CLIENT_REQUEST).set(request);
+
+            // 阻塞获取结果
+            String result = response.get();
+            if(response.getStatus() != 200){
+                logger.error("NettyClient.doHttpRequest fail:[status:{}], {}", response.getStatus(), response.getThrowable());
+            }
+            return result;
+        } finally {
+            if(!masterInstance.equals(this)){
+                this.close();
             }
         }
-
-        Channel channel = this.future.channel();
-
-
-        NettyResponse<String> response = new NettyResponse<>();
-        channel.attr(NETTY_CLIENT_REQUEST_TYPE).set(NettyRequestTypeEnum.MESSAGE);
-        channel.attr(NETTY_CLIENT_RESPONSE).set(response);
-        channel.attr(NETTY_CLIENT_REQUEST).set(request);
-
-        // 阻塞获取结果
-        String result = response.get();
-        if(response.getStatus() != 200){
-            logger.error("NettyClient.doHttpRequest fail:[status:{}], {}", response.getStatus(), response.getThrowable());
-        }
-        return result;
     }
 
 }
