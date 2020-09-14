@@ -17,9 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("/version")
@@ -103,10 +102,12 @@ public class VersionController {
 
         // 自动发布 - 调度任务:发布通知
         if(StringUtils.equals(record.getPublishType(), "2")){
-            TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
+            TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap<String, Object>(){{
+                put("publishType", "2");
+            }});
         }
 
-        Map<String, Object> taskParams = new HashMap<>();
+        ConcurrentHashMap<String, Object> taskParams = new ConcurrentHashMap<>();
         taskParams.put("versionId", versionId);
 
         if(isRemotePublish){
@@ -132,6 +133,36 @@ public class VersionController {
         record.setId(id);
         record.setStatus(status);
         versionInfoService.update(record);
+        return ResponseBuilder.buildSuccess();
+    }
+
+
+
+    @RequestMapping("/redeploy.json")
+    @ResponseType(ResponseTypeEnum.JSON)
+    public Object redeploy(int id){
+        VersionInfo entity = versionInfoService.selectById(id);
+        if(entity == null){
+            return ResponseBuilder.buildError("版本记录未找到【"+id+"】");
+        }
+
+        // 自动发布 - 调度任务:发布通知
+        if(StringUtils.equals(entity.getPublishType(), "2")){
+            TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap<String, Object>(){{
+                put("publishType", "2");
+            }});
+        }
+
+        ConcurrentHashMap<String, Object> taskParams = new ConcurrentHashMap<>();
+        taskParams.put("versionId", id);
+
+        if(StringUtils.equals(entity.getAddSource(), "2")){
+            // 文件下载
+            TaskHandler.callTaskChain(taskParams, Constant.TASK_DOWNLOAD, Constant.TASK_DEPLOY);
+        } else {
+            TaskHandler.callTask(Constant.TASK_DEPLOY, taskParams);
+        }
+
         return ResponseBuilder.buildSuccess();
     }
 }

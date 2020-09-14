@@ -118,8 +118,13 @@ public class MappingConfigHandler {
                     continue;
                 }
                 // int 类型
-                if(parameter.getParameterType().equals(int.class)){
-                    args[i] = Integer.parseInt(String.valueOf(params.get(parameter.getParameterName())));
+                if(parameter.getParameterType().equals(int.class) ||
+                        parameter.getParameterType().equals(Integer.class)){
+                    if(params.get(parameter.getParameterName()) == null){
+                        args[i] = null;
+                    } else {
+                        args[i] = Integer.parseInt(String.valueOf(params.get(parameter.getParameterName())));
+                    }
                     continue;
                 }
                 // java.util.Map

@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -86,7 +84,7 @@ public class TaskHandler implements Runnable {
      *
      * @return
      */
-    public static BaseTask taskInit(BaseTask task, Map<String, Object> params){
+    public static BaseTask taskInit(BaseTask task, ConcurrentHashMap<String, Object> params){
 
         if(task == null){
             return null;
@@ -99,7 +97,7 @@ public class TaskHandler implements Runnable {
         taskF.setTaskId(id);
         // 运行参数处理
         if(params == null){
-            params = new HashMap<>();
+            params = new ConcurrentHashMap<>();
         }
         if(taskF.getParams() != null){
             taskF.getParams().putAll(params);
@@ -136,7 +134,7 @@ public class TaskHandler implements Runnable {
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Integer callTask(BaseTask task, Map<String, Object> params, final long delay) {
+    public static Integer callTask(BaseTask task, ConcurrentHashMap<String, Object> params, final long delay) {
 
         if(task == null){
             logger.warn("task 【{}】 not config, please check it...");
@@ -176,7 +174,7 @@ public class TaskHandler implements Runnable {
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Integer callTask(String taskName, Map<String, Object> params, final long delay) {
+    public static Integer callTask(String taskName, ConcurrentHashMap<String, Object> params, final long delay) {
         final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
         return callTask(task, params, delay);
     }
@@ -213,7 +211,7 @@ public class TaskHandler implements Runnable {
      * @param params 额外参数
      * @return
      */
-    public static Integer callTask(BaseTask task, Map<String, Object> params) {
+    public static Integer callTask(BaseTask task, ConcurrentHashMap<String, Object> params) {
         return callTask(task, params, 0);
     }
 
@@ -224,7 +222,7 @@ public class TaskHandler implements Runnable {
      * @param params 额外参数
      * @return
      */
-    public static Integer callTask(String taskName, Map<String, Object> params) {
+    public static Integer callTask(String taskName, ConcurrentHashMap<String, Object> params) {
         return callTask(taskName, params, 0);
     }
 
@@ -261,7 +259,7 @@ public class TaskHandler implements Runnable {
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Future callTaskBlock(BaseTask task, Map<String, Object> params, final long delay) {
+    public static Future callTaskBlock(BaseTask task, ConcurrentHashMap<String, Object> params, final long delay) {
 
         if(task == null){
             logger.warn("task 【{}】 not config, please check it...");
@@ -297,7 +295,7 @@ public class TaskHandler implements Runnable {
      * @param delay 延迟多少秒提交
      * @return
      */
-    public static Future callTaskBlock(String taskName, Map<String, Object> params, final long delay) {
+    public static Future callTaskBlock(String taskName, ConcurrentHashMap<String, Object> params, final long delay) {
         final BaseTask task = SpringApp.getInstance().getBean(taskName, BaseTask.class);
         return callTaskBlock(task, params, delay);
     }
@@ -313,7 +311,7 @@ public class TaskHandler implements Runnable {
      *          it also delay every task's interval times.
      * @param tasks
      */
-    public static Integer callTaskChain(Map<String, Object> params, final long delay, BaseTask... tasks) {
+    public static Integer callTaskChain(ConcurrentHashMap<String, Object> params, final long delay, BaseTask... tasks) {
         if(tasks==null || tasks.length==0){
             logger.warn("task chain submit failed, taskNames must not be empty");
             return null;
@@ -323,7 +321,7 @@ public class TaskHandler implements Runnable {
         }
 
         if(params == null){
-            params = new HashMap<>();
+            params = new ConcurrentHashMap<>();
         }
         params.put(Constant.TASK_CHAIN_NAMES, CollectionUtils.arrayToList(tasks));
         params.put(Constant.TASK_CHAIN_DELAY, delay);
@@ -340,7 +338,7 @@ public class TaskHandler implements Runnable {
      *          it also delay every task's interval times.
      * @param taskNames
      */
-    public static Integer callTaskChain(Map<String, Object> params, final long delay, String... taskNames) {
+    public static Integer callTaskChain(ConcurrentHashMap<String, Object> params, final long delay, String... taskNames) {
         if(taskNames==null || taskNames.length==0){
             logger.warn("task chain submit failed, taskNames must not be empty");
             return null;
@@ -350,7 +348,7 @@ public class TaskHandler implements Runnable {
         }
 
         if(params == null){
-            params = new HashMap<>();
+            params = new ConcurrentHashMap<>();
         }
 
         BaseTask[] taskArr = new BaseTask[taskNames.length];
@@ -376,7 +374,7 @@ public class TaskHandler implements Runnable {
      * @param params
      * @param taskNames
      */
-    public static Integer callTaskChain(Map<String, Object> params, String... taskNames) {
+    public static Integer callTaskChain(ConcurrentHashMap<String, Object> params, String... taskNames) {
         return callTaskChain(params, 1000l, taskNames);
     }
 

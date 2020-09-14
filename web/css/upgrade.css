@@ -9,6 +9,20 @@ html {
 body {
     margin: 10px;
 }
+
+
+
+a{
+    color: dodgerblue;
+    text-decoration:underline;
+    cursor: pointer;
+}
+a:link {color: dodgerblue;} /* 未被访问的链接 蓝色 */
+a:visited {color: crimson;} /* 已被访问过的链接 蓝色 */
+a:hover {color: dodgerblue;} /* 鼠标悬浮在上的链接 蓝色 */
+a:active {color: dodgerblue;} /* 鼠标点中激活链接 蓝色 */
+
+
 table {
     border-collapse: collapse;
     border-spacing: 0;
@@ -63,13 +77,6 @@ td,th {
 .pure-table-bordered tbody>tr:last-child>td {
     border-bottom-width: 0;
 }
-
-.pure-table .operation-btn{
-    color: crimson;
-    cursor: pointer;
-}
-
-
 
 .pure-table input[type=text], .pure-table select{
     width: 100%;

@@ -50,6 +50,9 @@ public class DownloadTask extends BaseTask {
             logger.info("【】 file might having been download, task exit", this);
             return;
         }
+        if(StringUtils.isBlank(versionInfo.getFileName())){
+            throw new BusinessException("【versionId:" + id + "】 not found, please check it");
+        }
 
         String downloadUrl = Constant.URL_DOWNLOAD + versionInfo.getFileName();
         String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl);

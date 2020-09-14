@@ -112,5 +112,22 @@ const CommonJS = {
         };
     },
 
+    /**
+     * 默认ajax返回结果处理
+     * @param rdata
+     * @param _cb
+     */
+    ajaxCallback : function(rdata, _cb){
+        console.log(rdata);
+        if(rdata){
+            alert(rdata.message);
+            if(rdata.code == "0"){
+                _cb(rdata.data);
+            }
+        } else {
+            alert("请求异常，请联系管理员");
+        }
+    }
+
 
 };

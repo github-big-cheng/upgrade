@@ -420,6 +420,7 @@
         AND IFNULL(NOTIFY_COUNT, 0) <![CDATA[<]]> #{notifyCountStr}
       </if>
     </trim>
+    ORDER BY ID DESC
   </select>
 
 
@@ -446,7 +447,9 @@
             INNER JOIN T_UPGRADE_SUBSCRIBE_INFO B ON A.APP_TYPE = B.APP_TYPE AND B.STATUS = 1
             LEFT JOIN T_UPGRADE_RECORD C ON C.VERSION_ID = A.ID AND C.SUBSCRIBE_ID = B.ID
         WHERE A.STATUS = 1
-          AND A.PUBLISH_TYPE = 2
+          <if test="publishType != null">
+          AND A.PUBLISH_TYPE = #{publishType}
+          </if>
           AND NOT EXISTS(
                   SELECT 1 FROM T_UPGRADE_RECORD D
                   WHERE D.SUBSCRIBE_ID = B.ID

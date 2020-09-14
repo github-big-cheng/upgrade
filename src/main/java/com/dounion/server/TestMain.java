@@ -31,12 +31,12 @@ public class TestMain {
 //        transactionTest();
 //        pageTest();
 //        taskTest();
-//        chainTaskTest();
+        chainTaskTest();
 //        taskWakeUpTest();
 //        nettyClientTest();
 
         // 下载内存测试
-        downloadMemoryTest();
+//        downloadMemoryTest();
 
         while(true) {
 
@@ -132,12 +132,14 @@ public class TestMain {
     
     
     public static void chainTaskTest(){
-        TaskHandler.callTaskChain(null, 0, new TestTask("1"), new TestTask("2"));
+        TaskHandler.callTaskChain(null, 0, new TestTask("1"){
+            @Override
+            protected void execute() throws Exception {
+                throw new Exception("I'm exception");
+            }
+        }, new TestTask("2"));
         System.out.println(TaskHandler.getTaskList());
     }
-
-
-
 
 
     public static void taskWakeUpTest() throws InterruptedException {

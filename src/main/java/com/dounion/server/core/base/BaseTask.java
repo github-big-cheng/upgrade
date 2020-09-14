@@ -1,16 +1,13 @@
 package com.dounion.server.core.base;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dounion.server.core.helper.DateHelper;
-import com.dounion.server.core.helper.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 /**
@@ -21,7 +18,7 @@ public abstract class BaseTask implements Callable<Integer> {
     protected final static Logger logger = LoggerFactory.getLogger(BaseTask.class);
 
     protected Integer taskId; // 任务ID
-    protected Map<String, Object> params; // 额外参数
+    protected ConcurrentHashMap<String, Object> params; // 额外参数
     private Callback callback; // 回调函数
     private boolean interrupt = false; // 中断标识
     private Future<Integer> future;
@@ -41,11 +38,11 @@ public abstract class BaseTask implements Callable<Integer> {
         this.taskId = taskId;
     }
 
-    public Map<String, Object> getParams() {
+    public ConcurrentHashMap<String, Object> getParams() {
         return params;
     }
 
-    public void setParams(Map<String, Object> params) {
+    public void setParams(ConcurrentHashMap<String, Object> params) {
         this.params = params;
     }
 
@@ -151,14 +148,19 @@ public abstract class BaseTask implements Callable<Integer> {
 
     @Override
     public String toString() {
-        return "task: " +
-                "{taskId=" + this.taskId
-                + ", taskName=" + this.getTaskName()
-                + ", progress=" + this.getProgress()
-                + ", isLoop=" + this.isLoop()
-                + ", loopDelay=" + this.getLoopDelay()
-                + ", params=" + StringHelper.jsonFormatString(this.params)
-                + "}";
+        StringBuffer sb = new StringBuffer();
+        sb.append("task:")
+            .append("{")
+                .append("taskId=").append(this.taskId)
+                .append(", taskName=").append(this.getTaskName())
+                .append(", progress=").append(this.getProgress())
+                .append(", isLoop=").append(this.isLoop())
+                .append(", loopDelay=").append(this.getLoopDelay())
+                // there are some issue about HashMap in JDK 1.7, open it in a better Java Version
+//                .append(", params=").append(this.params)
+            .append("}")
+        ;
+        return sb.toString();
     }
 
     /**
@@ -225,12 +227,13 @@ public abstract class BaseTask implements Callable<Integer> {
             this.setCostTime(System.currentTimeMillis() - startTime);
         } catch (Exception e) {
             logger.error("【{}】执行异常:{}", this, e);
-        }
-
-        // 间隔定时任务 循环执行
-        if(!this.isInterrupted() && this.isLoop()){
-            Thread.sleep(this.getLoopDelay());
-            this.call();
+            return null;
+        } finally {
+            // 间隔定时任务 循环执行
+            if(!this.isInterrupted() && this.isLoop()){
+                Thread.sleep(this.getLoopDelay());
+                this.call();
+            }
         }
 
         return this.taskId;

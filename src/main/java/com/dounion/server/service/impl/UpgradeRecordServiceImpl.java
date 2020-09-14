@@ -7,6 +7,8 @@ import com.dounion.server.entity.SubscribeInfo;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.entity.VersionInfo;
 import com.dounion.server.service.UpgradeRecordService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,7 @@ public class UpgradeRecordServiceImpl implements UpgradeRecordService {
     @Autowired
     private UpgradeRecordMapper upgradeRecordMapper;
 
+
     @Override
     public List<Map<String, Object>> publishListQuery(Map<String, Object> params) {
         return upgradeRecordMapper.publishListQuery(params);
@@ -41,16 +44,30 @@ public class UpgradeRecordServiceImpl implements UpgradeRecordService {
         return upgradeRecordMapper.selectListBySelective(record);
     }
 
+
+    @Override
+    public UpgradeRecord load(Integer id) {
+        return upgradeRecordMapper.selectByPrimaryKey(id);
+    }
+
+
     @Override
     public int insert(UpgradeRecord record) {
         upgradeRecordMapper.insert(record);
         return record.getId();
     }
 
-
     @Override
     public int updateBySelective(UpgradeRecord record){
         return upgradeRecordMapper.updateByPrimaryKeySelective(record);
+    }
+
+
+    @Override
+    public PageInfo<UpgradeRecord> page(UpgradeRecord query, int pageSize, int pageNo) {
+        PageHelper.startPage(pageNo, pageSize);
+        List<UpgradeRecord> list = upgradeRecordMapper.selectEntityListBySelective(query);
+        return new PageInfo<>(list);
     }
 
     @Override
@@ -93,6 +110,9 @@ public class UpgradeRecordServiceImpl implements UpgradeRecordService {
             record.setVersionId(versionInfo.getId());
             record.setVersionNo(versionInfo.getVersionNo());
             record.setAppType(versionInfo.getAppType());
+            record.setFileName(versionInfo.getFileName());
+            record.setFileSize(versionInfo.getFileSize());
+            record.setFileMd5(versionInfo.getFileMd5());
             record.setPublishType(versionInfo.getPublishType());
             record.setIsForceUpdate(versionInfo.getIsForceUpdate());
             record.setSubscribeId(subscribeInfo.getId());

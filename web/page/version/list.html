@@ -31,9 +31,9 @@
 <hr/>
 <div style="margin-top: 20px;">
     <table class="pure-table">
-        <colgroup>
-            <col width="6%">
-        </colgroup>
+<!--        <colgroup>-->
+<!--            <col width="6%">-->
+<!--        </colgroup>-->
         <thead>
             <tr>
                 <th style="text-align: center;">序号</th>
@@ -74,7 +74,13 @@
         <td title="{%= $data.addSource=='1'?'本地发布':'远程发布' %}">{%= $data.addSource=='1'?'本地发布':'远程发布' %}</td>
         <td title="{%= publishDate %}">{%= publishDate %}</td>
         <td>
-            {%if $data.status=='1'%}<a class="operation-btn" data-id="{%= id%}" data-status="0">注销</a>{%/if%}
+            {%if $data.status=='1'%}
+                <a class="operation-btn" data-id="{%= id%}" data-status="0">注销</a>
+                {%if $data.publishType=='2'%}
+                    <!-- 状态正常 且 自动发布 -->
+                    &nbsp;&nbsp;<a class="redeploy-btn" data-id="{%= id%}">redeploy</a>
+                {%/if%}
+            {%/if%}
             {%if $data.status=='0'%}<a class="operation-btn" data-id="{%= id%}" data-status="1">激活</a>{%/if%}
         </td>
     </tr>
@@ -120,6 +126,20 @@
                 } else {
                     alert(rdata.message);
                 }
+            }
+        });
+    });
+	$("#version_list_tbody").on('click', 'a.redeploy-btn', function(e){
+	    e.preventDefault();
+        $.ajax({
+            type:'post',
+            data : {"id" : $(this).data("id")},
+            dataType:'json',
+            url:'/version/redeploy.json',
+            success:function(rdata) {
+                CommonJS.ajaxCallback(rdata, function(data){
+                    $("#query").click();
+                });
             }
         });
     });
