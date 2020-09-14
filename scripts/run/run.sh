@@ -12,5 +12,6 @@ if [ ! -x "$DIR" ]; then
 	chmod a+x *.sh
 fi
 
+JAVA_OPTS="-Xms6m"
 # 启动
-nohup java -jar ./upgrade.jar &
+nohup java -jar "$JAVA_OPTS" upgrade.jar &

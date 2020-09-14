@@ -98,7 +98,7 @@ public class DeployHandler {
         } finally {
             if(p != null){
                 logger.debug("progress destroy...");
-                p.destroy();
+//                p.destroy();
             }
         }
     }

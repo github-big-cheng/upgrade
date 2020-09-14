@@ -91,6 +91,7 @@ public class PublishAutoTask extends BaseTask {
                 params.put("fileSize", item.get("FILE_SIZE")); // 文件大小
                 params.put("fileMd5", item.get("FILE_MD5")); // 文件MD5
                 params.put("isForceUpdate", item.get("IS_FORCE_UPDATE")); // 是否强制更新
+                params.put("publishType", "2"); // 发布类型 默认自动发布
                 params.put("addSource", "2"); // 远程发布
 
                 // 通知发布

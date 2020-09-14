@@ -47,7 +47,7 @@ public class DownloadTask extends BaseTask {
 
         // 根据版本记录表文件路径判断是否已下载
         if(StringUtils.isNotBlank(versionInfo.getFilePath())){
-            logger.info("【】 file might having been download, task exit", this);
+            logger.info("【{}】 file might having been download 【{}】, task exit", this, versionInfo.getFilePath());
             return;
         }
         if(StringUtils.isBlank(versionInfo.getFileName())){

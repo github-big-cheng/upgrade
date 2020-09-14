@@ -49,8 +49,11 @@ echo "$progress_name"
 if [ "$PID" = 0 ]; then
 	PID=$(ps -ef | grep "$progress_name" | grep -v grep | grep 'java' | awk '{print $2}')	
 	if [ ! -n "$PID" ]; then
-                kill -9 "$PID"
-		echo "killed progress by ps, pid is 【$PID】"
+		for p in "$PID"
+		do
+			kill -9 "$p"
+                	echo "killed progress by ps, pid is 【$p】"
+		done
 		sleep 3
         fi
 fi
@@ -77,7 +80,7 @@ fi
 cd "$2"
 unzip "$2"/"$3".zip 
 
-sleep 2
+sleep 3
 
 # 检查是否解压成功
 if [ ! -d "$bak_dir" ]; then
@@ -85,6 +88,7 @@ if [ ! -d "$bak_dir" ]; then
 	exit 5
 fi
 #启应用
-nohup sh "$bak_dir"/"$shell_name" &
+echo "sh $bak_dir/$shell_name"
+sh "$bak_dir"/"$shell_name"
 
 
