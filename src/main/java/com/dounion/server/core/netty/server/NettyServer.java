@@ -2,8 +2,6 @@ package com.dounion.server.core.netty.server;
 
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
-import com.dounion.server.core.netty.client.NettyClient;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -61,12 +59,21 @@ public class NettyServer {
             nettyServer.future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
-                    logger.info("|--------------------------------------------------------------------|");
-                    logger.info("|++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++|");
-                    logger.info("|+ Server start up successfully, port bind with 【{}】             +|", port);
-                    logger.info("|+ Open your web browser and navigate to http://{}:{}/list +|", localIp, port);
-                    logger.info("|++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++|");
-                    logger.info("|--------------------------------------------------------------------|");
+
+
+
+                    logger.info("######################################################################");
+                    logger.info("#********************************************************************#");
+                    logger.info("#  Open your web browser and navigate to http://{}:{}/list  #", localIp, port);
+                    logger.info("#********************************************************************#");
+                    logger.info("#  _    _ _____   _____ _____            _____  ______               #");
+                    logger.info("# | |  | |  __ \\ / ____|  __ \\     /\\   |  __ \\|  ____|              #");
+                    logger.info("# | |  | | |__) | |  __| |__) |   /  \\  | |  | | |__                 #");
+                    logger.info("# | |  | |  ___/| | |_ |  _  /   / /\\ \\ | |  | |  __|                #");
+                    logger.info("# | |__| | |    | |__| | | \\ \\  / ____ \\| |__| | |____               #");
+                    logger.info("#  \\____/|_|     \\_____|_|  \\_\\/_/    \\_\\_____/|______|              #");
+//                    logger.info("#* Server start up successfully, port bind with 【{}】             *#", port);
+                    logger.info("######################################################################");
                 }
             });
 
