@@ -27,7 +27,7 @@ public enum AppTypeEnum {
 //    GTS_APP("40100-110", "gts-app", null),
     GTS_CONTROLLER("40100-120", "gts-controller", DeployTypeEnum.MAIN),
 //    HR_APP("40100-190", "hr_app", null),
-    IDOC("40100-290", "idoc", DeployTypeEnum.MAIN),
+//    IDOC("40100-290", "idoc", DeployTypeEnum.MAIN),
 //    OA_APP("40100-180", "oa_app", null),
 //    OFFICEUTIL("40100-250", "officeutil", null),
 //    PAMS_APP("40100-200", "pams_app", null),

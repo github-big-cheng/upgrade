@@ -53,7 +53,7 @@ public class DeployHandler {
 
     /**
      * 获取部署适配器
-     * @param appType
+     * @param deployType
      * @param <T>
      * @return
      */
@@ -87,9 +87,13 @@ public class DeployHandler {
                 }
             });
 
-            new CmdOuterCleanThread(p.getInputStream(), "INFO").start();
+            final CountDownLatch latch = new CountDownLatch(2);
+
+            new CmdOuterCleanThread(latch, p.getInputStream(), "INFO").start();
             // redirectErrorStream ERROR 不应该被打印
-            new CmdOuterCleanThread(p.getErrorStream(), "ERROR").start();
+            new CmdOuterCleanThread(latch, p.getErrorStream(), "ERROR").start();
+
+            latch.await();
 
             logger.info("Exit value: {}", future.get(10, TimeUnit.SECONDS));
 
@@ -98,17 +102,19 @@ public class DeployHandler {
         } finally {
             if(p != null){
                 logger.debug("progress destroy...");
-//                p.destroy();
+                p.destroy();
             }
         }
     }
 
 
     static class CmdOuterCleanThread extends Thread {
+        CountDownLatch latch;
         InputStream is;
         String type;
 
-        CmdOuterCleanThread(InputStream is, String type) {
+        CmdOuterCleanThread(CountDownLatch latch, InputStream is, String type) {
+            this.latch = latch;
             this.is = is;
             this.type = type;
         }
@@ -123,6 +129,10 @@ public class DeployHandler {
                 }
             } catch (IOException e) {
                 logger.error("read {} error:{}", this.type, e);
+            } finally {
+                if(latch != null){
+                    latch.countDown();
+                }
             }
         }
 
