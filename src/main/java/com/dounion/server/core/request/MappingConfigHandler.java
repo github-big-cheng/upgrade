@@ -345,11 +345,8 @@ public class MappingConfigHandler {
             logger.error("{} fail,{}", config, e);
         } catch (Exception e) {
             logger.error("{} error,{}", config, e);
-            error = e;
-        }
-
-        if(error != null){
-            response.setStatus(HttpResponseStatus.INTERNAL_SERVER_ERROR);
+            String message = JSON.toJSONString(ResponseBuilder.buildError());
+            buf = Unpooled.copiedBuffer(message, CharsetUtil.UTF_8);
         }
 
         return response.replace(buf);

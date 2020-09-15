@@ -63,6 +63,7 @@ public class SubscribeServiceImpl implements SubscribeService {
             } else {
                 temp = new SubscribeInfo();
                 BeanUtils.copyProperties(record, temp);
+                temp.setId(null);
                 temp.setAppType(appType);
                 temp.setStatus("1");
                 temp.setSubscribeTime(time);
