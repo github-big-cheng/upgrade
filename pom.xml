@@ -15,7 +15,6 @@
         <sqlite.version>3.23.1</sqlite.version>
         <aspectj.version>1.8.5</aspectj.version>
         <mybatis.version>3.2.7</mybatis.version>
-        <redis.version>2.0.0</redis.version>
         <netty.version>4.1.49.Final</netty.version>
     </properties>
 
@@ -101,13 +100,6 @@
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
             <version>5.1.2</version>
-        </dependency>
-
-        <!-- redis -->
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>${redis.version}</version>
         </dependency>
 
 
