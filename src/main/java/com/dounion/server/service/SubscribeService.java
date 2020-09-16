@@ -10,7 +10,7 @@ public interface SubscribeService {
 
     List<SubscribeInfo> list(SubscribeInfo query);
 
-    PageInfo<SubscribeInfo> page(SubscribeInfo query);
+    PageInfo<SubscribeInfo> page(SubscribeInfo query, int pageNo, int pageSize);
 
     void addSubscribe(SubscribeInfo record);
 

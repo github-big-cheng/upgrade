@@ -4,6 +4,7 @@ import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.dao.SubscribeInfoMapper;
 import com.dounion.server.entity.SubscribeInfo;
 import com.dounion.server.service.SubscribeService;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +29,8 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     @Override
-    public PageInfo<SubscribeInfo> page(SubscribeInfo query) {
+    public PageInfo<SubscribeInfo> page(SubscribeInfo query, int pageNo, int pageSize) {
+        PageHelper.startPage(pageNo, pageSize);
         List<SubscribeInfo> list = subscribeInfoMapper.selectListBySelective(query);
         return new PageInfo<>(list);
     }
