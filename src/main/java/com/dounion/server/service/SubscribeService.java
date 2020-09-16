@@ -1,6 +1,7 @@
 package com.dounion.server.service;
 
 import com.dounion.server.entity.SubscribeInfo;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Map;
 public interface SubscribeService {
 
     List<SubscribeInfo> list(SubscribeInfo query);
+
+    PageInfo<SubscribeInfo> page(SubscribeInfo query);
 
     void addSubscribe(SubscribeInfo record);
 
