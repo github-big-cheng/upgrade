@@ -51,6 +51,9 @@ targetDir=`ls $DIR_NAME`
 for file in $targetDir
 do
 	echo "file is $file"
+	if [ -s "file" ]; then
+		continue
+	fi
 	if [[ ${file:0-4} == '.sql' ]]; then
 	
 		# set parameters as sql variables && add them to the first line of t.sql
