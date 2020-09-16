@@ -1,6 +1,5 @@
 package com.dounion.server.task;
 
-import com.alibaba.fastjson.JSON;
 import com.dounion.server.core.base.AppInfo;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
@@ -71,7 +70,8 @@ public class DeployTask extends BaseTask {
 
             // 远程发布且版本号等于或低于当前版本则不发布
             // check version
-            if(StringUtils.equals(versionInfo.getAddSource(), "2") &&
+            if(!StringUtils.equals(versionInfo.getIsForceUpdate(), "1") && // 非强制更新
+                    StringUtils.equals(versionInfo.getAddSource(), "2") && // 远程发布
                     appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) >= 0){
                 logger.debug("【{}】 Remote publish ! Current version is {}, deploy version is {}, deploy task will be exit",
                         this, appInfo.getVersionNo(), versionInfo.getVersionNo());
