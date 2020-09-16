@@ -5,6 +5,8 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.entity.DownloadRouteRecord;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -18,6 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RouteHandler {
 
+    private final static Logger logger = LoggerFactory.getLogger(RouteHandler.class);
+
     // private constructor
     private RouteHandler() {
     }
@@ -26,8 +30,18 @@ public class RouteHandler {
     private static Object LOCK2 = new Object();
     private static Object LOCK3 = new Object();
 
+    /**
+     * 最大同时下载数
+     */
     final static Integer MAX_COUNT = ConfigurationHelper.getInt(Constant.CONF_DOWNLOAD_MAX_COUNT, -1);
+    /**
+     * 注册路由最大活动时间
+     */
     final static Long MAX_ROUTE_TIME = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_ROUTE_TIME, -1);
+    /**
+     * 下载速率系数
+     */
+    final static Long DOWNLOAD_SPEED_RATIO = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_SPEED_RATIO, 0);
 
 
     /**
@@ -205,7 +219,8 @@ public class RouteHandler {
                 return null;
             }
             for(DownloadRouteRecord route : records){
-                if(MAX_ROUTE_TIME > 0 && System.currentTimeMillis()-MAX_ROUTE_TIME<0){
+                // 判断最大路由活动时间
+                if(MAX_ROUTE_TIME > 0 && System.currentTimeMillis()-route.getRegisterTime()<MAX_ROUTE_TIME){
                     continue;
                 }
                 queue.add(route);
@@ -222,5 +237,54 @@ public class RouteHandler {
         }
 
         return record.getDownloadPath();
+    }
+
+
+    /**
+     * 发布策略控制
+     * @param index
+     * @param fileLength
+     * @param url 下载路径
+     */
+    public static void publishPolicy(Integer index, Long fileLength, String url){
+
+        if(index==null || fileLength==null || StringUtils.isBlank(url)){
+            logger.warn("publishPolicy: some parameters is null [index={},fileLength={},url={}]",
+                    index, fileLength, url);
+            return;
+        }
+
+        if(MAX_COUNT <= 0){
+            // 未配置或不限制最大下载数量时,不做处理
+            return;
+        }
+
+        if(DOWNLOAD_SPEED_RATIO <= 0){
+            // 未配置下载系数,不做处理
+            return;
+        }
+
+        // 统计当前可以提供下载的路由数量
+        int routeCount = 0;
+        BlockingQueue<DownloadRouteRecord> queue = ROUTE_QUEUE_MAP.get(url);
+        if(queue!=null && !queue.isEmpty()){
+            routeCount = queue.size();
+        }
+        routeCount = MAX_COUNT + routeCount; // 当前路由数量 + 最大下载数
+
+        // 超过最大下载次数的推送
+        if(index%routeCount==0){
+            fileLength = fileLength == null ? 0 : fileLength;
+            // 根据文件大小及下载系数计算大致下载时间
+            // 下载时间(秒) = 文件大小(byte)/1024(byte)/下载速率(Kb/s)
+            long costTime = fileLength/1024/DOWNLOAD_SPEED_RATIO;
+            try {
+                logger.debug("publishPolicy sleep time is {} s", costTime);
+                Thread.sleep(costTime*1000);
+            } catch (InterruptedException e) {
+                logger.error("publishPolicy error:{}", e);
+            }
+        }
+
     }
 }

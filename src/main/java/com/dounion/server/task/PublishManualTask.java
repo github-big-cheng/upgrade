@@ -9,6 +9,7 @@ import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.helper.DataHelper;
 import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.core.netty.client.NettyClient;
+import com.dounion.server.core.route.RouteHandler;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.service.UpgradeRecordService;
@@ -56,6 +57,7 @@ public class PublishManualTask extends BaseTask {
         this.setProgressTwentyFive(); // progress 25%
         BigDecimal itemProcess = DataHelper.divide(90, records.size());
 
+        int index = 0;
         String time = DateHelper.format(new Date());
         for(UpgradeRecord record : records){
             try{
@@ -79,6 +81,9 @@ public class PublishManualTask extends BaseTask {
                 params.put("publishType", "2"); // 发布类型 默认自动发布
                 params.put("addSource", "2"); // 远程发布
 
+                // 发布策略控制
+                RouteHandler.publishPolicy(index, record.getFileSize(), Constant.URL_DOWNLOAD + record.getFileName());
+
                 // 通知发布
                 String publishUrl = record.getSubscribe().getPublishUrl();
                 String message = JSONObject.toJSONString(params);
@@ -96,6 +101,8 @@ public class PublishManualTask extends BaseTask {
             } catch (Exception e) {
                 logger.error("【{}】 error in loop :{}", this, e);
             } finally {
+                index++;
+
                 upgradeRecordService.updateBySelective(record);
 
                 // progress

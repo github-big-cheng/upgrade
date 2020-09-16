@@ -8,6 +8,7 @@ import com.dounion.server.core.helper.ConfigurationHelper;
 import com.dounion.server.core.helper.DataHelper;
 import com.dounion.server.core.helper.DateHelper;
 import com.dounion.server.core.netty.client.NettyClient;
+import com.dounion.server.core.route.RouteHandler;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.UpgradeRecord;
 import com.dounion.server.service.UpgradeRecordService;
@@ -54,6 +55,7 @@ public class PublishAutoTask extends BaseTask {
         BigDecimal itemProcess = DataHelper.divide(90, list.size());
 
         UpgradeRecord record = null;
+        int index = 0;
         for(Map<String, Object> item : list){
             try {
                 record = new UpgradeRecord();
@@ -84,6 +86,9 @@ public class PublishAutoTask extends BaseTask {
                     record.setId(recordId);
                 }
 
+                long fileSize = DataHelper.getBigDecimal(item.get("FILE_SIZE")).longValue();
+                String fileName = (String) item.get("FILE_NAME");
+
                 Map<String, Object> params = new HashMap<>();
                 params.put("versionNo", item.get("VERSION_NO")); // 版本号
                 params.put("appType", item.get("APP_TYPE")); // 应用类型
@@ -93,6 +98,9 @@ public class PublishAutoTask extends BaseTask {
                 params.put("isForceUpdate", item.get("IS_FORCE_UPDATE")); // 是否强制更新
                 params.put("publishType", "2"); // 发布类型 默认自动发布
                 params.put("addSource", "2"); // 远程发布
+
+                // 发布策略控制
+                RouteHandler.publishPolicy(index, fileSize, Constant.URL_DOWNLOAD + fileName);
 
                 // 通知发布
                 String publishUrl = (String) item.get("PUBLISH_URL");
@@ -112,6 +120,8 @@ public class PublishAutoTask extends BaseTask {
             } catch (Exception e) {
                 logger.error("record 【{}】 publish failed..,{}", item, e);
             } finally {
+                index++;
+
                 if(record != null && record.getId()!=null){
                     upgradeRecordService.updateBySelective(record);
                 }

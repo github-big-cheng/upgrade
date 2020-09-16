@@ -29,6 +29,10 @@ public interface Constant {
      */
     String CONF_DOWNLOAD_MAX_ROUTE_TIME = "download.max_route_active_time";
     /**
+     * 下载速率系数
+     */
+    String CONF_DOWNLOAD_SPEED_RATIO = "download.speed_ratio";
+    /**
      * 路由注册间隔时间
      */
     String CONF_ROUTE_REGISTER_DELAY = "route.register_delay";
