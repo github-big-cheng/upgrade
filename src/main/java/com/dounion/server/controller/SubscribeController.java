@@ -60,6 +60,8 @@ public class SubscribeController {
     public Object addJson(SubscribeInfo record){
         // 更新订阅记录
         subscribeService.addSubscribe(record);
+        // 订阅任务
+        TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
         // 自动发布任务
         TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
         return ResponseBuilder.buildSuccess();
