@@ -37,7 +37,7 @@ public class SubscribeController {
     @RequestMapping("/list.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object listJson(SubscribeInfo query){
-        return ResponseBuilder.buildSuccess(subscribeService.list(query));
+        return ResponseBuilder.buildSuccess(subscribeService.page(query));
     }
 
 
