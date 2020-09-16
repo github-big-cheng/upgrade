@@ -62,7 +62,7 @@ public class SubscribeTask extends BaseTask {
         List<Map<String, String>> subscribeList = subscribeService.currentServiceSubscribeQuery(query);
         if (!CollectionUtils.isEmpty(subscribeList)) {
             for(Map<String, String> item : subscribeList){
-                servicesMap.putAll(item);
+                servicesMap.put(item.get("APP_TYPE"), item.get("VERSION_NO"));
             }
         }
 
