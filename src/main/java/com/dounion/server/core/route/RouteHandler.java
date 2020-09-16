@@ -273,7 +273,7 @@ public class RouteHandler {
         routeCount = MAX_COUNT + routeCount; // 当前路由数量 + 最大下载数
 
         // 超过最大下载次数的推送
-        if(index%routeCount==0){
+        if(index!=0 && index%routeCount==0){
             fileLength = fileLength == null ? 0 : fileLength;
             // 根据文件大小及下载系数计算大致下载时间
             // 下载时间(秒) = 文件大小(byte)/1024(byte)/下载速率(Kb/s)
