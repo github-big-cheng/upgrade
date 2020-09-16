@@ -54,7 +54,8 @@
         <td title="{%= $data.active?'活动':'停止' %}">{%= $data.active?'活动':'停止' %}</td>
         <td>
             {%if $data.active %}
-                <a class="stop-btn" data-id="{%= taskId%}" style="color: red;">停止</a>
+                <a class="stop-btn" data-id="{%= taskId%}" style="color: red;">停止</a>&nbsp;&nbsp;
+                <a class="wakeup-btn" data-id="{%= taskId%}" style="color: red;">唤醒</a>
             {%/if%}
         </td>
     </tr>
@@ -75,6 +76,22 @@
             url: '/task/interrupted.json',
             success: function (rdata) {
                 if (rdata && rdata.code == '0') {
+                    alert("中断指令已发送成功！");
+                    query();
+                }
+            }
+        });
+    });
+    $("#task_list_tbody").on('click', '.wakeup-btn', function(e){
+       e.preventDefault();
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            data: {taskId : $(this).data('id')},
+            url: '/task/wakeup.json',
+            success: function (rdata) {
+                if (rdata && rdata.code == '0') {
+                    alert("唤醒指令已发送成功！");
                     query();
                 }
             }
