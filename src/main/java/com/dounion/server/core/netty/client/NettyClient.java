@@ -245,7 +245,7 @@ public class NettyClient implements Closeable {
             }
             return result;
         } finally {
-            if(!masterInstance.equals(this)){
+            if(!this.equals(masterInstance)){
                 this.close();
             }
         }

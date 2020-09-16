@@ -8,6 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +46,11 @@ public abstract class AbstractNettyClientHandler<V> extends SimpleChannelInbound
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("netty client error:{}", cause);
-        this.nettyResponse.setError(cause);
-        ctx.channel().close();
+        if(!(cause instanceof IllegalReferenceCountException)){
+            logger.error("netty client error:{}", cause);
+            this.nettyResponse.setError(cause);
+            ctx.channel().close();
+        }
     }
 
 }

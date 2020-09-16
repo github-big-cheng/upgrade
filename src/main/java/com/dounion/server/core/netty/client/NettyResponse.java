@@ -109,6 +109,8 @@ public class NettyResponse<V> {
                 LOCK.unlock();
             }
 
+            logger.debug("NettyResponse:[status={}, v={}, throwable={}]", this.status, this.v, this.throwable);
+
             if(!isDone()){
                 this.status = 502;
                 this.throwable = new BusinessException("Netty request timeout");

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -101,22 +102,24 @@ public class VersionController {
         final int versionId = versionInfoService.updateVersion(record);
         logger.debug("new version id is 【{}】", versionId);
 
-        // 自动发布 - 调度任务:发布通知
-        if(StringUtils.equals(record.getPublishType(), "2")){
-            TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap<String, Object>(){{
-                put("publishType", "2");
-            }});
-        }
-
         ConcurrentHashMap<String, Object> taskParams = new ConcurrentHashMap<>();
         taskParams.put("versionId", versionId);
 
+        List<String> tasks = new ArrayList<>();
         if(isRemotePublish){
-            // 文件下载
-            TaskHandler.callTaskChain(taskParams, Constant.TASK_DOWNLOAD, Constant.TASK_DEPLOY);
-        } else {
-            TaskHandler.callTask(Constant.TASK_DEPLOY, taskParams);
+            // 远程下载
+            tasks.add(Constant.TASK_DOWNLOAD);
         }
+        // 本地部署
+        tasks.add(Constant.TASK_DEPLOY);
+        // 自动发布 - 调度任务:发布通知
+        if(StringUtils.equals(record.getPublishType(), "2")){
+            tasks.add(Constant.TASK_PUBLISH_AUTO);
+            taskParams.put("publishType", "2");
+        }
+
+        // 调用任务链
+        TaskHandler.callTaskChain(taskParams, tasks.toArray(new String[taskParams.size()]));
 
         return ResponseBuilder.buildSuccess();
     }
