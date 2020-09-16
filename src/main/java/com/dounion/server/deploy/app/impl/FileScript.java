@@ -1,6 +1,5 @@
 package com.dounion.server.deploy.app.impl;
 
-import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.deploy.annotation.Deploy;
 import com.dounion.server.deploy.app.AbstractScript;
 import com.dounion.server.eum.DeployTypeEnum;
@@ -9,10 +8,6 @@ import com.dounion.server.eum.DeployTypeEnum;
 @Deploy(deployType = DeployTypeEnum.FILE)
 public class FileScript extends AbstractScript {
 
-    @Override
-    public String getWorkDirectory() {
-        return Constant.PATH_SCRIPT + os.getScriptPackage();
-    }
 
     @Override
     public String[] command() {

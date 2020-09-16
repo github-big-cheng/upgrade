@@ -39,7 +39,8 @@ public enum AppTypeEnum {
 //    TRAIN_APP("40100-170", "train_app", null),
 //    upgrade_linux("40100-280", "upgrade-linux"),
 //    upgrade-win("40100-270", "upgrade-win")
-    UPGRADE("40100-270", "upgrade", DeployTypeEnum.MAIN)
+    UPGRADE("40100-270", "upgrade", DeployTypeEnum.MAIN),
+    MY_SQL("40100-310", "mysql", DeployTypeEnum.MYSQL)
     ;
 
 

@@ -2,6 +2,8 @@ package com.dounion.server.deploy.os.impl;
 
 import com.dounion.server.deploy.os.OperatingSystem;
 
+import java.io.File;
+
 /**
  * Linux 操作系统
  */
@@ -19,7 +21,7 @@ public class LinuxOperatingSystem implements OperatingSystem {
 
     @Override
     public String getScriptPackage() {
-        return "linux/";
+        return "linux" + File.separator;
     }
 
     @Override

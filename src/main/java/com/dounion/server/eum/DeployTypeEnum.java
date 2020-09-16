@@ -11,7 +11,8 @@ public enum DeployTypeEnum {
 
     TOMCAT("40700-10", "Tomcat"),
     MAIN("40700-20", "Main"),
-    FILE("40700-30", "file")
+    FILE("40700-30", "File"),
+    MYSQL("40700-40", "MySql")
     ;
 
     DeployTypeEnum(String code, String desc) {

@@ -25,8 +25,8 @@ public abstract class AbstractScript {
         this.params = params;
     }
 
-    public String getWorkDirectory(){
-        return Constant.PATH_WORK;
+    public String getWorkDirectory() {
+        return Constant.PATH_SCRIPT + os.getScriptPackage();
     }
 
     protected abstract String[] command();
