@@ -54,8 +54,8 @@
         <td title="{%= $data.active?'活动':'停止' %}">{%= $data.active?'活动':'停止' %}</td>
         <td>
             {%if $data.active %}
-                <a class="stop-btn" data-id="{%= taskId%}" style="color: red;">停止</a>&nbsp;&nbsp;
-                <a class="wakeup-btn" data-id="{%= taskId%}" style="color: red;">唤醒</a>
+                <a class="stop-btn" data-id="{%= taskId%}" >停止</a>&nbsp;&nbsp;
+                <a class="wakeup-btn" data-id="{%= taskId%}" >唤醒</a>
             {%/if%}
         </td>
     </tr>
@@ -99,6 +99,7 @@
     });
 
     let refresh = false;
+    let timeoutID;
     $("body").on('click', 'a.auto-refresh-btn', function(e) {
         e.preventDefault();
 
@@ -116,6 +117,10 @@
         $(this).text('自动刷新');
 
         refresh = false;
+        if(timeoutID){
+            clearTimeout(timeoutID);
+            timeoutID = null;
+        }
     });
 
     function loopQuery(){
@@ -123,7 +128,7 @@
 
         let time = $("input[name=refreshTime]:checked").val();
         if(refresh){
-            setTimeout(function(){
+            timeoutID = setTimeout(function(){
                 loopQuery();
             }, time*1000);
         }
