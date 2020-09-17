@@ -33,7 +33,8 @@
 				<col width="6%">
 				<col width="20%">
 				<col width="20%">
-				<col width="54%">
+				<col width="39%">
+				<col width="15%">
 			</colgroup>
 			<thead>
 				<tr>
@@ -41,6 +42,7 @@
 					<th>服务类型</th>
 					<th>版本号</th>
 					<th>工作目录</th>
+					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody id="service_list_body"></tbody>
@@ -55,6 +57,7 @@
 		<td>{%= $item.format('appType', $data.appType) %}</td>
 		<td>{%= versionNo %}</td>
 		<td>{%= workPath %}</td>
+		<td><a class="app-restart-btn" data-id="{%= appType%}">重启</a></td>
 	</tr>
 </script>
 
@@ -109,7 +112,7 @@
 				if(rdata){
 					alert(rdata.message);
 					if(rdata.code=='0'){
-						window.location.href = "/index";
+						window.location = "/index";
 					}
 				}
 			}
@@ -158,6 +161,27 @@
 				}
 			});
 		}
+	});
+
+	$("#service_list_body").on('click', 'a.app-restart-btn', function(e){
+		e.preventDefault();
+		$.ajax({
+			url: '/restartApp.json',
+			dataType:'json',
+			data : { appType : $(this).data("id") },
+			type:'POST',
+			success: function (rdata) {
+				console.log(rdata);
+				if(rdata){
+					alert(rdata.message);
+					if(rdata.code == '0'){
+						setTimeout(function(){
+							window.location.href = rdata.data;
+						}, 5000);
+					}
+				}
+			}
+		});
 	});
 
 

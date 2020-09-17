@@ -44,6 +44,10 @@ public interface Constant {
      * 服务配置文件名称
      */
     String FILE_JSON_CONFIG_NAME = "serviceInfo.json";
+    /**
+     * 换行
+     */
+    String FILE_NEW_LINE = System.lineSeparator();
 
     /**
      * 临时文件夹

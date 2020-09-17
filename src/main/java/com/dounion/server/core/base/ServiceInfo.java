@@ -1,15 +1,19 @@
 package com.dounion.server.core.base;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.helper.StringHelper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServiceInfo {
 
@@ -56,6 +60,8 @@ public class ServiceInfo {
     // 启动时保存的原端口--防止修改端口
     @JSONField(serialize = false, deserialize = false)
     private Integer runningPort;
+    @JSONField(serialize = false, deserialize = false)
+    private Map<String, AppInfo> appInfoMap; // this.localServices 有变动时需重置为null
 
 
     // ============================= extended method  ==============================
@@ -85,7 +91,7 @@ public class ServiceInfo {
     public void toFile(){
         try {
             String jsonString = StringHelper.jsonFormatString(this);
-            FileHelper.writeFile(Constant.PATH_CONF + Constant.FILE_JSON_CONFIG_NAME, jsonString);
+            Files.write(Paths.get(Constant.PATH_CONF + Constant.FILE_JSON_CONFIG_NAME), jsonString.getBytes());
         } catch (IOException e) {
             logger.error("ServiceInfo write to file error: {}", e);
         }
@@ -191,6 +197,7 @@ public class ServiceInfo {
     }
 
     public void setLocalServices(List<AppInfo> localServices) {
+        this.appInfoMap = null; // 初始化
         this.localServices = localServices;
     }
 
@@ -201,5 +208,30 @@ public class ServiceInfo {
 
     public void setRunningPort(Integer runningPort) {
         this.runningPort = runningPort;
+    }
+
+
+    /**
+     * 根据appType获取本地服务对象
+     * @param appType
+     * @return
+     */
+    public AppInfo appInfoPickUp(String appType) {
+        if(CollectionUtils.isEmpty(this.localServices)){
+            return null;
+        }
+
+        if(appInfoMap == null){
+            synchronized (this) {
+                if(appInfoMap == null){
+                    appInfoMap = new HashMap<>();
+                    for(AppInfo appInfo : this.localServices){
+                        appInfoMap.put(appInfo.getAppType(), appInfo);
+                    }
+                }
+            }
+        }
+
+        return appInfoMap.get(appType);
     }
 }

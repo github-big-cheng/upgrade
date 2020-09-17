@@ -123,7 +123,7 @@ const CommonJS = {
         if(rdata){
             message = rdata.message ? rdata.message : message;
             alert(message);
-            if(rdata.code == "0"){
+            if(rdata.code == "0" && _cb instanceof Function){
                 _cb(rdata.data);
             }
         } else {

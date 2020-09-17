@@ -459,8 +459,67 @@
   </select>
 
 
-  <select id="">
-
-  </select>
+  <delete id="deleteBySelective" parameterType="com.dounion.server.entity.UpgradeRecord">
+    DELETE FROM T_UPGRADE_RECORD
+    <trim prefix="where " prefixOverrides="AND | OR">
+      <if test="subscribeId != null">
+        AND SUBSCRIBE_ID = #{subscribeId,jdbcType=INTEGER}
+      </if>
+      <if test="code != null">
+        AND CODE = #{code,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null">
+        AND `NAME` = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="publishUrl != null">
+        AND PUBLISH_URL = #{publishUrl,jdbcType=VARCHAR}
+      </if>
+      <if test="versionId != null">
+        AND VERSION_ID = #{versionId,jdbcType=INTEGER}
+      </if>
+      <if test="appType != null">
+        AND APP_TYPE = #{appType,jdbcType=VARCHAR}
+      </if>
+      <if test="versionNo != null">
+        AND VERSION_NO = #{versionNo,jdbcType=VARCHAR}
+      </if>
+      <if test="fileName != null">
+        AND FILE_NAME = #{fileName,jdbcType=VARCHAR}
+      </if>
+      <if test="fileSize != null">
+        AND FILE_SIZE = #{fileSize,jdbcType=BIGINT}
+      </if>
+      <if test="fileMd5 != null">
+        AND FILE_MD5 = #{fileMd5,jdbcType=VARCHAR}
+      </if>
+      <if test="isForceUpdate != null">
+        AND IS_FORCE_UPDATE = #{isForceUpdate,jdbcType=VARCHAR}
+      </if>
+      <if test="notifyStatus != null">
+        AND NOTIFY_STATUS = #{notifyStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="notifyCount != null">
+        AND NOTIFY_COUNT = #{notifyCount,jdbcType=INTEGER}
+      </if>
+      <if test="notifyTime != null">
+        AND NOTIFY_TIME = #{notifyTime, jdbcType=VARCHAR}
+      </if>
+      <if test="downloadStatus != null">
+        AND DOWNLOAD_STATUS = #{downloadStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="downloadTime != null">
+        AND DOWNLOAD_TIME = #{downloadTime,jdbcType=VARCHAR}
+      </if>
+      <if test="upgradeStatus != null">
+        AND UPGRADE_STATUS = #{upgradeStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="upgradeTime != null">
+        AND UPGRADE_TIME = #{upgradeTime,jdbcType=VARCHAR}
+      </if>
+      <if test="notifyCountStr != null">
+        AND IFNULL(NOTIFY_COUNT, 0) <![CDATA[<]]> #{notifyCountStr}
+      </if>
+    </trim>
+  </delete>
 
 </mapper>

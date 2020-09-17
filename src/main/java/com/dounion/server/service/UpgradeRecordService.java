@@ -29,4 +29,5 @@ public interface UpgradeRecordService {
 
     void upgradeRecordsGenerate(VersionInfo versionInfo, String subscribeCodes);
 
+    void cleanup();
 }

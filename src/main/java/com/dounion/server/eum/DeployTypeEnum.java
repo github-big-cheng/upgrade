@@ -5,14 +5,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 更新操作类型
+ * 部署操作类型
  */
 public enum DeployTypeEnum {
 
+    RESTART("40700-00", "Restart"),
     TOMCAT("40700-10", "Tomcat"),
     MAIN("40700-20", "Main"),
     FILE("40700-30", "File"),
-    MYSQL("40700-40", "MySql")
+    MYSQL("40700-40", "MySql"),
+    PROPERTIES("40700-50", "Properties"),
     ;
 
     DeployTypeEnum(String code, String desc) {

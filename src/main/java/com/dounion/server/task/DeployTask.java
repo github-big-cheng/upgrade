@@ -14,8 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-
 /**
  * 部署后台任务
  *      本地任务
@@ -51,54 +49,41 @@ public class DeployTask extends BaseTask {
             return;
         }
 
-        // 获取本地服务列表
-        List<AppInfo> localServices = serviceInfo.getLocalServices();
-        if(CollectionUtils.isEmpty(localServices)){
-            logger.info("【{}】 local service list is empty, deploy task exit", this);
+        super.setProgressTwentyFive(); // progress 25%
+
+        // 获取本地应用
+        AppInfo appInfo = serviceInfo.appInfoPickUp(versionInfo.getAppType());
+        if(appInfo == null){
+            logger.warn("【{}】 local service list is empty, deploy task exit", this);
             return;
         }
 
-        super.setProgressTwentyFive(); // progress 25%
-
-        // called scripts here
-        for(AppInfo appInfo : localServices){
-
-            // find appType and check is it needed to deploy
-            if(!StringUtils.equals(appInfo.getAppType(), versionInfo.getAppType())){
-                continue;
-            }
-
-            // 远程发布且版本号等于或低于当前版本则不发布
-            // check version
-            if(!StringUtils.equals(versionInfo.getIsForceUpdate(), "1") && // 非强制更新
-                    StringUtils.equals(versionInfo.getAddSource(), "2") && // 远程发布
-                    appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) >= 0){
-                logger.debug("【{}】 Remote publish ! Current version is {}, deploy version is {}, deploy task will be exit",
-                        this, appInfo.getVersionNo(), versionInfo.getVersionNo());
-                break;
-            }
-
-            // deploy
-            AbstractScript script = DeployHandler.getDeploy(appInfo.getDeployTypeEnum());
-            script.setOs(OperatingSystemFactory.build());
-            script.setParams(
-                new String[]{
-                    versionInfo.getFilePath(),
-                    appInfo.getWorkPath(),
-                    versionInfo.getFileName()
-                }
-            );
-            script.deploy();
-
-            super.setProgressNeelyComplete(); // progress 95%
-
-            // 发布完成更新serviceInfo 信息
-            appInfo.setVersionNo(versionInfo.getVersionNo());
-            serviceInfo.toFile();
-
-            super.setProgressComplete(); // progress 100%
-
-            break;
+        // 远程发布且版本号等于或低于当前版本则不发布
+        // check version
+        if(!StringUtils.equals(versionInfo.getIsForceUpdate(), "1") && // 非强制更新
+                StringUtils.equals(versionInfo.getAddSource(), "2") && // 远程发布
+                appInfo.getVersionNo().compareTo(versionInfo.getVersionNo()) >= 0){
+            logger.warn("【{}】 Remote publish ! Current version is {}, deploy version is {}, deploy task will be exit",
+                    this, appInfo.getVersionNo(), versionInfo.getVersionNo());
+            return;
         }
+
+        // deploy
+        AbstractScript.ScriptParams scriptParams = new AbstractScript.ScriptParams();
+        scriptParams.setAppInfo(appInfo);
+        scriptParams.setVersionInfo(versionInfo);
+
+        AbstractScript script = DeployHandler.getDeploy(appInfo.getDeployTypeEnum());
+        script.setOs(OperatingSystemFactory.build());
+        script.setParams(scriptParams);
+        script.deploy();
+
+        super.setProgressNeelyComplete(); // progress 95%
+
+        // 发布完成更新serviceInfo 信息
+        appInfo.setVersionNo(versionInfo.getVersionNo());
+        serviceInfo.toFile();
+
+        super.setProgressComplete(); // progress 100%
     }
 }

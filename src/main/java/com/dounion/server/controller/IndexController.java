@@ -1,10 +1,10 @@
 package com.dounion.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dounion.server.core.base.AppInfo;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
-import com.dounion.server.core.deploy.DeployHandler;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.request.MappingConfigHandler;
@@ -13,6 +13,7 @@ import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.deploy.app.AbstractScript;
+import com.dounion.server.deploy.app.impl.RestartScript;
 import com.dounion.server.deploy.os.OperatingSystem;
 import com.dounion.server.deploy.os.OperatingSystemFactory;
 import com.dounion.server.deploy.os.impl.WindowsOperatingSystem;
@@ -189,10 +190,32 @@ public class IndexController {
     }
 
 
-    @RequestMapping(value = "/subscribe.json")
+    @RequestMapping("/subscribe.json")
     @ResponseType(ResponseTypeEnum.JSON)
     public Object subscribe() {
         TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
+        return ResponseBuilder.buildSuccess();
+    }
+
+
+
+    @RequestMapping("/restartApp.json")
+    @ResponseType(ResponseTypeEnum.JSON)
+    public Object restartApp(String appType){
+
+        AppInfo app = serviceInfo.appInfoPickUp(appType);
+        if(app == null){
+            return ResponseBuilder.buildError("未找到指定的本地服务【" + appType + "】");
+        }
+
+        AbstractScript.ScriptParams params = new AbstractScript.ScriptParams();
+        params.setAppInfo(app);
+
+        AbstractScript script = new RestartScript();
+        script.setOs(OperatingSystemFactory.build());
+        script.setParams(params);
+        script.deploy();
+
         return ResponseBuilder.buildSuccess();
     }
 

@@ -9,49 +9,75 @@ import java.util.Set;
  */
 public enum AppTypeEnum {
 
-    APP("40100-140", "app", DeployTypeEnum.TOMCAT),
-    DO_BPM("40100-150", "dobpm", DeployTypeEnum.TOMCAT),
-    DO_FILE("40100-220", "dofile", DeployTypeEnum.TOMCAT),
-    APP_SERVER("40100-10", "dosmart-appServer", DeployTypeEnum.TOMCAT),
-    DO_SMART_CONTROLLER("40100-60", "dosmart-controller", DeployTypeEnum.MAIN),
-    DO_SMART_LOG("40100-40", "dosmart-log", DeployTypeEnum.MAIN),
-    DO_SMART_MASTER("40100-20", "dosmart-master", DeployTypeEnum.MAIN),
-    DO_SMART_PAD_APK("40100-70", "dosmart-pad-apk", DeployTypeEnum.FILE),
-    DO_SMART_PHONE_APK("40100-80", "dosmart-phone-apk", DeployTypeEnum.FILE),
-    DO_SMART_SCREEN_APK("40100-90", "dosmart-screen-apk", DeployTypeEnum.FILE),
-    DO_SMART_TASK("40100-30", "dosmart-task", DeployTypeEnum.MAIN),
-    DO_SMART_VIDEO("40100-50", "dosmart-video", DeployTypeEnum.FILE),
-    DO_SMS_SERVER("40100-230", "dosmsserver", DeployTypeEnum.TOMCAT),
-    GRAIN_PHONE_APK("40100-130", "grain-phone-apk", DeployTypeEnum.FILE),
-    GTS("40100-100", "gts", DeployTypeEnum.TOMCAT),
-//    GTS_APP("40100-110", "gts-app", null),
-    GTS_CONTROLLER("40100-120", "gts-controller", DeployTypeEnum.MAIN),
-//    HR_APP("40100-190", "hr_app", null),
-//    IDOC("40100-290", "idoc", DeployTypeEnum.MAIN),
-//    OA_APP("40100-180", "oa_app", null),
-//    OFFICEUTIL("40100-250", "officeutil", null),
-//    PAMS_APP("40100-200", "pams_app", null),
-//    PORTAL_APP("40100-160", "portal_app", null),
-    PRINT("40100-210", "print", DeployTypeEnum.MAIN),
-//    RED("40100-300", "red", null),
-    REMIND("40100-260", "remind", DeployTypeEnum.TOMCAT),
-    SEND("40100-240", "send", DeployTypeEnum.TOMCAT),
-//    TRAIN_APP("40100-170", "train_app", null),
-//    upgrade_linux("40100-280", "upgrade-linux"),
-//    upgrade-win("40100-270", "upgrade-win")
-    UPGRADE("40100-270", "upgrade", DeployTypeEnum.MAIN),
-    MY_SQL("40100-310", "mysql", DeployTypeEnum.MYSQL)
+    // tomcat
+    APP("40100-1001", "app", "app.war", DeployTypeEnum.TOMCAT),
+    PUSH("40100-1002", "push", "push.war", DeployTypeEnum.TOMCAT),
+    APP_SERVER("40100-1003", "appServer", "appServer.war", DeployTypeEnum.TOMCAT),
+    BIZ_SERVICE("40100-1004", "bizService", "bizService.war", DeployTypeEnum.TOMCAT),
+    DO_BPM("40100-1005", "dobpm", "dobpm.war", DeployTypeEnum.TOMCAT),
+    DO_SMS_SERVER("40100-1006", "dosmsserver", "dosmsserver.war", DeployTypeEnum.TOMCAT),
+    FILE("40100-1007", "file", "file.war", DeployTypeEnum.TOMCAT),
+    REMIND("40100-1008", "remind", "remind.war", DeployTypeEnum.TOMCAT),
+    DO_REMIND("40100-1009", "doremind", "doremind.war", DeployTypeEnum.TOMCAT),
+    GTS("40100-1010", "gts", "gts.war", DeployTypeEnum.TOMCAT),
+    DO_OA("40100-1011", "dooa", "dooa.war", DeployTypeEnum.TOMCAT),
+    DO_HR("40100-1012", "dohr", "dohr.war", DeployTypeEnum.TOMCAT),
+    NBS("40100-1013", "nbs", "nbs.war", DeployTypeEnum.TOMCAT),
+
+    // main
+    DO_SMART_MASTER("40100-2001", "dosmart-master", "dosmart-master.zip", DeployTypeEnum.MAIN),
+    DO_SMART_TASK("40100-2002", "dosmart-task", "dosmart-task.zip", DeployTypeEnum.MAIN),
+    DO_SMART_LOG("40100-2003", "dosmart-log", "dosmart-log.zip", DeployTypeEnum.MAIN),
+    DO_SMART_CONTROLLER("40100-2004", "dosmart-controller", "dosmart-controller-1.0.0.zip", DeployTypeEnum.MAIN),
+    GTS_CONTROLLER("40100-2005", "gtsController", "gtsController.rar", DeployTypeEnum.MAIN),
+    PRINT("40100-2006", "print", "print.zip", DeployTypeEnum.MAIN),
+    UPGRADE("40100-2007", "upgrade", "upgrade.zip", DeployTypeEnum.MAIN),
+
+    // 下载文件
+    GRAIN_ANDROID_APK("40100-3001", "grain-android", "grain-android.apk", DeployTypeEnum.FILE),
+    DO_SMART_SCREEN_APK("40100-3002", "grain-screen", "grain-screen.apk", DeployTypeEnum.FILE),
+    DO_SMART_PAD_APK("40100-3003", "grain-pad", "grain-pad.apk", DeployTypeEnum.FILE),
+    DOUNION_VIDEO("40100-3004", "dounion_video", "dounion_video.msi", DeployTypeEnum.FILE),
+    DOUNION_VIDEO_NET("40100-3005", "dotNetFx45_Full_setup", "dotNetFx45_Full_setup.exe", DeployTypeEnum.FILE),
+    D_TOOLS("40100-3006", "dtools", "dtools.exe", DeployTypeEnum.FILE), // 打印控件
+
+    // 数据库
+    MY_SQL("40100-4001", "mysql", "mysql", DeployTypeEnum.MYSQL),
+
+    // 配置文件相关
+    PROPERTIES_APP("40100-5101", "app", "framework.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_PUSH("40100-5102", "push", "config_push.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_APP_SERVER("40100-5103", "appServer", "config_appServer.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_BIZ_SERVICE("40100-5104", "bizService", "config_dograin_service.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_SMS_SERVER("40100-5106", "dosmsserver", "config_dosmsserver.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_FILE("40100-5107", "file", "config_file.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_REMIND("40100-5108", "remind", "config_doremind.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_REMIND("40100-5109", "doremind", "config_doremind.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_GTS("40100-5110", "gts", "config_dograin_gts.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_OA("40100-5111", "dooa", "config_dograin_oa.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_HR("40100-5112", "dohr", "config_dograin_hr.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_NBS("40100-5113", "nbs", "config_dograin_nbs.properties", DeployTypeEnum.PROPERTIES),
+
+    PROPERTIES_DO_SMART_MASTER("40100-5201", "dosmart-master", "config_master.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_SMART_TASK("40100-5202", "dosmart-task", "config_task.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_SMART_LOG("40100-5203", "dosmart-log", "config_log.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_SMART_CONTROLLER("40100-5204", "dosmart-controller", "config_controller.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_GTS_CONTROLLER("40100-5205", "gtsController", "application-dev.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_PRINT("40100-5206", "print", "system.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_UPGRADE("40100-5207", "upgrade", "config_upgrade.properties", DeployTypeEnum.PROPERTIES),
     ;
 
 
-    AppTypeEnum(String code, String desc, DeployTypeEnum deployType) {
+    AppTypeEnum(String code, String appName, String fileName, DeployTypeEnum deployType) {
         this.code = code;
-        this.desc = desc;
+        this.appName = appName;
+        this.fileName = fileName;
         this.deployType = deployType;
     }
 
     private String code;
-    private String desc;
+    private String appName;
+    private String fileName;
     private DeployTypeEnum deployType;
     private static Map<String, AppTypeEnum> map;
 
@@ -63,12 +89,20 @@ public enum AppTypeEnum {
         this.code = code;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getAppName() {
+        return appName;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public DeployTypeEnum getDeployType() {
@@ -81,7 +115,7 @@ public enum AppTypeEnum {
 
     @Override
     public String toString() {
-        return this.code + "-" + this.desc;
+        return this.code + "-" + this.fileName;
     }
 
     public boolean equals(AppTypeEnum enu){

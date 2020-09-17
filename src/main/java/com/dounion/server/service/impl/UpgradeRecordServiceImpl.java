@@ -124,4 +124,9 @@ public class UpgradeRecordServiceImpl implements UpgradeRecordService {
         }
     }
 
+
+    @Override
+    public void cleanup() {
+        upgradeRecordMapper.deleteBySelective(new UpgradeRecord());
+    }
 }

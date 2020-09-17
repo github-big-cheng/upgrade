@@ -12,7 +12,8 @@
 <body>
 <h1>发布记录列表</h1>
 
-    <a id="republish" href="javascript:void(0);">重新发布</a>
+    <a id="cleanup" >清空</a>
+    <a id="republish" >重新发布</a>
 
 
     <div style="width: 100%;">
@@ -160,6 +161,17 @@
             type: 'post',
             dataType: 'json',
             url: '/publish/republish.json',
+            success: function (rdata) {
+                alert(rdata.message);
+            }
+        });
+    });
+	$("#cleanup").on('click', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: '/publish/cleanup.json',
             success: function (rdata) {
                 alert(rdata.message);
             }

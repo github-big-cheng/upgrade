@@ -2,20 +2,20 @@
 
 # 参数校验
 
-if [ ! -n "$1" ]; then
+if [ -z "$1" ]; then
         echo "please have a parameter of new file name with full path, such as /home/dounion/download/app.war"
         exit
 fi
 echo "待更新的文件：【$1】"
 
 
-if [ ! -n "$2" ]; then
+if [ -z "$2" ]; then
         echo "please have a parameter of work path, such as /home/dounion/tomcat/tomcat-app"
         exit
 fi
 echo "工作目录路径：【$2】"
 
-if [ ! -n "$3" ]; then
+if [ -z "$3" ]; then
         echo "please have a parameter of old file name, such as app.war"
         exit
 fi
@@ -27,8 +27,11 @@ echo "操作的文件名：【$3】"
 # 停应用
 pid=$(ps -ef | grep "$2" | grep -v grep | grep '/bin/java' | awk '{print $2}')
 if [ -n "$pid" ]; then
-  echo "tomcat is running, killed $pid"
-  kill -9 "$pid"
+	for p in $pid
+	do
+  		echo "tomcat is running, killed $p"
+  		kill -9 "$p"
+	done
 fi
 sleep 3
 

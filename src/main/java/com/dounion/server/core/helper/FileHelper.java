@@ -95,10 +95,11 @@ public class FileHelper {
 
     /**
      * 写文件
-     *
      * @param path
      * @param content
+     * @deprecated instead by Files.write
      */
+    @Deprecated
     public static void writeFile(String path, String content) throws IOException {
 
         BufferedWriter writer = null;

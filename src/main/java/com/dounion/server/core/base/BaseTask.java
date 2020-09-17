@@ -196,13 +196,15 @@ public abstract class BaseTask implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
 
+        logger.info("task 【{}】 begin", this);
+
         long startTime = System.currentTimeMillis();
         // 设置开始时间
         this.setStartTime(DateHelper.format(new Date()));
 
         // 任务开始前检查是否已被撤销
         if(this.isInterrupted()){
-            logger.info("task 【{}】 has been interrupted, it will be exit...", this.taskId);
+            logger.info("task 【{}】 has been interrupted, it will be exit...", this);
             return taskId;
         }
 
@@ -234,6 +236,8 @@ public abstract class BaseTask implements Callable<Integer> {
                 Thread.sleep(this.getLoopDelay());
                 this.call();
             }
+
+            logger.info("task 【{}】 end", this);
         }
 
         return this.taskId;

@@ -87,4 +87,12 @@ public class PublishController {
         return ResponseBuilder.buildSuccess();
     }
 
+
+    @RequestMapping("/cleanup.json")
+    @ResponseType(ResponseTypeEnum.JSON)
+    public Object cleanup(){
+        upgradeRecordService.cleanup();
+        return ResponseBuilder.buildSuccess();
+    }
+
 }

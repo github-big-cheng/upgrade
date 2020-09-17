@@ -59,8 +59,18 @@ public class AppInfo {
     }
 
     @JSONField(deserialize = false)
+    public AppTypeEnum getAppTypeEnum(){
+        return AppTypeEnum.getMap().get(this.appType);
+    }
+
+    @JSONField(deserialize = false)
+    public String getAppName(){
+        return this.getAppTypeEnum()==null ? null : this.getAppTypeEnum().getAppName();
+    }
+
+    @JSONField(deserialize = false)
     public DeployTypeEnum getDeployTypeEnum(){
-        AppTypeEnum appTypeEnum = AppTypeEnum.getMap().get(this.appType);
+        AppTypeEnum appTypeEnum = this.getAppTypeEnum();
         return appTypeEnum==null ? null : appTypeEnum.getDeployType();
     }
 }

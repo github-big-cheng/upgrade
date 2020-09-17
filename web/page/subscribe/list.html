@@ -47,6 +47,7 @@
                 <th>发布回调地址</th>
                 <th>订阅状态</th>
                 <th>订阅时间</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody id="subscribe_list_tbody"></tbody>
@@ -77,6 +78,7 @@
         <td title="{%= $data.publishUrl %}">{%= $data.publishUrl %}</td>
         <td title="{%= $data.status=='1'?'已订阅':'已取消' %}">{%= $data.status=='1'?'已订阅':'已取消' %}</td>
         <td title="{%= subscribeTime %}">{%= subscribeTime %}</td>
+        <td><a class="unsubscribe-btn" data-id="{%= id%}">注销</a></td>
     </tr>
 </script>
 
@@ -146,6 +148,23 @@
             }
         });
     }
+
+
+    $("#subscribe_list_tbody").on('click', 'a.unsubscribe-btn', function(e){
+        e.preventDefault();
+
+        $.ajax({
+            type:'post',
+            data : {id : $(this).data("id")},
+            dataType:'json',
+            url:'/subscribe/cancel.json',
+            success:function(rdata) {
+                CommonJS.ajaxCallback(rdata, function(data){
+                    $("#query").click();
+                });
+            }
+    });
+
 
 
 

@@ -24,4 +24,7 @@ public class UpgradeRecordMapper extends BaseDao<UpgradeRecord> {
         return sql.selectList(this.getNamespace() + ".selectEntityListBySelective", query);
     }
 
+    public void deleteBySelective(UpgradeRecord record) {
+        sql.delete(this.getNamespace() + ".deleteBySelective", record);
+    }
 }

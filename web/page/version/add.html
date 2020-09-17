@@ -29,11 +29,11 @@
 				</colgroup>
 				<tbody>
 					<tr>
-						<td>服务类型</td>
+						<td>应用类型</td>
 						<td>
 							<select id="appType" name="appType"></select>
 						</td>
-						<td>服务类型</td>
+						<td>应用类型</td>
 					</tr>
 					<tr>
 						<td>版本号</td>
@@ -122,6 +122,17 @@
 
 		e.preventDefault();
 
+		let file = $('input[name=file]')[0].files[0];
+		if(!file){
+			alert("请上传版本文件");
+			return;
+		}
+
+		let ok = confirm("请确认应用类型与文件是否匹配？");
+		if(!ok){
+			return;
+		}
+
 		let url = "/version/add.json";
 		let _url = $("input[name=masterAddress]").val();
 		if(_url && _url!=''){
@@ -129,10 +140,10 @@
 		}
 
 		let formData = new FormData();
-		formData.append("appType", $('select[name=appType]').val());
+		formData.append("appType", appType);
 		formData.append("versionNo", $('input[name=versionNo]').val());
 		formData.append("isForceUpdate", $('input[name=isForceUpdate]:checked').val());
-		formData.append("file", $('input[name=file]')[0].files[0]);
+		formData.append("file", file);
 		formData.append("addSource", $('input[name=addSource]').val());
 		formData.append("publishType", $('input[name=publishType]:checked').val());
 
