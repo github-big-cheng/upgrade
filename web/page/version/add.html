@@ -140,7 +140,7 @@
 		}
 
 		let formData = new FormData();
-		formData.append("appType", appType);
+		formData.append("appType", $('select[name=appType]').val());
 		formData.append("versionNo", $('input[name=versionNo]').val());
 		formData.append("isForceUpdate", $('input[name=isForceUpdate]:checked').val());
 		formData.append("file", file);
