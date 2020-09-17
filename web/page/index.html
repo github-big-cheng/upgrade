@@ -174,11 +174,6 @@
 				console.log(rdata);
 				if(rdata){
 					alert(rdata.message);
-					if(rdata.code == '0'){
-						setTimeout(function(){
-							window.location.href = rdata.data;
-						}, 5000);
-					}
 				}
 			}
 		});
