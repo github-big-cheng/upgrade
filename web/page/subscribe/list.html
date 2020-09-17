@@ -154,15 +154,16 @@
         e.preventDefault();
 
         $.ajax({
-            type:'post',
-            data : {id : $(this).data("id")},
-            dataType:'json',
-            url:'/subscribe/cancel.json',
-            success:function(rdata) {
-                CommonJS.ajaxCallback(rdata, function(data){
+            type: 'post',
+            data: {id: $(this).data("id")},
+            dataType: 'json',
+            url: '/subscribe/cancel.json',
+            success: function (rdata) {
+                CommonJS.ajaxCallback(rdata, function (data) {
                     $("#query").click();
                 });
             }
+        });
     });
 
 
