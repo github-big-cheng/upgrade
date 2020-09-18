@@ -1,11 +1,9 @@
 package com.dounion.server.core.helper;
 
 import com.dounion.server.core.exception.SystemException;
-import info.monitorenter.cpdetector.io.*;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 
@@ -165,33 +163,6 @@ public class FileHelper {
             e.printStackTrace();
         }
         return null;
-    }
-
-
-    /**
-     * 获取文件编码
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public static Charset getFileEncoding(File file) {
-
-        CodepageDetectorProxy detector = CodepageDetectorProxy.getInstance();
-        detector.add(new ParsingDetector(false));
-        detector.add(JChardetFacade.getInstance());
-        detector.add(ASCIIDetector.getInstance());
-        detector.add(UnicodeDetector.getInstance());
-
-        try {
-            Charset charset = detector.detectCodepage(file.toURI().toURL());
-            if (charset != null) {
-                return charset;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Charset.defaultCharset();
     }
 
 }

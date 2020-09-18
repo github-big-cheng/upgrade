@@ -4,7 +4,6 @@ import com.dounion.server.core.deploy.annotation.Deploy;
 import com.dounion.server.core.exception.BusinessException;
 import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.helper.DateHelper;
-import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.eum.DeployTypeEnum;
 import org.apache.commons.lang.StringUtils;
 
@@ -12,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +24,8 @@ public class PropertiesScript extends RestartScript{
 
     final static String CONVERT_CHAR = "Save:|"; // 保存/覆盖操作
     final static String APPEND_CHAR = "Append:|"; // 追加操作
+
+    final Charset charset = Charset.defaultCharset();
 
     @Override
     public void deploy() {
@@ -46,11 +48,9 @@ public class PropertiesScript extends RestartScript{
         String originFileName = params.getAppInfo().getWorkPath() +
                         File.separator + params.getVersionInfo().getFileName();
         File originFile = new File(originFileName);
-        Charset charset = Charset.defaultCharset();
         if(originFile.exists()){
             // 检查原文件存在，解析
-            charset = FileHelper.getFileEncoding(originFile);
-            this.fileParser(originFile, content, originLine, charset);
+            this.fileParser(originFile, content, originLine);
         }
 
         // 文件组装
@@ -67,7 +67,7 @@ public class PropertiesScript extends RestartScript{
             Files.write(
                 f.toPath(), // 文件路径
                 content, // 文件内容
-                charset  // 编码
+                charset // 编码
             );
         } catch (IOException e) {
             logger.error("PropertiesScript: file write error:{}", e);
@@ -102,12 +102,11 @@ public class PropertiesScript extends RestartScript{
         // 遍历处理版本文件
         try (
                 BufferedReader reader =
-                     Files.newBufferedReader(versionFile.toPath(), FileHelper.getFileEncoding(versionFile))
-        ){
-
+                     Files.newBufferedReader(versionFile.toPath(), charset)
+        ) {
             String line;
-            while((line=reader.readLine()) != null) {
-                if(StringUtils.isBlank(line)){
+            while ((line = reader.readLine()) != null) {
+                if (StringUtils.isBlank(line)) {
                     continue;
                 }
 
@@ -116,32 +115,33 @@ public class PropertiesScript extends RestartScript{
                 // 追加操作
                 boolean append = false;
                 String realLine = line;
-                if(StringUtils.startsWith(line, APPEND_CHAR)){
+                if (StringUtils.startsWith(line, APPEND_CHAR)) {
                     realLine = StringUtils.substring(line, APPEND_CHAR.length());
                     append = true;
                 }
-                if(StringUtils.startsWith(line, CONVERT_CHAR)){
+                if (StringUtils.startsWith(line, CONVERT_CHAR)) {
                     realLine = StringUtils.substring(line, CONVERT_CHAR.length());
                 }
 
                 // 注释 直接添加
-                if(StringUtils.startsWith(realLine, "#")){
-                    content.add(realLine);
-                    continue;
-                }
+                // 暂不处理注释
+//                if (StringUtils.startsWith(realLine, "#")) {
+//                    content.add(realLine);
+//                    continue;
+//                }
 
                 String[] arr = StringUtils.split(realLine, "=", 2);
-                if(arr.length != 2){
+                if (arr.length != 2) {
                     logger.warn("properties line mixed failed..[{}]", realLine);
                     continue;
                 }
 
-                Integer index = originLine.get(arr[0]);
+                Integer index = originLine.get(arr[0].trim());
                 // 原文件中存在指定键值
-                if(index != null){
+                if (index != null) {
                     // 追加
-                    if(append){
-                        content.set(index, content.get(index) + arr[1]);
+                    if (append) {
+                        content.set(index, content.get(index).trim() + arr[1].trim());
                     } else {
                         content.set(index, realLine);
                     }
@@ -151,6 +151,7 @@ public class PropertiesScript extends RestartScript{
                 // 默认追加
                 content.add(realLine);
             }
+        } catch (MalformedInputException e) {
 
         } catch (IOException e) {
             logger.error("propertiesMixed: 文件【{}】处理异常{}, e:{}", versionFile.getName(), e);
@@ -164,10 +165,9 @@ public class PropertiesScript extends RestartScript{
      * @param file
      * @param content
      * @param map
-     * @param charset
      * @return
      */
-    private void fileParser(File file, List<String> content, LinkedHashMap<String, Integer> map, Charset charset){
+    private void fileParser(File file, List<String> content, LinkedHashMap<String, Integer> map){
 
         try (
                 BufferedReader reader =
@@ -186,7 +186,7 @@ public class PropertiesScript extends RestartScript{
                         !StringUtils.startsWith(line, "#")){
                     String[] arr = StringUtils.split(line, "=", 2);
                     if(arr.length == 2){
-                        map.put(arr[0], lineNum);
+                        map.put(arr[0].trim(), lineNum);
                     }
                 }
 
