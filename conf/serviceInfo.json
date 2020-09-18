@@ -1,43 +1,215 @@
 {
-  // 库点代码
+  "code-comment": "库点代码",
   "code": "dounion118",
-  // 库点名称
+
+  "name-comment": "库点名称",
   "name": "测试118",
-  // 当前主机IP
+
+  "localIp-comment": "服务IP，主机注册使用，请录入外网IP",
   "localIp": "127.0.0.1",
-  // 服务端口
+
+  "port-comment": "服务端口号",
   "port": 8001,
-  // 忽略模式 非强制更新不更新
-  "ignoreMode": "1",
-  // 是否是master
-  "master": "1",
-  // 上级服务器IP
-  "masterIp" : "127.0.0.1",
-  // 上级服务器IP
+
+  "ignoreMode-comment": "忽略模式：暂未启用，后期增加更新逻辑处理，忽略模式下非强制更新不主动部署程序",
+  "ignoreMode": "0",
+
+  "master-comment": "是否是根节点主机 1-是 0-否",
+  "master": "0",
+
+  "masterIp-comment" : "上级主机IP",
+  "masterIp" : "120.77.63.203",
+
+  "masterPort-comment" : "上级主机端口",
   "masterPort" : 8001,
-  // 操作系统
-  "osType": "40300-20",
-  // 是否提供分发下载服务
+
+  "osType-comment": "操作系统，详情请参考http://120.77.63.203:8001/common/dictList.json?type=osType",
+  "osType": "40300-10",
+
+  "standBy-comment": "是否提供分发下载 1-是 0-否，上级节点达到最下下载次数时会向下级已更新完主机转发下载请求",
   "standBy": "1",
-  // 发布回调地址 未配置则默认 http://local_ip:port/version/add.json
+
+  "publishPath-comment": "发布回调地址，未配置则默认 http://local_ip:port/version/add.json",
   "publishPath": "",
-  // 本地注册的服务
+
+  "localServices-comment" : "本地服务列表",
   "localServices": [
     {
-      // 服务类型
-      "appType": "40100-140",
-      // 版本号
+      "appType-comment": "应用类型，详情请参考http://120.77.63.203:8001/common/dictList.json?type=appType",
+      "appType": "40100-1001",
+      "versionNo-comment" : "版本号，可使用大小版本号1.0.0/日期格式字符串等格式",
       "versionNo" : "1.0.0",
-      // 工作目录
-      "workPath" : "E:\\upgrade\\nnlk118\\app"
+      "workPath-comment" : "工作路径",
+      "workPath-comment1" : "tomcat需指向到tomcat的完整路径，如：/home/dounion/tomcat/tomcat-app-push",
+      "workPath-comment2" : "Main程序需指向程序工作目录的上级目录，如：/home/dounion/server",
+      "workPath-comment3" : "File文件需指向下载目录，如：/home/dounion/download",
+      "workPath" : "/home/dounion/tomcat/tomcat-app-push"
     },
     {
-      // 服务类型
-      "appType": "40100-60",
-      // 版本号
+      "appType": "40100-1002",
       "versionNo" : "1.0.0",
-      // 工作目录
-      "workPath" : "E:\\upgrade\\nnlk118\\dosmart-controller"
+      "workPath" : "/home/dounion/tomcat/tomcat-app-push"
+    },
+    {
+      "appType": "40100-1003",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-appServer"
+    },
+    {
+      "appType": "40100-1004",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-bizService"
+    },
+    {
+      "appType": "40100-1005",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-dobpm-sms"
+    },
+    {
+      "appType": "40100-1006",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-dobpm-sms"
+    },
+    {
+      "appType": "40100-1007",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-file-doremind-idoc"
+    },
+    {
+      "appType": "40100-1009",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-file-doremind-idoc"
+    },
+    {
+      "appType": "40100-1010",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-gts-oa-hr"
+    },
+    {
+      "appType": "40100-1011",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-gts-oa-hr"
+    },
+    {
+      "appType": "40100-1012",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-gts-oa-hr"
+    },
+    {
+      "appType": "40100-2001",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-2002",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-2003",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-2006",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-2007",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-4001",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion"
+    },
+    {
+      "appType": "40100-5101",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-app-push"
+    },
+    {
+      "appType": "40100-5102",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-app-push"
+    },
+    {
+      "appType": "40100-5103",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-appServer"
+    },
+    {
+      "appType": "40100-5104",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-bizService"
+    },
+    {
+      "appType": "40100-5105",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-dobpm-sms"
+    },
+    {
+      "appType": "40100-5106",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-dobpm-sms"
+    },
+    {
+      "appType": "40100-5107",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-file-doremind-idoc"
+    },
+    {
+      "appType": "40100-5109",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-file-doremind-idoc"
+    },
+    {
+      "appType": "40100-5110",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-gts-oa-hr"
+    },
+    {
+      "appType": "40100-5111",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-gts-oa-hr"
+    },
+    {
+      "appType": "40100-5112",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/tomcat/tomcat-gts-oa-hr"
+    },
+    {
+      "appType": "40100-5201",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-5202",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-5203",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-5206",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-5207",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/server"
+    },
+    {
+      "appType": "40100-3006",
+      "versionNo" : "1.0.0",
+      "workPath" : "/home/dounion/download"
     }
+
   ]
 }
