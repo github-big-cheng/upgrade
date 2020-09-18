@@ -146,11 +146,6 @@
       "workPath" : "/home/dounion/tomcat/tomcat-bizService"
     },
     {
-      "appType": "40100-5105",
-      "versionNo" : "1.0.0",
-      "workPath" : "/home/dounion/tomcat/tomcat-dobpm-sms"
-    },
-    {
       "appType": "40100-5106",
       "versionNo" : "1.0.0",
       "workPath" : "/home/dounion/tomcat/tomcat-dobpm-sms"
