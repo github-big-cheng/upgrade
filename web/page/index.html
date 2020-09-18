@@ -57,7 +57,10 @@
 		<td>{%= $item.format('appType', $data.appType) %}</td>
 		<td>{%= versionNo %}</td>
 		<td>{%= workPath %}</td>
-		<td><a class="app-restart-btn" data-id="{%= appType%}">重启</a></td>
+		<td>
+			{%if $data.appType.indexOf('40100-5')!=0 %}
+			<a class="app-restart-btn" data-id="{%= appType%}">重启</a></td>
+			{%/if%}
 	</tr>
 </script>
 

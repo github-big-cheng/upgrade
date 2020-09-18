@@ -4,6 +4,7 @@ import com.dounion.server.core.deploy.annotation.Deploy;
 import com.dounion.server.core.exception.BusinessException;
 import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.helper.DateHelper;
+import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.eum.DeployTypeEnum;
 import org.apache.commons.lang.StringUtils;
 
@@ -45,9 +46,11 @@ public class PropertiesScript extends RestartScript{
         String originFileName = params.getAppInfo().getWorkPath() +
                         File.separator + params.getVersionInfo().getFileName();
         File originFile = new File(originFileName);
+        Charset charset = Charset.defaultCharset();
         if(originFile.exists()){
             // 检查原文件存在，解析
-            this.fileParser(originFile, content, originLine);
+            charset = FileHelper.getFileEncoding(originFile);
+            this.fileParser(originFile, content, originLine, charset);
         }
 
         // 文件组装
@@ -64,7 +67,7 @@ public class PropertiesScript extends RestartScript{
             Files.write(
                 f.toPath(), // 文件路径
                 content, // 文件内容
-                Charset.forName("GBK")  // 编码 properties文件默认 GBK
+                charset  // 编码
             );
         } catch (IOException e) {
             logger.error("PropertiesScript: file write error:{}", e);
@@ -97,13 +100,18 @@ public class PropertiesScript extends RestartScript{
         }
 
         // 遍历处理版本文件
-        try (BufferedReader reader = Files.newBufferedReader(versionFile.toPath(), Charset.forName("GBK"))){
+        try (
+                BufferedReader reader =
+                     Files.newBufferedReader(versionFile.toPath(), FileHelper.getFileEncoding(versionFile))
+        ){
 
             String line;
             while((line=reader.readLine()) != null) {
                 if(StringUtils.isBlank(line)){
                     continue;
                 }
+
+                line = StringUtils.trim(line);
 
                 // 追加操作
                 boolean append = false;
@@ -114,6 +122,12 @@ public class PropertiesScript extends RestartScript{
                 }
                 if(StringUtils.startsWith(line, CONVERT_CHAR)){
                     realLine = StringUtils.substring(line, CONVERT_CHAR.length());
+                }
+
+                // 注释 直接添加
+                if(StringUtils.startsWith(realLine, "#")){
+                    content.add(realLine);
+                    continue;
                 }
 
                 String[] arr = StringUtils.split(realLine, "=", 2);
@@ -148,16 +162,22 @@ public class PropertiesScript extends RestartScript{
     /**
      * 文件解析
      * @param file
+     * @param content
+     * @param map
+     * @param charset
      * @return
      */
-    private void fileParser(File file, List<String> content, LinkedHashMap<String, Integer> map){
+    private void fileParser(File file, List<String> content, LinkedHashMap<String, Integer> map, Charset charset){
 
-        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), Charset.forName("GBK"))){
+        try (
+                BufferedReader reader =
+                        Files.newBufferedReader(file.toPath(), charset)
+        ){
             int lineNum = 0;
             String line;
             while((line=reader.readLine()) != null) {
 
-                lineNum ++;
+                line = StringUtils.trim(line);
 
                 content.add(line);
 
@@ -169,6 +189,8 @@ public class PropertiesScript extends RestartScript{
                         map.put(arr[0], lineNum);
                     }
                 }
+
+                lineNum ++;
             }
         } catch (IOException e) {
             logger.error("fileParser: 文件【{}】解析异常{}, e:{}", file.getName(), e);

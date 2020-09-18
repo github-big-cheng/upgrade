@@ -1,6 +1,6 @@
 package com.dounion.server.eum;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -129,7 +129,7 @@ public enum AppTypeEnum {
 
     public static Map<String, AppTypeEnum> getMap(){
         if(map == null){
-            map = new HashMap<>();
+            map = new LinkedHashMap<>();
             for(AppTypeEnum eum : AppTypeEnum.values()){
                 map.put(eum.code, eum);
             }

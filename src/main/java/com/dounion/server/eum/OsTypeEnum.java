@@ -1,6 +1,6 @@
 package com.dounion.server.eum;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,7 +57,7 @@ public enum OsTypeEnum {
 
     public static Map<String, OsTypeEnum> getMap(){
         if(map == null){
-            map = new HashMap<>();
+            map = new LinkedHashMap<>();
             for(OsTypeEnum eum : OsTypeEnum.values()){
                 map.put(eum.code, eum);
             }
