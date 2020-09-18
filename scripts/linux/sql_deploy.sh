@@ -47,9 +47,10 @@ fi
 
 # loop the sql file in dir
 echo "ls $DIR_NAME"
-targetDir=`ls $DIR_NAME`
+targetDir=$(ls $DIR_NAME|tr " " "\?")
 for file in $targetDir
 do
+	file=$(tr "\?" " " <<<$file)
 	echo "file is $file"
 	if [ -s "file" ]; then
 		continue
