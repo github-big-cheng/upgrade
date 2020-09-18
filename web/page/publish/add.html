@@ -185,7 +185,7 @@
 			url: '/subscribe/list.json',
 			type: 'post',
 			dataType: 'json',
-			data : {status:'1', appType:appType},
+			data : {status:'1', appType:appType, pageNo:1, pageSize:Number.MAX_SAFE_INTEGER},
 			success: function (rdata) {
 				console.log(rdata);
 				if(rdata && rdata.code=='0'){

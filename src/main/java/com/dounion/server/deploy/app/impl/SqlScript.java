@@ -26,6 +26,8 @@ public class SqlScript extends AbstractScript {
                 " sql_deploy" + os.getScriptSuffix() // shell name
                 + " " + serviceInfo.getCode() // 库点代码
                 + " " + params.getVersionInfo().getFilePath() // sql.zip 路径
+                + " " + params.getAppInfo().getUsername() // 数据库用户名
+                + " " + params.getAppInfo().getPassword() // 数据库密码
         };
     }
 }

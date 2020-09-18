@@ -14,6 +14,8 @@ public class AppInfo {
     private String appType; // 服务类型
     private String versionNo; // 版本号
     private String workPath; // 工作路径
+    private String username; // 用户名 mysql 等
+    private String password; // 密码
 
 
     // ============================= extended method  ==============================
@@ -56,6 +58,22 @@ public class AppInfo {
 
     public void setWorkPath(String workPath) {
         this.workPath = workPath;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @JSONField(deserialize = false)
