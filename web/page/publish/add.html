@@ -185,15 +185,15 @@
 			url: '/subscribe/list.json',
 			type: 'post',
 			dataType: 'json',
-			data : {status:'1', appType:appType, pageNo:1, pageSize:Number.MAX_SAFE_INTEGER},
+			data : {status:'1', appType:appType, pageNo:1, pageSize:2147483647},
 			success: function (rdata) {
 				console.log(rdata);
 				if(rdata && rdata.code=='0'){
 					let _ul = $("#deptCodeUl");
 					_ul.html("");
 					//生成模板
-					rdata.data.unshift({name:'全选'})
-					$("#dept_code_li_tmpl").tmpl(rdata.data).appendTo(_ul);
+					rdata.data.list.unshift({name:'全选'})
+					$("#dept_code_li_tmpl").tmpl(rdata.data.list).appendTo(_ul);
 				}
 			}
 		});

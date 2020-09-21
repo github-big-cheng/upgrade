@@ -43,6 +43,10 @@ public class SubscribeServiceImpl implements SubscribeService {
         if(appTypes==null || appTypes.length==0){
             return;
         }
+        String[] versionNos = StringUtils.split(record.getVersionNo(), ",");
+        if(versionNos==null || versionNos.length==0 || versionNos.length!=appTypes.length){
+            return;
+        }
 
         // 移除本次未注册的服务
         SubscribeInfo delete = new SubscribeInfo();
@@ -54,6 +58,7 @@ public class SubscribeServiceImpl implements SubscribeService {
         String time = DateHelper.format(new Date());
 
         // 遍历处理订阅记录
+        int inx = 0;
         for(String appType : appTypes){
 
             // 查询指定版本是否已订阅指定库点下所有订阅记录
@@ -68,17 +73,20 @@ public class SubscribeServiceImpl implements SubscribeService {
                 temp = list.get(0);
                 record.setId(temp.getId());
                 record.setAppType(appType);
+                record.setVersionNo(versionNos[inx]);
                 subscribeInfoMapper.updateByPrimaryKeySelective(record);
             } else {
                 temp = new SubscribeInfo();
                 BeanUtils.copyProperties(record, temp);
                 temp.setId(null);
                 temp.setAppType(appType);
+                temp.setVersionNo(versionNos[inx]);
                 temp.setStatus("1");
                 temp.setSubscribeTime(time);
                 subscribeInfoMapper.insert(temp);
             }
 
+            inx++;
         }
     }
 

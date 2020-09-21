@@ -65,6 +65,7 @@ public class SubscribeController {
         // 订阅任务
         TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
         // 自动发布任务-指定code
+        logger.debug("SubscribeController.addJson code is :{}", record.getCode());
         TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap(){{
             put("code", record.getCode());
         }});

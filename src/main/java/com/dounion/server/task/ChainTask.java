@@ -9,7 +9,6 @@ import com.dounion.server.core.task.annotation.Task;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
@@ -29,7 +28,6 @@ public class ChainTask extends BaseTask {
 
     @Override
     protected void execute() throws Exception {
-        Map<String, Object> params = super.getParams();
 
         List<BaseTask> tasks = (List<BaseTask>) params.get(Constant.TASK_CHAIN_NAMES);
         if (CollectionUtils.isEmpty(tasks)) {
@@ -46,9 +44,12 @@ public class ChainTask extends BaseTask {
         int i = 0;
         ConcurrentHashMap<String, Object> temp;
         for (BaseTask task : tasks) {
-            temp = new ConcurrentHashMap<>();
-            temp.putAll(params);
-            Future<Integer> future = TaskHandler.callTaskBlock(task, temp, delay);
+
+            if(this.isInterrupted()){
+                throw new BusinessException("Chain task is interrupted by remote");
+            }
+
+            Future<Integer> future = TaskHandler.callTaskBlock(task, super.params, delay);
             Integer id = future.get();
             if(id == null){
                 throw new BusinessException("Chain task execute failed");

@@ -155,6 +155,7 @@ public class RouteHandler {
      */
     public static void routeCancel(String path) {
         Assert.notNull(path, "path is required");
+        logger.debug("RouteHandler.routeCancel path is:{}", path);
         ROUTE_INFO_MAP.remove(path);
     }
 
@@ -165,6 +166,8 @@ public class RouteHandler {
     public static void routeCancel(String path, String host) {
         Assert.notNull(path, "path is required");
         Assert.notNull(host, "host is required");
+        logger.debug("RouteHandler.routeCancel path is:{}, host is {}", path, host);
+
         List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(path);
         if(CollectionUtils.isEmpty(records)){
             return;
@@ -200,6 +203,7 @@ public class RouteHandler {
         }
 
         // 当前下载数未超过最大限制
+        logger.debug("RouteHandler.getNewUrl getCount is {}", getCount(url));
         if (getCount(url) < MAX_COUNT) {
             return null;
         }
@@ -214,7 +218,9 @@ public class RouteHandler {
      */
     private static String routeQueueOperation(String url) {
 
+        logger.debug("RouteHandler.routeQueueOperation url is : {}", url);
         BlockingQueue<DownloadRouteRecord> queue = ROUTE_QUEUE_MAP.get(url);
+        logger.debug("RouteHandler.routeQueueOperation queue is null : {}", queue==null);
 
         // queue 为 null 初始化数据
         if(queue == null){
@@ -229,8 +235,10 @@ public class RouteHandler {
             // 遍历添加队列
             List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
             if(CollectionUtils.isEmpty(records)){
+                logger.debug("RouteHandler.routeQueueOperation no records found");
                 return null;
             }
+            logger.debug("RouteHandler.routeQueueOperation records's size is {}", records.size());
             for(DownloadRouteRecord route : records){
                 // 判断最大路由活动时间
                 if(MAX_ROUTE_TIME > 0 && System.currentTimeMillis()-route.getRegisterTime()<MAX_ROUTE_TIME){
@@ -241,14 +249,17 @@ public class RouteHandler {
         }
 
         DownloadRouteRecord record = queue.poll();
+        logger.debug("RouteHandler.routeQueueOperation record is null {}", record==null);
         if(record == null){
             return null;
         }
 
         if(MAX_ROUTE_TIME>0 && System.currentTimeMillis()-MAX_ROUTE_TIME<=0){
-            return null;
+            // 当前取出记录已过期，重新获取
+            return routeQueueOperation(url);
         }
 
+        logger.debug("RouteHandler.routeQueueOperation record's download path is {}", record.getDownloadPath());
         return record.getDownloadPath();
     }
 
@@ -279,9 +290,10 @@ public class RouteHandler {
 
         // 统计当前可以提供下载的路由数量
         int routeCount = 0;
-        BlockingQueue<DownloadRouteRecord> queue = ROUTE_QUEUE_MAP.get(url);
-        if(queue!=null && !queue.isEmpty()){
-            routeCount = queue.size();
+        List<DownloadRouteRecord> routeRecords = ROUTE_INFO_MAP.get(url);
+        if(!CollectionUtils.isEmpty(routeRecords)){
+            logger.debug("routeRecords size is {}", routeRecords.size());
+            routeCount = routeRecords.size();
         }
         routeCount = MAX_COUNT + routeCount; // 当前路由数量 + 最大下载数
 

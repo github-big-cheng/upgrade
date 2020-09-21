@@ -43,6 +43,9 @@ public class PublishAutoTask extends BaseTask {
         if(!CollectionUtils.isEmpty(super.params)){
             query.putAll(super.params);
         }
+
+        logger.debug("SubscribeController.addJson code is :{}", query.get("code"));
+
         query.put("maxCount", ConfigurationHelper.getInt(Constant.CONF_PUBLISH_MAX_NOTIFY_COUNT, 1));
         List<Map<String, Object>> list = upgradeRecordService.publishListQuery(query);
         if(CollectionUtils.isEmpty(list)){
