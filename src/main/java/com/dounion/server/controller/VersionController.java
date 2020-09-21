@@ -105,7 +105,7 @@ public class VersionController {
 
 
         // 路由注销
-        RouteHandler.routeCancel(Constant.PATH_DOWNLOAD + file.getName());
+        RouteHandler.routeCancel(Constant.PATH_DOWNLOAD + record.getFileName());
 
         // 后台任务-任务链
         ConcurrentHashMap<String, Object> taskParams = new ConcurrentHashMap<>();
