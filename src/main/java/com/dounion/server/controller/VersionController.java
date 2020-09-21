@@ -1,6 +1,7 @@
 package com.dounion.server.controller;
 
 import com.dounion.server.core.base.Constant;
+import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
@@ -28,6 +29,8 @@ public class VersionController {
 
     private final static Logger logger = LoggerFactory.getLogger(VersionController.class);
 
+    @Autowired
+    private ServiceInfo serviceInfo;
     @Autowired
     private VersionInfoService versionInfoService;
 
@@ -85,17 +88,14 @@ public class VersionController {
             record.setFileSize(file.length()); // 文件大小
             record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
         } else {
-            // 非强制更新
-            if(!StringUtils.equals(record.getIsForceUpdate(), "1")){
-                // 远程发布检查 检查本地版本号
-                VersionInfo query = new VersionInfo();
-                query.setAppType(record.getAppType());
-                List<VersionInfo> list = versionInfoService.list(query);
-                if(!CollectionUtils.isEmpty(list) &&
-                        list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){
-                    logger.info("接收发布成功，但版本过低已忽略");
-                    return ResponseBuilder.buildSuccess("接收发布成功，但版本过低已忽略");
-                }
+            // 远程发布检查 检查本地版本号
+            VersionInfo query = new VersionInfo();
+            query.setAppType(record.getAppType());
+            List<VersionInfo> list = versionInfoService.list(query);
+            if(!CollectionUtils.isEmpty(list) &&
+                    list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){
+                logger.info("接收发布成功，但版本过低已忽略");
+                return ResponseBuilder.buildSuccess("接收发布成功，但版本过低已忽略");
             }
         }
 
@@ -116,16 +116,26 @@ public class VersionController {
             // 远程下载
             tasks.add(Constant.TASK_DOWNLOAD);
         }
-        // 本地部署
-        tasks.add(Constant.TASK_DEPLOY);
+
+
+        // 非强制更新
+        if(StringUtils.equals(record.getIsForceUpdate(), "1") || // 强制更新
+                !StringUtils.equals(serviceInfo.getIgnoreMode(), "1")){ // 非忽略模式
+            // 本地部署
+            tasks.add(Constant.TASK_DEPLOY);
+        }
+
         // 自动发布 - 调度任务:发布通知
         if(StringUtils.equals(record.getPublishType(), "2")){
             tasks.add(Constant.TASK_PUBLISH_AUTO);
             taskParams.put("publishType", "2");
         }
 
-        // 调用任务链
-        TaskHandler.callTaskChain(taskParams, tasks.toArray(new String[taskParams.size()]));
+        // 检查是否需要后台任务
+        if(tasks.size() > 0){
+            // 调用任务链
+            TaskHandler.callTaskChain(taskParams, tasks.toArray(new String[taskParams.size()]));
+        }
 
         return ResponseBuilder.buildSuccess();
     }

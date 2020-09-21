@@ -38,9 +38,6 @@ public class Main {
                 TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 10000);
                 // 分发下载路由注册服务 -- 30秒后
                 TaskHandler.callTask(Constant.TASK_ROUTE, 30000);
-            } else {
-                // 自动发布后台任务 -- 10秒后
-                TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, 10000);
             }
 
 

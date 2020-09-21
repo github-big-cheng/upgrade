@@ -203,7 +203,7 @@ public class RouteHandler {
         }
 
         // 当前下载数未超过最大限制
-        logger.debug("RouteHandler.getNewUrl getCount is {}", getCount(url));
+        logger.trace("RouteHandler.getNewUrl getCount is {}", getCount(url));
         if (getCount(url) < MAX_COUNT) {
             return null;
         }
@@ -218,9 +218,9 @@ public class RouteHandler {
      */
     private static String routeQueueOperation(String url) {
 
-        logger.debug("RouteHandler.routeQueueOperation url is : {}", url);
+        logger.trace("RouteHandler.routeQueueOperation url is : {}", url);
         BlockingQueue<DownloadRouteRecord> queue = ROUTE_QUEUE_MAP.get(url);
-        logger.debug("RouteHandler.routeQueueOperation queue is null : {}", queue==null);
+        logger.trace("RouteHandler.routeQueueOperation queue is null : {}", queue==null);
 
         // queue 为 null 初始化数据
         if(queue == null){
@@ -235,21 +235,26 @@ public class RouteHandler {
             // 遍历添加队列
             List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
             if(CollectionUtils.isEmpty(records)){
-                logger.debug("RouteHandler.routeQueueOperation no records found");
+                logger.trace("RouteHandler.routeQueueOperation no records found");
                 return null;
             }
-            logger.debug("RouteHandler.routeQueueOperation records's size is {}", records.size());
+            logger.trace("RouteHandler.routeQueueOperation records's size is {}", records.size());
             for(DownloadRouteRecord route : records){
                 // 判断最大路由活动时间
-                if(MAX_ROUTE_TIME > 0 && System.currentTimeMillis()-route.getRegisterTime()<MAX_ROUTE_TIME){
-                    continue;
+                if(MAX_ROUTE_TIME > 0){
+                    long activeTime = System.currentTimeMillis() - MAX_ROUTE_TIME;
+                    if(activeTime > route.getRegisterTime()) {
+                        logger.debug("record is expired, url :{}, activeTime is {}, registerTime is {}",
+                                route.getDownloadPath(), activeTime, route.getRegisterTime());
+                        continue;
+                    }
                 }
                 queue.add(route);
             }
         }
 
         DownloadRouteRecord record = queue.poll();
-        logger.debug("RouteHandler.routeQueueOperation record is null {}", record==null);
+        logger.trace("RouteHandler.routeQueueOperation record is null {}", record==null);
         if(record == null){
             return null;
         }
@@ -259,7 +264,7 @@ public class RouteHandler {
             return routeQueueOperation(url);
         }
 
-        logger.debug("RouteHandler.routeQueueOperation record's download path is {}", record.getDownloadPath());
+        logger.trace("RouteHandler.routeQueueOperation record's download path is {}", record.getDownloadPath());
         return record.getDownloadPath();
     }
 
@@ -292,7 +297,7 @@ public class RouteHandler {
         int routeCount = 0;
         List<DownloadRouteRecord> routeRecords = ROUTE_INFO_MAP.get(url);
         if(!CollectionUtils.isEmpty(routeRecords)){
-            logger.debug("routeRecords size is {}", routeRecords.size());
+            logger.trace("routeRecords size is {}", routeRecords.size());
             routeCount = routeRecords.size();
         }
         routeCount = MAX_COUNT + routeCount; // 当前路由数量 + 最大下载数
