@@ -20,7 +20,7 @@ if [ "$2" = "print"  ]; then
 	SHELL_NAME="start.sh"
 fi
 if [ "$2" = "app"  ]; then
-        GREP_NAME="-app-"
+        GREP_NAME="tomcat-app-push"
 fi
 echo "应用名称：【$2】"
 

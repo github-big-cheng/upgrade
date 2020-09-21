@@ -21,11 +21,16 @@ if [ -z "$3" ]; then
 fi
 echo "操作的文件名：【$3】"
 
+GREP_NAME=${3%.*}
+if [ "$GREP_NAME" = 'app'  ]; then
+	GREP_NAME="tomcat-app-push"
+fi
+echo "GREP_NAME is $GREP_NAME"
 
 
 
 # 停应用
-pid=$(ps -ef | grep "$2" | grep -v grep | grep '/bin/java' | awk '{print $2}')
+pid=$(ps -ef|grep "$GREP_NAME"|grep -v grep|grep '/bin/java'|awk '{print $2}')
 if [ -n "$pid" ]; then
 	for p in $pid
 	do
