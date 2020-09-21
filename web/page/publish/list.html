@@ -193,12 +193,14 @@
         let pageNo = $("input[name=pageNo]").val();
         if(isNaN(pageNo)){
             pageNo = 1;
-        } else if(pageNo <= 1){
-            pageNo = 1
-        } else {
-            pageNo = Number(pageNo) + num;
         }
 
+        pageNo = Number(pageNo) + num;
+
+        // 小于起始页
+        if(pageNo <= 1){
+            pageNo = 1
+        }
         // 大于最大页数
         if(pageNo > totalPage){
             pageNo = Math.max(totalPage, 1);

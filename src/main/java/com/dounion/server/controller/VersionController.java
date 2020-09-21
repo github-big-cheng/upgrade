@@ -5,6 +5,7 @@ import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
+import com.dounion.server.core.route.RouteHandler;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.entity.VersionInfo;
 import com.dounion.server.eum.ResponseTypeEnum;
@@ -102,6 +103,11 @@ public class VersionController {
         final int versionId = versionInfoService.updateVersion(record);
         logger.debug("new version id is 【{}】", versionId);
 
+
+        // 路由注销
+        RouteHandler.routeCancel(Constant.PATH_DOWNLOAD + file.getName());
+
+        // 后台任务-任务链
         ConcurrentHashMap<String, Object> taskParams = new ConcurrentHashMap<>();
         taskParams.put("versionId", versionId);
 

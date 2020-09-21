@@ -7,6 +7,7 @@ import com.dounion.server.entity.DownloadRouteRecord;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -147,11 +148,23 @@ public class RouteHandler {
         records.add(record);
     }
 
+
     /**
-     * 路由注销
+     * 按下载路径注销路由注册表
+     * @param path
+     */
+    public static void routeCancel(String path) {
+        Assert.notNull(path, "path is required");
+        ROUTE_INFO_MAP.remove(path);
+    }
+
+    /**
+     * 按下载路径+主机注销路由注册表
      * @param path
      */
     public static void routeCancel(String path, String host) {
+        Assert.notNull(path, "path is required");
+        Assert.notNull(host, "host is required");
         List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(path);
         if(CollectionUtils.isEmpty(records)){
             return;
