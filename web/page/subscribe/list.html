@@ -98,18 +98,20 @@
 
 	$("#query").on('click', function (e) {
        e.preventDefault();
-        let p = {
-            pageNo : $("input[name=pageNo]").val(),
-            pageSize : 5,
-            code : $("input[name=code]").val(),
-        };
-       query(p);
+       query(1);
     });
 
 
-	function query(param){
+	function query(pageNo){
 
 	    $("#subscribe_list_tbody").html("");
+
+        let param = {
+            pageNo : pageNo,
+            pageSize : 10,
+            code : $("input[name=code]").val(),
+        };
+
 
         $.ajax({
             type:'post',
@@ -160,7 +162,7 @@
             url: '/subscribe/cancel.json',
             success: function (rdata) {
                 CommonJS.ajaxCallback(rdata, function (data) {
-                    $("#query").click();
+                    query(1);
                 });
             }
         });
@@ -168,45 +170,49 @@
 
 
 
+    function pageCheck(num){
 
-    $(".page-prev").on('click', function(e){
-        e.preventDefault();
+        // 总页数
+        let totalPage = $("#totalPage").text().trim();
+        if(isNaN(totalPage)){
+            totalPage = 0;
+            $("#totalPage").text(totalPage);
+        }
 
+        // 页码
         let pageNo = $("input[name=pageNo]").val();
         if(isNaN(pageNo)){
             pageNo = 1;
         } else if(pageNo <= 1){
             pageNo = 1
         } else {
-            pageNo = Number(pageNo) - 1;
+            pageNo = Number(pageNo) + num;
         }
 
+        // 大于最大页数
+        if(pageNo > totalPage){
+            pageNo = Math.max(totalPage, 1);
+        }
+
+        return pageNo;
+    }
+    $(".page-prev").on('click', function(e){
+        e.preventDefault();
+        let pageNo = pageCheck(-1);
         $("input[name=pageNo]").val(pageNo);
-        $("#query").click();
+        query(pageNo);
     });
     $(".page-next").on('click', function(e){
         e.preventDefault();
-
-        let totalPage = $("#totalPage").text().trim();
-        if(isNaN(totalPage)){
-            totalPage = 0;
-            $("#totalPage").text(totalPage);
-        }
-        let pageNo = $("input[name=pageNo]").val();
-        if(isNaN(pageNo)){
-            pageNo = 1;
-        } else if(pageNo >= totalPage){
-            pageNo = totalPage
-        } else {
-            pageNo = Number(pageNo) + 1;
-        }
-
+        let pageNo = pageCheck(1);
         $("input[name=pageNo]").val(pageNo);
-        $("#query").click();
+        query(pageNo);
     });
     $(".page-go").on('click', function(e){
         e.preventDefault();
-        $("#query").click();
+        let pageNo = pageCheck(0);
+        $("input[name=pageNo]").val(pageNo);
+        query(pageNo);
     });
 </script>
 

@@ -40,8 +40,8 @@ public class PublishAutoTask extends BaseTask {
 
         // 推送前，生成个更新记录信息
         Map<String, Object> query = new HashMap<>();
-        if(super.params!=null && super.params.get("publishType")!=null){
-            query.put("publishType", super.params.get("publishType"));
+        if(!CollectionUtils.isEmpty(super.params)){
+            query.putAll(super.params);
         }
         query.put("maxCount", ConfigurationHelper.getInt(Constant.CONF_PUBLISH_MAX_NOTIFY_COUNT, 1));
         List<Map<String, Object>> list = upgradeRecordService.publishListQuery(query);

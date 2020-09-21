@@ -92,7 +92,7 @@
 	$(function(){
 
 	    // 初始化字典
-        CommonJS.dictQuery('', function (data) {
+        CommonJS.dictQuery(null, function (data) {
             dict = data;
             let arr = [];
             arr.push({text:'全部', value: ''});

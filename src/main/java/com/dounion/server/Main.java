@@ -29,17 +29,24 @@ public class Main {
             // 初始化部署任务处理器
             DeployHandler.initialization();
 
-            ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
 
-            // 订阅更新服务
-            TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 10000);
-            // 分发下载路由注册服务
-            TaskHandler.callTask(Constant.TASK_ROUTE, 20000);
+            // 运行指定后台任务
+            ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
+            // master
+            if(serviceInfo.getMasterBlur()) {
+                // 自动发布 -- 10秒后
+                TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, 10000);
+            } else {
+                // 订阅更新服务 -- 10秒后
+                TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 10000);
+            }
+            // 分发下载路由注册服务 -- 30秒后
+            TaskHandler.callTask(Constant.TASK_ROUTE, 30000);
 
 
             // 启动服务端
             NettyServer.startUp();
-
+            // Netty has blocked here, no code should exists after this line
 
         } catch (Exception e) {
             logger.error("server start up failed... {}", e);

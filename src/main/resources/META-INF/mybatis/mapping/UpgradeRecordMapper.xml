@@ -447,6 +447,9 @@
             INNER JOIN T_UPGRADE_SUBSCRIBE_INFO B ON A.APP_TYPE = B.APP_TYPE AND B.STATUS = 1
             LEFT JOIN T_UPGRADE_RECORD C ON C.VERSION_ID = A.ID AND C.SUBSCRIBE_ID = B.ID
         WHERE A.STATUS = 1
+          <if test="code != null">
+          AND B.CODE = #{code}
+          </if>
           <if test="publishType != null">
           AND A.PUBLISH_TYPE = #{publishType}
           </if>

@@ -59,7 +59,7 @@
 		<td>{%= versionNo %}</td>
 		<td>{%= workPath %}</td>
 		<td>
-			{%if $data.appType.indexOf('40100-5')!=0 %}
+			{%if $data.appType.indexOf('40100-5')!=0&&$data.appType!='40100-4001' %}
 			<a class="app-restart-btn" data-id="{%= appType%}">重启</a></td>
 			{%/if%}
 	</tr>
@@ -184,7 +184,7 @@
 	});
 
 
-    const ids = ["code", "localIp", "port", "masterIp", "masterPort", "publishPath"];
+    const ids = ["code", "name", "localIp", "port", "masterIp", "masterPort", "publishPath"];
     function fillInfo(data){
     	if(!data){
     		return;

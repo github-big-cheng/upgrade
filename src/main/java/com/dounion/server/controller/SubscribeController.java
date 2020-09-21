@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @Controller
 @RequestMapping("/subscribe")
 public class SubscribeController {
@@ -57,13 +59,15 @@ public class SubscribeController {
      */
     @RequestMapping(value = "/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object addJson(SubscribeInfo record){
+    public Object addJson(final SubscribeInfo record){
         // 更新订阅记录
         subscribeService.addSubscribe(record);
         // 订阅任务
         TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
-        // 自动发布任务
-        TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
+        // 自动发布任务-指定code
+        TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap(){{
+            put("code", record.getCode());
+        }});
         return ResponseBuilder.buildSuccess();
     }
 

@@ -59,9 +59,7 @@
 					<tr>
 						<td>版本文件</td>
 						<td><input type="file" name="file" /></td>
-						<td>版本文件 *.war;*.exe;*.zip
-							tips:sql文件需由压缩包同名文件夹打包
-						</td>
+						<td>版本文件，详细说明请见右侧</td>
 					</tr>
 				</tbody>
 				<tfoot>
@@ -75,7 +73,22 @@
 			</table>
 		</form>
 
-		<div id="right-div" style="float:left; width:30%;"></div>
+		<div id="right-div" style="float:left; width:30%;">
+			<p>支持如下文件类型：*.war；*.exe；*.zip；*.properties</p>
+			<p>Tomcat需指向到tomcat的完整路径，如：/home/dounion/tomcat/tomcat-app-push</p>
+			<p>Main程序需指向程序工作目录的上级目录，如：/home/dounion/server</p>
+			<p>File文件需指向下载目录，如：/home/dounion/download</p>
+			<p>Mysql需在serviceInfo.json中录入用户名密码，username、password</p>
+			<p>Properties需指向文件所在目录，如：/home/dounion/server/conf、/home/dounion/tomcat/tomact-app/conf</p>
+			<p>Sql文件需由压缩包同名文件夹打包，如：</p>
+			sql.zip
+			<ul>
+				<li style="list-style: none;">sql.zip</li>
+				<li>sql</li>
+				<li>-- 01 table_do_lk.sql</li>
+				<li>-- 11 data_do_lk.sql</li>
+			</ul>
+		</div>
 	</div>
 </body>
 
@@ -93,30 +106,12 @@
 <script>
 
 	$(function(){
-		// $("#right-div").find('li').hide();
-		// $("#right-div").find('a').addClass('unfold-btn');
-
 		// 初始化字典
 		CommonJS.dictQuery('appType', function(rdata){
 			CommonJS.callback(rdata, 'appType', 'option_tmpl', 'appType');
 		});
 	});
 
-
-	$("#right-div").on('click', "a.unfold-btn", function(){
-		let _div = $(this).closest('div');
-		_div.find('li').show();
-		$(this).text('折叠');
-		$(this).removeClass('unfold-btn');
-		$(this).addClass('fold-btn');
-	});
-	$("#right-div").on('click', "a.fold-btn", function(){
-		let _div = $(this).closest('div');
-		_div.find('li').hide();
-		$(this).text('展开');
-		$(this).removeClass('fold-btn');
-		$(this).addClass('unfold-btn');
-	});
 
 	$("#submit").on('click', function (e) {
 
