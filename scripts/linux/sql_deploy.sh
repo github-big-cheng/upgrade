@@ -1,16 +1,16 @@
 #!/bin/sh
 
+
 # 库点代码
 CODE=$1
-echo "$CODE"
 if [ -z "$CODE" ]; then
 	echo "please have a parameter of dept code, such as dounion118"
 	exit 1
 fi
+echo "库点代码【$CODE】"
 
 # sql文件压缩包路径
 ZIP_FILE=$2
-echo "$ZIP_FILE"
 if [ -z "$ZIP_FILE" ]; then
 	echo "please have a parameter of sql's zip file with full path, such as /home/dounion/download/upgrade/sql.zip"
 	exit 2
@@ -20,6 +20,21 @@ if [ ! -f "$ZIP_FILE" ]; then
 	echo "file doesn't exists, please check it"
 	exit 3
 fi
+echo "文件压缩包路径【$ZIP_FILE】"
+
+# 用户名
+if [ -z "$3" ]; then
+	echo "please have a parameter of sql's username, such as dounion"
+	exit 4
+fi
+echo "用户名【$3】"
+
+# 密码
+if [ -z "$4" ]; then
+        echo "please have a parameter of sql's password"
+        exit 5
+fi
+echo "密码【******】"
 
 
 # 获取当前是否存在已解压的文件夹
@@ -41,7 +56,7 @@ unzip -o "$ZIP_FILE"
 # 检查是否解压成功
 if [ ! -d "$DIR_NAME" ]; then
 	echo "unzip failed..."
-	exit 4
+	exit 6
 fi
 
 
@@ -61,7 +76,7 @@ do
 		sed -i "2 i\ set @code='$CODE';" "$DIR_NAME"/"$file"
 	
 		# execute sql script
-		mysql < "$DIR_NAME"/"$file"
+		mysql -u"$3" -p"$4" < "$DIR_NAME"/"$file"
 
 		# clear sql script variables
 		sed -i "2d" "$DIR_NAME"/"$file"
