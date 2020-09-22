@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
@@ -35,10 +37,18 @@ public class Main {
             // master
             if(!serviceInfo.getMasterBlur()) {
                 // 订阅更新服务 -- 10秒后
-                TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 10000);
+                TaskHandler.callTask(Constant.TASK_SUBSCRIBE, 10 * 1000);
                 // 分发下载路由注册服务 -- 30秒后
-                TaskHandler.callTask(Constant.TASK_ROUTE, 30000);
+                TaskHandler.callTask(Constant.TASK_ROUTE, 30 * 1000);
             }
+            // 自动发布任务 -- 60秒后
+            TaskHandler.callTask(
+                    Constant.TASK_PUBLISH_AUTO,
+                    new ConcurrentHashMap<String, Object>(){{
+                        put("publishType", "2"); // 自动发布
+                    }},
+                    60 * 1000
+            );
 
 
             // 启动服务端

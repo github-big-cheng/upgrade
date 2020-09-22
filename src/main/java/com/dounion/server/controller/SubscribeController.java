@@ -69,6 +69,7 @@ public class SubscribeController {
         logger.trace("SubscribeController.addJson code is :{}", code);
         TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap(){{
             put("code", code);
+            put("publishType", "2");
         }});
         return ResponseBuilder.buildSuccess();
     }
