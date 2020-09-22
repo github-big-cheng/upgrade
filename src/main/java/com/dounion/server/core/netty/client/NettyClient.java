@@ -189,7 +189,13 @@ public class NettyClient implements Closeable {
             NettyResponse<String> response = new NettyResponse<>(maxDownloadTime);
             channel.attr(NETTY_CLIENT_RESPONSE).set(response);
 
-            return response.get();
+            String fileName = response.get();
+            if(response.getStatus()==302){
+                // 重定向处理, 这里的fileName是url
+                fileName = fileDownload(fileName);
+            }
+
+            return fileName;
         } finally {
             if(!masterInstance.equals(this)){
                 this.close();

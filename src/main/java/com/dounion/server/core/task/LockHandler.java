@@ -66,7 +66,7 @@ public class LockHandler {
         }
 
         // Is it unsafe here ?
-        if(lock.getHoldCount()==0 && lock.getQueueLength()==0){
+        if(!lock.isLocked() && lock.getHoldCount()==0 && lock.getQueueLength()==0){
             REENTRANT_LOCK_MAP.remove(lockKey);
             for(String key : CONDITION_MAP.keySet()){
                 if(StringUtils.startsWith(key, lockKey + JOIN_KEY)){

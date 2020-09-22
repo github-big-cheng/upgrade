@@ -56,28 +56,12 @@ public class NettyResponse<V> {
         return this.status != 0;
     }
 
-    public void setSuccess(V v){
-        LOCK.lock();
-        try {
-            this.status = 200;
-            if(v == null){
-                this.status = 500;
-            }
-            this.v = v;
-            condition.signalAll();
 
-        } catch (Exception e) {
-            setError(e);
-        } finally {
-            LOCK.unlock();
-        }
-    }
-
-
-    public void setError(int code, Throwable throwable){
+    public void setResult(int code, V v, Throwable throwable){
         LOCK.lock();
         try {
             this.status = code;
+            this.v = v;
             this.throwable = throwable;
             condition.signalAll();
         } catch (Exception e) {
@@ -85,6 +69,19 @@ public class NettyResponse<V> {
         } finally {
             LOCK.unlock();
         }
+    }
+
+    public void setSuccess(V v){
+        int code = 200;
+        if(v == null){
+            code = 500;
+        }
+        this.setResult(code, v, null);
+    }
+
+
+    public void setError(int code, Throwable throwable){
+        this.setResult(code, null, throwable);
     }
 
     public void setError(Throwable throwable){

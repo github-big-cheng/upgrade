@@ -210,7 +210,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
                     if (total < 0) { // total unknown
                         logger.debug(future.channel() + " Transfer progress: " + progress);
                     } else {
-                        logger.debug(future.channel() + " Transfer progress: " + progress + " / " + total);
+                        logger.trace(future.channel() + " Transfer progress: " + progress + " / " + total);
                     }
                 }
 

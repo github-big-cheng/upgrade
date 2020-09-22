@@ -8,10 +8,7 @@ import com.dounion.server.eum.NettyRequestTypeEnum;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCountUtil;
 
 import java.io.File;
@@ -95,8 +92,14 @@ public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
 
             if (!reading) {
                 if (downloadFile != null && downloadFile.exists()) {
+                    // 文件下载成功
                     this.nettyResponse.setSuccess(downloadFile.getPath());
+                } else if(HttpResponseStatus.FOUND.equals(this.response.status())) {
+                    // 重定向处理
+                    String newUrl = this.response.headers().get(HttpHeaderNames.LOCATION);
+                    this.nettyResponse.setResult(this.response.status().code(), newUrl, null);
                 } else {
+                    // 文件下载失败
                     this.nettyResponse.setError(new SystemException("file 【" + fileName + "】 download failed"));
                 }
                 if (null != fos) {
