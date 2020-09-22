@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -27,8 +29,6 @@ public class RouteHandler {
     private RouteHandler() {
     }
 
-    private static Object LOCK1 = new Object();
-    private static Object LOCK2 = new Object();
     private static Object LOCK3 = new Object();
 
     /**
@@ -53,8 +53,8 @@ public class RouteHandler {
 
     /**
      * 已注册的路由表
-     *      key:path
-     *      value:routes
+     * key:path
+     * value:routes
      */
     public final static ConcurrentHashMap<String, List<DownloadRouteRecord>>
             ROUTE_INFO_MAP = new ConcurrentHashMap<>();
@@ -62,10 +62,10 @@ public class RouteHandler {
 
     /**
      * 路由队列集合
-     *  key:path
-     *  value:queue
+     * key:path
+     * value:queue
      */
-    public final static Map<String, BlockingQueue<DownloadRouteRecord>> ROUTE_QUEUE_MAP = new HashMap<>();
+    public final static ConcurrentHashMap<String, BlockingQueue<DownloadRouteRecord>> ROUTE_QUEUE_MAP = new ConcurrentHashMap<>();
 
 
     // ================================================ local count  ===================================================
@@ -77,17 +77,10 @@ public class RouteHandler {
      * @return
      */
     private static AtomicInteger get(String path) {
-        AtomicInteger integer = LOCAL_COUNTER_MAP.get(path);
-        if (integer == null) {
-            synchronized (LOCK1) {
-                if (integer == null) {
-                    integer = new AtomicInteger(0);
-                    LOCAL_COUNTER_MAP.put(path, integer);
-                }
-                integer = LOCAL_COUNTER_MAP.get(path);
-            }
+        if (LOCAL_COUNTER_MAP.get(path) == null) {
+            LOCAL_COUNTER_MAP.putIfAbsent(path, new AtomicInteger(0));
         }
-        return integer;
+        return LOCAL_COUNTER_MAP.get(path);
     }
 
 
@@ -128,30 +121,23 @@ public class RouteHandler {
     // ================================================ route operation ================================================
 
 
-
     /**
      * 路由注册
+     *
      * @param path
      * @param record
      */
     public static void routeRegister(String path, DownloadRouteRecord record) {
-        List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(path);
-        if(records == null){
-            synchronized (LOCK2) {
-                if(records == null){
-                    records = Collections.synchronizedList(new LinkedList<DownloadRouteRecord>());
-                    ROUTE_INFO_MAP.put(path, records);
-                }
-                records = ROUTE_INFO_MAP.get(path);
-            }
+        if (ROUTE_INFO_MAP.get(path) == null) {
+            ROUTE_INFO_MAP.putIfAbsent(path, Collections.synchronizedList(new LinkedList<DownloadRouteRecord>()));
         }
-
-        records.add(record);
+        ROUTE_INFO_MAP.get(path).add(record);
     }
 
 
     /**
      * 按下载路径注销路由注册表
+     *
      * @param path
      */
     public static void routeCancel(String path) {
@@ -162,6 +148,7 @@ public class RouteHandler {
 
     /**
      * 按下载路径+主机注销路由注册表
+     *
      * @param path
      */
     public static void routeCancel(String path, String host) {
@@ -170,19 +157,19 @@ public class RouteHandler {
         logger.debug("RouteHandler.routeCancel path is:{}, host is {}", path, host);
 
         List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(path);
-        if(CollectionUtils.isEmpty(records)){
+        if (CollectionUtils.isEmpty(records)) {
             return;
         }
 
         int removeInx = -1;
-        for(int i=0; i<records.size(); i++){
-            if(StringUtils.equals(records.get(i).getHost(), host)){
+        for (int i = 0; i < records.size(); i++) {
+            if (StringUtils.equals(records.get(i).getHost(), host)) {
                 removeInx = i;
                 break;
             }
         }
 
-        if(removeInx > -1){
+        if (removeInx > -1) {
             records.remove(removeInx);
         }
     }
@@ -214,6 +201,7 @@ public class RouteHandler {
 
     /**
      * 路由处理
+     *
      * @param url
      * @return
      */
@@ -221,49 +209,44 @@ public class RouteHandler {
 
         logger.trace("RouteHandler.routeQueueOperation url is : {}", url);
         BlockingQueue<DownloadRouteRecord> queue = ROUTE_QUEUE_MAP.get(url);
-        logger.trace("RouteHandler.routeQueueOperation queue is null : {}", queue==null);
+        logger.trace("RouteHandler.routeQueueOperation queue is null : {}", queue == null);
 
         // queue 为 null 初始化数据
-        if(CollectionUtils.isEmpty(queue)){
-            synchronized (LOCK3) {
-                // do double-check
-                if(CollectionUtils.isEmpty(queue)){
-                    if(queue == null){ // 初始化
-                        queue = new LinkedBlockingQueue<>();
-                        ROUTE_QUEUE_MAP.put(url, queue);
-                    }
+        if (CollectionUtils.isEmpty(queue)) {
+            if (queue == null) { // 初始化
+                ROUTE_QUEUE_MAP.putIfAbsent(url, new LinkedBlockingQueue<DownloadRouteRecord>());
+            }
+            queue = ROUTE_QUEUE_MAP.get(url);
 
-                    // 遍历添加队列
-                    List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
-                    if(CollectionUtils.isEmpty(records)){
-                        logger.trace("RouteHandler.routeQueueOperation no records found");
-                        return null;
-                    }
-                    logger.trace("RouteHandler.routeQueueOperation records's size is {}", records.size());
-                    for(DownloadRouteRecord route : records){
-                        // 判断最大路由活动时间
-                        if(MAX_ROUTE_TIME > 0){
-                            long activeTime = System.currentTimeMillis() - MAX_ROUTE_TIME;
-                            if(activeTime > route.getRegisterTime()) {
-                                logger.debug("record is expired, url :{}, activeTime is {}, registerTime is {}",
-                                        route.getDownloadPath(), activeTime, route.getRegisterTime());
-                                continue;
-                            }
-                        }
-                        queue.add(route);
+
+            // 遍历添加队列
+            List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
+            if (CollectionUtils.isEmpty(records)) {
+                logger.trace("RouteHandler.routeQueueOperation no records found");
+                return null;
+            }
+            logger.trace("RouteHandler.routeQueueOperation records's size is {}", records.size());
+            for (DownloadRouteRecord route : records) {
+                // 判断最大路由活动时间
+                if (MAX_ROUTE_TIME > 0) {
+                    long activeTime = System.currentTimeMillis() - MAX_ROUTE_TIME;
+                    if (activeTime > route.getRegisterTime()) {
+                        logger.debug("record is expired, url :{}, activeTime is {}, registerTime is {}",
+                                route.getDownloadPath(), activeTime, route.getRegisterTime());
+                        continue;
                     }
                 }
-                queue = ROUTE_QUEUE_MAP.get(url);
+                queue.add(route);
             }
         }
 
         DownloadRouteRecord record = queue.poll();
-        logger.trace("RouteHandler.routeQueueOperation record is null {}", record==null);
-        if(record == null){
+        logger.trace("RouteHandler.routeQueueOperation record is null {}", record == null);
+        if (record == null) {
             return null;
         }
 
-        if(MAX_ROUTE_TIME>0 && System.currentTimeMillis()-MAX_ROUTE_TIME<=0){
+        if (MAX_ROUTE_TIME > 0 && System.currentTimeMillis() - MAX_ROUTE_TIME <= 0) {
             // 当前取出记录已过期，重新获取
             return routeQueueOperation(url);
         }
@@ -275,24 +258,25 @@ public class RouteHandler {
 
     /**
      * 发布策略控制
+     *
      * @param index
      * @param fileLength
-     * @param url 下载路径
+     * @param url        下载路径
      */
-    public static void publishPolicy(Integer index, Long fileLength, String url){
+    public static void publishPolicy(Integer index, Long fileLength, String url) {
 
-        if(index==null || fileLength==null || StringUtils.isBlank(url)){
+        if (index == null || fileLength == null || StringUtils.isBlank(url)) {
             logger.warn("publishPolicy: some parameters is null [index={},fileLength={},url={}]",
                     index, fileLength, url);
             return;
         }
 
-        if(MAX_COUNT <= 0){
+        if (MAX_COUNT <= 0) {
             // 未配置或不限制最大下载数量时,不做处理
             return;
         }
 
-        if(DOWNLOAD_SPEED_RATIO <= 0){
+        if (DOWNLOAD_SPEED_RATIO <= 0) {
             // 未配置下载系数,不做处理
             return;
         }
@@ -300,21 +284,21 @@ public class RouteHandler {
         // 统计当前可以提供下载的路由数量
         int routeCount = 0;
         List<DownloadRouteRecord> routeRecords = ROUTE_INFO_MAP.get(url);
-        if(!CollectionUtils.isEmpty(routeRecords)){
+        if (!CollectionUtils.isEmpty(routeRecords)) {
             logger.trace("routeRecords size is {}", routeRecords.size());
             routeCount = routeRecords.size();
         }
         routeCount = MAX_COUNT + routeCount; // 当前路由数量 + 最大下载数
 
         // 超过最大下载次数的推送
-        if(index!=0 && index%routeCount==0){
+        if (index != 0 && index % routeCount == 0) {
             fileLength = fileLength == null ? 0 : fileLength;
             // 根据文件大小及下载系数计算大致下载时间
             // 下载时间(秒) = 文件大小(byte)/1024(byte)/下载速率(Kb/s)
-            long costTime = fileLength/1024/DOWNLOAD_SPEED_RATIO;
+            long costTime = fileLength / 1024 / DOWNLOAD_SPEED_RATIO;
             try {
                 logger.trace("publishPolicy sleep time is {} s", costTime);
-                Thread.sleep(costTime*1000);
+                Thread.sleep(costTime * 1000);
             } catch (InterruptedException e) {
                 logger.error("publishPolicy error:{}", e);
             }

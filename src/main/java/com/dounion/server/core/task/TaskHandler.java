@@ -40,6 +40,7 @@ public class TaskHandler implements Runnable {
     // 循环执行任务单例控制
     public final static ConcurrentHashMap<String, BaseTask> LOOP_TASK_MAP = new ConcurrentHashMap<>();
 
+
     static {
         // 创建后台任务处理器
         EXECUTOR_SERVICE.submit(new TaskHandler());
