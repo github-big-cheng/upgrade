@@ -18,7 +18,7 @@
   "master": "0",
 
   "masterIp-comment": "上级主机IP",
-  "masterIp": "120.77.63.203",
+  "masterIp": "",
 
   "masterPort-comment": "上级主机端口",
   "masterPort": 8001,
@@ -177,7 +177,7 @@
       "versionNo": "1.0.0",
       "workPath": "/home/dounion",
       "username": "root",
-      "password": "dounion"
+      "password": "123456"
     },
     {
       "appName": "app",
