@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -375,6 +376,7 @@ public class TaskHandler implements Runnable {
      * @param taskNames
      */
     public static Integer callTaskChain(ConcurrentHashMap<String, Object> params, String... taskNames) {
+        logger.trace("taskNames is {}", Arrays.toString(taskNames));
         return callTaskChain(params, 1000l, taskNames);
     }
 

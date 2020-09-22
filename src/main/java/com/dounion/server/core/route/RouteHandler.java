@@ -109,6 +109,7 @@ public class RouteHandler {
      * @return
      */
     public static Integer countDown(String path) {
+        logger.trace("RouteHandler.countDown path is:{}, count is :{}", path, get(path));
         return get(path).addAndGet(1);
     }
 
@@ -223,33 +224,36 @@ public class RouteHandler {
         logger.trace("RouteHandler.routeQueueOperation queue is null : {}", queue==null);
 
         // queue 为 null 初始化数据
-        if(queue == null){
+        if(CollectionUtils.isEmpty(queue)){
             synchronized (LOCK3) {
-                if(queue == null){
-                    queue = new LinkedBlockingQueue<>();
-                    ROUTE_QUEUE_MAP.put(url, queue);
-                }
-                queue = ROUTE_QUEUE_MAP.get(url);
-            }
+                // do double-check
+                if(CollectionUtils.isEmpty(queue)){
+                    if(queue == null){ // 初始化
+                        queue = new LinkedBlockingQueue<>();
+                        ROUTE_QUEUE_MAP.put(url, queue);
+                    }
 
-            // 遍历添加队列
-            List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
-            if(CollectionUtils.isEmpty(records)){
-                logger.trace("RouteHandler.routeQueueOperation no records found");
-                return null;
-            }
-            logger.trace("RouteHandler.routeQueueOperation records's size is {}", records.size());
-            for(DownloadRouteRecord route : records){
-                // 判断最大路由活动时间
-                if(MAX_ROUTE_TIME > 0){
-                    long activeTime = System.currentTimeMillis() - MAX_ROUTE_TIME;
-                    if(activeTime > route.getRegisterTime()) {
-                        logger.debug("record is expired, url :{}, activeTime is {}, registerTime is {}",
-                                route.getDownloadPath(), activeTime, route.getRegisterTime());
-                        continue;
+                    // 遍历添加队列
+                    List<DownloadRouteRecord> records = ROUTE_INFO_MAP.get(url);
+                    if(CollectionUtils.isEmpty(records)){
+                        logger.trace("RouteHandler.routeQueueOperation no records found");
+                        return null;
+                    }
+                    logger.trace("RouteHandler.routeQueueOperation records's size is {}", records.size());
+                    for(DownloadRouteRecord route : records){
+                        // 判断最大路由活动时间
+                        if(MAX_ROUTE_TIME > 0){
+                            long activeTime = System.currentTimeMillis() - MAX_ROUTE_TIME;
+                            if(activeTime > route.getRegisterTime()) {
+                                logger.debug("record is expired, url :{}, activeTime is {}, registerTime is {}",
+                                        route.getDownloadPath(), activeTime, route.getRegisterTime());
+                                continue;
+                            }
+                        }
+                        queue.add(route);
                     }
                 }
-                queue.add(route);
+                queue = ROUTE_QUEUE_MAP.get(url);
             }
         }
 
@@ -309,7 +313,7 @@ public class RouteHandler {
             // 下载时间(秒) = 文件大小(byte)/1024(byte)/下载速率(Kb/s)
             long costTime = fileLength/1024/DOWNLOAD_SPEED_RATIO;
             try {
-                logger.debug("publishPolicy sleep time is {} s", costTime);
+                logger.trace("publishPolicy sleep time is {} s", costTime);
                 Thread.sleep(costTime*1000);
             } catch (InterruptedException e) {
                 logger.error("publishPolicy error:{}", e);

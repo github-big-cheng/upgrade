@@ -101,7 +101,7 @@ public class VersionController {
 
         // 更新版本信息
         final int versionId = versionInfoService.updateVersion(record);
-        logger.debug("new version id is 【{}】", versionId);
+        logger.trace("new version id is 【{}】", versionId);
 
 
         // 路由注销
@@ -117,7 +117,6 @@ public class VersionController {
             tasks.add(Constant.TASK_DOWNLOAD);
         }
 
-
         // 非强制更新
         if(StringUtils.equals(record.getIsForceUpdate(), "1") || // 强制更新
                 !StringUtils.equals(serviceInfo.getIgnoreMode(), "1")){ // 非忽略模式
@@ -132,9 +131,10 @@ public class VersionController {
         }
 
         // 检查是否需要后台任务
-        if(tasks.size() > 0){
+        logger.trace("tasks is :{}", tasks);
+        if(!CollectionUtils.isEmpty(tasks)){
             // 调用任务链
-            TaskHandler.callTaskChain(taskParams, tasks.toArray(new String[taskParams.size()]));
+            TaskHandler.callTaskChain(taskParams, tasks.toArray(new String[tasks.size()]));
         }
 
         return ResponseBuilder.buildSuccess();
