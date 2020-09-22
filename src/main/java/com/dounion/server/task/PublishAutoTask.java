@@ -44,9 +44,10 @@ public class PublishAutoTask extends BaseTask {
             query.putAll(super.params);
         }
 
-        logger.debug("SubscribeController.addJson code is :{}", query.get("code"));
-
         query.put("maxCount", ConfigurationHelper.getInt(Constant.CONF_PUBLISH_MAX_NOTIFY_COUNT, 1));
+
+        logger.trace("PublishAutoTask.execute query is :{}", query);
+
         List<Map<String, Object>> list = upgradeRecordService.publishListQuery(query);
         if(CollectionUtils.isEmpty(list)){
             logger.info("【{}】 no publish record found, task will exit", this);

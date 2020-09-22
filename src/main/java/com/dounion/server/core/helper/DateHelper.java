@@ -44,13 +44,13 @@ public class DateHelper {
                 tl = SDF_MAP.get(pattern);
                 if (tl == null) {
                     // 只有Map中还没有这个pattern的sdf才会生成新的sdf并放入map
-                    logger.debug("put new format of pattern " + pattern + " to map");
+                    logger.trace("put new format of pattern " + pattern + " to map");
 
                     // 这里是关键,使用ThreadLocal<SimpleDateFormat>替代原来直接new SimpleDateFormat
                     tl = new ThreadLocal<SimpleDateFormat>() {
                         @Override
                         protected SimpleDateFormat initialValue() {
-                            logger.debug("thread: " + Thread.currentThread() + " init pattern: " + pattern);
+                            logger.trace("thread: " + Thread.currentThread() + " init pattern: " + pattern);
                             return new SimpleDateFormat(pattern);
                         }
                     };

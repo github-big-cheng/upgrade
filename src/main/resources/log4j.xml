@@ -20,7 +20,7 @@
 		<param name="Append" value="true" />
 		<param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%p (%c:%L)- %m%n" />
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %p (%c:%L)- %m%n" />
 		</layout>
 	</appender>
 

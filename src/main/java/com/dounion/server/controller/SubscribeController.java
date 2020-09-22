@@ -59,15 +59,16 @@ public class SubscribeController {
      */
     @RequestMapping(value = "/add.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object addJson(final SubscribeInfo record){
+    public Object addJson(SubscribeInfo record){
         // 更新订阅记录
         subscribeService.addSubscribe(record);
         // 订阅任务
         TaskHandler.callTask(Constant.TASK_SUBSCRIBE);
         // 自动发布任务-指定code
-        logger.debug("SubscribeController.addJson code is :{}", record.getCode());
+        final String code = record.getCode();
+        logger.trace("SubscribeController.addJson code is :{}", code);
         TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap(){{
-            put("code", record.getCode());
+            put("code", code);
         }});
         return ResponseBuilder.buildSuccess();
     }

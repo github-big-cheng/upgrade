@@ -36,7 +36,7 @@ public class TaskHandler implements Runnable {
     // 任务ID生成器
     private static AtomicInteger TASK_ID = new AtomicInteger(0);
     // 任务控制集合
-    private final static ConcurrentHashMap<Integer, ThreadLocal<BaseTask>> THREAD_LOCAL_MAP = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<Integer, BaseTask> THREAD_LOCAL_MAP = new ConcurrentHashMap<>();
     // 循环执行任务单例控制
     public final static ConcurrentHashMap<String, BaseTask> LOOP_TASK_MAP = new ConcurrentHashMap<>();
 
@@ -110,13 +110,8 @@ public class TaskHandler implements Runnable {
         task.setCallback(new BaseTask.Callback() {
             @Override
             public void doSomething() {
-                // 任务结束，移除对应的任务线程变量
-                ThreadLocal<BaseTask> threadLocal = THREAD_LOCAL_MAP.get(taskF.getTaskId());
-                BaseTask task1 = threadLocal.get();
-                if(task1 !=null && !taskF.isLoop()){
-                    threadLocal.remove();
-                    THREAD_LOCAL_MAP.remove(taskF.getTaskId());
-                }
+            // 任务结束，移除对应的任务
+            THREAD_LOCAL_MAP.remove(taskF.getTaskId());
             }
         });
 
@@ -144,12 +139,7 @@ public class TaskHandler implements Runnable {
 
         final BaseTask taskF = taskInit(task, params);
 
-        THREAD_LOCAL_MAP.put(taskF.getTaskId(), new ThreadLocal<BaseTask>(){
-            @Override
-            protected BaseTask initialValue() {
-                return taskF;
-            }
-        });
+        THREAD_LOCAL_MAP.put(taskF.getTaskId(), taskF);
 
         Future future = EXECUTOR_SERVICE.submit(new Runnable() {
             @Override
@@ -269,12 +259,7 @@ public class TaskHandler implements Runnable {
 
         final BaseTask taskF = taskInit(task, params);
 
-        THREAD_LOCAL_MAP.put(taskF.getTaskId(), new ThreadLocal<BaseTask>(){
-            @Override
-            protected BaseTask initialValue() {
-                return taskF;
-            }
-        });
+        THREAD_LOCAL_MAP.put(taskF.getTaskId(), taskF);
 
         try {
             Thread.sleep(delay);
@@ -397,7 +382,7 @@ public class TaskHandler implements Runnable {
         if(id == null){
             return null;
         }
-        return THREAD_LOCAL_MAP.get(id)==null ? null : THREAD_LOCAL_MAP.get(id).get();
+        return THREAD_LOCAL_MAP.get(id)==null ? null : THREAD_LOCAL_MAP.get(id);
     }
 
 
@@ -418,9 +403,7 @@ public class TaskHandler implements Runnable {
      */
     public static List<BaseTask> getTaskList(){
         List<BaseTask> tasks = new ArrayList<>();
-        for(Integer id : THREAD_LOCAL_MAP.keySet()){
-            tasks.add(THREAD_LOCAL_MAP.get(id).get());
-        }
+        tasks.addAll(THREAD_LOCAL_MAP.values());
         return tasks;
     }
 

@@ -169,7 +169,8 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             String newUrl = RouteHandler.getNewUrl(request.uri());
             logger.debug("new url by RouteHandler is :{}", newUrl);
             if(StringUtils.isNotBlank(newUrl)){
-                this.sendPermanentRedirect(ctx, newUrl);
+                logger.debug("Remote {} send redirect to {}", ctx.channel(), newUrl);
+                this.sendRedirect(ctx, newUrl);
                 return;
             }
 
@@ -317,22 +318,18 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
      * @param ctx
      * @param newUri
      */
-    private void sendPermanentRedirect(ChannelHandlerContext ctx, String newUri){
-        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.PERMANENT_REDIRECT); //设置重定向响应码 （临时重定向、永久重定向）
-        HttpHeaders headers = response.headers();
-        headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "x-requested-with,content-type");
-        headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "POST,GET");
-        headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        headers.set(HttpHeaderNames.LOCATION, newUri); //重定向URL设置
-        this.sendAndCleanupConnection(ctx, response);
-    }
-
     private void sendRedirect(ChannelHandlerContext ctx, String newUri) {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, FOUND, Unpooled.EMPTY_BUFFER);
         response.headers().set(HttpHeaderNames.LOCATION, newUri);
         this.sendAndCleanupConnection(ctx, response);
     }
 
+
+    /**
+     * 返回错误
+     * @param ctx
+     * @param status
+     */
     private void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
         FullHttpResponse response = new DefaultFullHttpResponse(
                 HTTP_1_1, status, Unpooled.copiedBuffer("Failure: " + status + "\r\n", CharsetUtil.UTF_8));
@@ -342,7 +339,6 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
 
     /**
      * When file timestamp is the same as what the browser is sending up, send a "304 Not Modified"
-     *
      * @param ctx Context
      */
     private void sendNotModified(ChannelHandlerContext ctx) {

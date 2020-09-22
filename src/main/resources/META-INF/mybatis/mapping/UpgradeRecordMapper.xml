@@ -444,7 +444,9 @@
                B.PUBLISH_URL,
                C.ID AS RECORD_ID
         FROM T_UPGRADE_VERSION_INFO A
-            INNER JOIN T_UPGRADE_SUBSCRIBE_INFO B ON A.APP_TYPE = B.APP_TYPE AND B.STATUS = 1
+            INNER JOIN T_UPGRADE_SUBSCRIBE_INFO B ON A.APP_TYPE = B.APP_TYPE
+              AND B.STATUS = 1
+              AND B.VERSION_NO <![CDATA[<]]> A.VERSION_NO
             LEFT JOIN T_UPGRADE_RECORD C ON C.VERSION_ID = A.ID AND C.SUBSCRIBE_ID = B.ID
         WHERE A.STATUS = 1
           <if test="code != null">
@@ -453,12 +455,7 @@
           <if test="publishType != null">
           AND A.PUBLISH_TYPE = #{publishType}
           </if>
-          AND NOT EXISTS(
-                  SELECT 1 FROM T_UPGRADE_RECORD D
-                  WHERE D.SUBSCRIBE_ID = B.ID
-                    AND D.VERSION_ID = A.ID
-                    AND (D.NOTIFY_COUNT >=#{maxCount} OR D.NOTIFY_STATUS = 1)
-              )
+          AND NOT (C.NOTIFY_COUNT >=#{maxCount} OR C.NOTIFY_STATUS = 1)
   </select>
 
 
