@@ -88,7 +88,7 @@ public class VersionController {
             record.setFileSize(file.length()); // 文件大小
             record.setFileMd5(FileHelper.getFileMD5(file)); // 文件MD5值
         } else {
-            // 远程发布检查 检查本地版本号
+            // 远程发布检查 检查数据库中保存的版本号
             VersionInfo query = new VersionInfo();
             query.setAppType(record.getAppType());
             List<VersionInfo> list = versionInfoService.list(query);
@@ -127,7 +127,6 @@ public class VersionController {
         // 自动发布 - 调度任务:发布通知
         if(StringUtils.equals(record.getPublishType(), "2")){
             tasks.add(Constant.TASK_PUBLISH_AUTO);
-            taskParams.put("publishType", "2");
         }
 
         // 检查是否需要后台任务
@@ -168,9 +167,7 @@ public class VersionController {
 
         // 自动发布 - 调度任务:发布通知
         if(StringUtils.equals(entity.getPublishType(), "2")){
-            TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, new ConcurrentHashMap<String, Object>(){{
-                put("publishType", "2");
-            }});
+            TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO);
         }
 
         ConcurrentHashMap<String, Object> taskParams = new ConcurrentHashMap<>();

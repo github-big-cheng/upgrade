@@ -63,14 +63,14 @@ public class LockHandler {
         ReentrantLock lock = REENTRANT_LOCK_MAP.get(lockKey);
         if(lock != null){
             lock.unlock();
-        }
 
-        // Is it unsafe here ?
-        if(!lock.isLocked() && lock.getHoldCount()==0 && lock.getQueueLength()==0){
-            REENTRANT_LOCK_MAP.remove(lockKey);
-            for(String key : CONDITION_MAP.keySet()){
-                if(StringUtils.startsWith(key, lockKey + JOIN_KEY)){
-                    CONDITION_MAP.remove(key);
+            // Is it unsafe here ?
+            if(!lock.isLocked() && lock.getHoldCount()==0 && lock.getQueueLength()==0){
+                REENTRANT_LOCK_MAP.remove(lockKey);
+                for(String key : CONDITION_MAP.keySet()){
+                    if(StringUtils.startsWith(key, lockKey + JOIN_KEY)){
+                        CONDITION_MAP.remove(key);
+                    }
                 }
             }
         }

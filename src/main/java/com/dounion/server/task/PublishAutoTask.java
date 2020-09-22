@@ -47,7 +47,7 @@ public class PublishAutoTask extends BaseTask {
             if(!CollectionUtils.isEmpty(super.params)){
                 query.putAll(super.params);
             }
-
+            query.put("publishType", "2"); // 默认自动发布类型
             query.put("maxCount", ConfigurationHelper.getInt(Constant.CONF_PUBLISH_MAX_NOTIFY_COUNT, 1));
 
             logger.trace("PublishAutoTask.execute query is :{}", query);

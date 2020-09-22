@@ -91,6 +91,7 @@ public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
             }
 
             if (!reading) {
+                logger.debug("file download response is :{}", response);
                 if (downloadFile != null && downloadFile.exists()) {
                     // 文件下载成功
                     this.nettyResponse.setSuccess(downloadFile.getPath());

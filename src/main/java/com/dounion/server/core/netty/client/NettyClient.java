@@ -192,7 +192,9 @@ public class NettyClient implements Closeable {
             String fileName = response.get();
             if(response.getStatus()==302){
                 // 重定向处理, 这里的fileName是url
-                fileName = fileDownload(fileName);
+                NettyClient client = NettyClient.getInstance(fileName);
+                logger.debug("do redirect, client is:{}", client);
+                fileName = client.fileDownload(fileName);
             }
 
             return fileName;
