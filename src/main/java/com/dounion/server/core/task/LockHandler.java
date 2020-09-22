@@ -60,8 +60,10 @@ public class LockHandler {
      */
     public static void unlock(String lockKey) {
 
-        ReentrantLock lock = getLock(lockKey);
-        lock.unlock();
+        ReentrantLock lock = REENTRANT_LOCK_MAP.get(lockKey);
+        if(lock != null){
+            lock.unlock();
+        }
 
         // Is it unsafe here ?
         if(lock.getHoldCount()==0 && lock.getQueueLength()==0){

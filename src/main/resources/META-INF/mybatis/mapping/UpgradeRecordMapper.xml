@@ -455,7 +455,7 @@
           <if test="publishType != null">
           AND A.PUBLISH_TYPE = #{publishType}
           </if>
-          AND NOT (C.NOTIFY_COUNT >=#{maxCount} OR C.NOTIFY_STATUS = 1)
+          AND NOT (IFNULL(C.NOTIFY_COUNT, 0) >=#{maxCount} OR IFNULL(C.NOTIFY_STATUS, 0) = 1)
   </select>
 
 
