@@ -43,11 +43,11 @@ public class Main {
             }
             // 自动发布任务 -- 60秒后
             TaskHandler.callTask(
-                    Constant.TASK_PUBLISH_AUTO,
-                    new ConcurrentHashMap<String, Object>(){{
-                        put("publishType", "2"); // 自动发布
-                    }},
-                    60 * 1000
+                Constant.TASK_PUBLISH_AUTO,
+                new ConcurrentHashMap<String, Object>(){{
+                    put("publishType", "2"); // 自动发布
+                }},
+                60 * 1000
             );
 
 
