@@ -7,8 +7,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LockHandler {
 
+    private LockHandler(){
+        this(false);
+    }
+
+    private LockHandler(boolean fair){
+        this.lock = new ReentrantLock(fair);
+    }
+
     final private AtomicInteger lockedCount = new AtomicInteger(0);
-    final private ReentrantLock lock = new ReentrantLock(true);
+    private ReentrantLock lock;
 
     private ConcurrentHashMap<String, Condition> conditionMap = new ConcurrentHashMap<>();
 
@@ -41,35 +49,29 @@ public class LockHandler {
     public final static ConcurrentHashMap<String, LockHandler> LOCK_HANDLER_MAP = new ConcurrentHashMap<>();
 
 
+
+
     /**
      * 获取锁控制对象
      * @param key
      * @return
      */
-    public static synchronized LockHandler getHandler(String key) {
+    public static synchronized LockHandler getHandler(String key, boolean fair) {
         if(!LOCK_HANDLER_MAP.contains(key)){
-            LOCK_HANDLER_MAP.putIfAbsent(key, new LockHandler());
+            LOCK_HANDLER_MAP.putIfAbsent(key, new LockHandler(fair));
         }
         return LOCK_HANDLER_MAP.get(key);
     }
 
+
     /**
-     * 获取重入锁
+     * 获取锁控制对象
+     *      默认-公平锁
      * @param key
      * @return
      */
-    public static synchronized ReentrantLock getLock(String key){
-        return getHandler(key).getLock();
-    }
-
-    /**
-     * 获取条件对象
-     * @param lockKey
-     * @param conditionKey
-     * @return
-     */
-    public static synchronized Condition getCondition(String lockKey, String conditionKey){
-        return getHandler(lockKey).newCondition(conditionKey);
+    public static LockHandler getHandler(String key) {
+        return getHandler(key, true);
     }
 
 
