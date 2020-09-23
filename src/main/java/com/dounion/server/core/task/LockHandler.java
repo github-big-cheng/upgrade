@@ -88,11 +88,16 @@ public class LockHandler {
      * @param key
      */
     public static void unlock(String key){
-        LockHandler handler = getHandler(key);
-        handler.unlock();
-        if(handler.isRelease()){
-            LOCK_HANDLER_MAP.remove(key);
-        }
+        getHandler(key).unlock();
+    }
+
+
+    /**
+     * 释放指定的锁对象，避免内存溢出
+     * @param key
+     */
+    public static void release(String key){
+        LOCK_HANDLER_MAP.remove(key);
     }
 
 
