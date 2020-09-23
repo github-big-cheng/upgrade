@@ -173,7 +173,25 @@ public class NettyClient implements Closeable {
     }
 
 
+    /**
+     * 文件下载
+     *      默认重定向3次
+     * @param url
+     * @return
+     */
     public String fileDownload(String url) {
+        return fileDownload(url, 0, 3);
+    }
+
+
+    /**
+     * 文件下载
+     * @param url
+     * @param inx 当前重定向次数
+     * @param maxRedirectCount
+     * @return
+     */
+    public String fileDownload(String url, int inx, int maxRedirectCount) {
 
         try {
             logger.debug("【{}】 fileDownload execute...url:【{}】", this, url);
@@ -191,11 +209,15 @@ public class NettyClient implements Closeable {
 
             String fileName = response.get();
             if(response.getStatus()==302){
-                // 暂未处理重定向次数过多的问题，待完善
+                // 重定向次数过多，返回空
+                if(inx >= maxRedirectCount){
+                    logger.error("redirect to many times:{}", url);
+                    return null;
+                }
                 // 重定向处理, 这里的fileName是url
                 NettyClient client = NettyClient.getInstance(fileName);
                 logger.debug("do redirect, client is:{}", client);
-                fileName = client.fileDownload(url);
+                fileName = client.fileDownload(url, inx++, maxRedirectCount);
             }
 
             return fileName;

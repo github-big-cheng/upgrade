@@ -1,78 +1,95 @@
 package com.dounion.server.core.task;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.Assert;
-
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LockHandler {
 
-    private final static String JOIN_KEY = "#";
-    public final static ConcurrentHashMap<String, ReentrantLock> REENTRANT_LOCK_MAP = new ConcurrentHashMap<>();
-    public final static ConcurrentHashMap<String, Condition> CONDITION_MAP = new ConcurrentHashMap<>();
+    final private AtomicInteger lockedCount = new AtomicInteger(0);
+    final private ReentrantLock lock = new ReentrantLock(true);
 
+    private ConcurrentHashMap<String, Condition> conditionMap = new ConcurrentHashMap<>();
 
-    /**
-     * 获取重入锁对象
-     * @param lockKey
-     * @return
-     */
-    public static ReentrantLock getLock(String lockKey){
-
-        Assert.notNull(lockKey, "lock key is required");
-
-        ReentrantLock lock = REENTRANT_LOCK_MAP.get(lockKey);
-        if(lock == null){
-            REENTRANT_LOCK_MAP.putIfAbsent(lockKey, new ReentrantLock(true));
-        }
-        return REENTRANT_LOCK_MAP.get(lockKey);
+    public ReentrantLock getLock(){
+        return this.lock;
     }
 
-    /**
-     * 获取
-     * @param lockKey 锁名称
-     * @param conditionKey 条件名称
-     * @return
-     */
-    public static Condition newCondition(String lockKey, String conditionKey){
-        String realKey = lockKey + JOIN_KEY + conditionKey;
-        if(CONDITION_MAP.get(realKey) == null){
-            ReentrantLock lock = getLock(lockKey);
-            CONDITION_MAP.putIfAbsent(realKey, lock.newCondition());
+    public Condition newCondition(String key){
+        if(!conditionMap.contains(key)){
+            conditionMap.putIfAbsent(key, lock.newCondition());
         }
-        return CONDITION_MAP.get(realKey);
+        return conditionMap.get(key);
+    }
+
+    public void lock(){
+        this.lock.lock();
+        lockedCount.incrementAndGet(); // 计数器自增
+    }
+
+    public void unlock(){
+        this.lock.unlock();
+        lockedCount.decrementAndGet(); // 计数器自减
+    }
+
+    public boolean isRelease(){
+        return lockedCount.intValue() == 0;
     }
 
 
+    public final static ConcurrentHashMap<String, LockHandler> LOCK_HANDLER_MAP = new ConcurrentHashMap<>();
+
+
     /**
-     * 锁
-     * @param lockKey
+     * 获取锁控制对象
+     * @param key
+     * @return
      */
-    public static void lock(String lockKey) {
-        getLock(lockKey).lock();
+    public static synchronized LockHandler getHandler(String key) {
+        if(!LOCK_HANDLER_MAP.contains(key)){
+            LOCK_HANDLER_MAP.putIfAbsent(key, new LockHandler());
+        }
+        return LOCK_HANDLER_MAP.get(key);
+    }
+
+    /**
+     * 获取重入锁
+     * @param key
+     * @return
+     */
+    public static synchronized ReentrantLock getLock(String key){
+        return getHandler(key).getLock();
+    }
+
+    /**
+     * 获取条件对象
+     * @param lockKey
+     * @param conditionKey
+     * @return
+     */
+    public static synchronized Condition getCondition(String lockKey, String conditionKey){
+        return getHandler(lockKey).newCondition(conditionKey);
+    }
+
+
+    /**
+     * 上锁
+     * @param key
+     */
+    public static void lock(String key){
+        getHandler(key).lock();
     }
 
     /**
      * 解锁
-     * @param lockKey
+     * @param key
      */
-    public static void unlock(String lockKey) {
-
-        ReentrantLock lock = REENTRANT_LOCK_MAP.get(lockKey);
-        if(lock != null){
-            lock.unlock();
-
-            // Is it unsafe here ?
-            if(!lock.isLocked() && lock.getHoldCount()==0 && lock.getQueueLength()==0){
-                REENTRANT_LOCK_MAP.remove(lockKey);
-                for(String key : CONDITION_MAP.keySet()){
-                    if(StringUtils.startsWith(key, lockKey + JOIN_KEY)){
-                        CONDITION_MAP.remove(key);
-                    }
-                }
-            }
+    public static void unlock(String key){
+        LockHandler handler = getHandler(key);
+        handler.unlock();
+        if(handler.isRelease()){
+            LOCK_HANDLER_MAP.remove(key);
         }
     }
 
