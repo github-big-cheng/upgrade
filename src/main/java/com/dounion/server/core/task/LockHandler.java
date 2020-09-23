@@ -32,13 +32,13 @@ public class LockHandler {
     }
 
     public void lock(){
-        this.lock.lock();
         lockedCount.incrementAndGet(); // 计数器自增
+        this.lock.lock();
     }
 
     public void unlock(){
-        this.lock.unlock();
         lockedCount.decrementAndGet(); // 计数器自减
+        this.lock.unlock();
     }
 
     public boolean isRelease(){
@@ -88,7 +88,11 @@ public class LockHandler {
      * @param key
      */
     public static void unlock(String key){
-        getHandler(key).unlock();
+        LockHandler handler = getHandler(key);
+        handler.unlock();
+        if(handler.isRelease()){
+            release(key);
+        }
     }
 
 

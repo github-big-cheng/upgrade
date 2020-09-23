@@ -52,6 +52,14 @@ public class NettyResponse<V> {
         this.throwable = throwable;
     }
 
+    public V getV() {
+        return v;
+    }
+
+    public void setV(V v) {
+        this.v = v;
+    }
+
     private Boolean isDone(){
         return this.status != 0;
     }
@@ -105,8 +113,6 @@ public class NettyResponse<V> {
             } finally {
                 LOCK.unlock();
             }
-
-            logger.debug("NettyResponse:[status={}, v={}, throwable={}]", this.status, this.v, this.throwable);
 
             if(!isDone()){
                 this.status = 502;

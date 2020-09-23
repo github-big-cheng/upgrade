@@ -208,6 +208,8 @@ public class NettyClient implements Closeable {
             channel.attr(NETTY_CLIENT_RESPONSE).set(response);
 
             String fileName = response.get();
+            logger.debug("NettyResponse:[status={}, v={}, throwable={}]",
+                    response.getStatus(), response.getV(), response.getThrowable());
             if(response.getStatus()==302){
                 // 重定向次数过多，返回空
                 if(inx >= maxRedirectCount){
