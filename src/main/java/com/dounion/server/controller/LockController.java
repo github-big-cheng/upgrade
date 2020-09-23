@@ -19,8 +19,7 @@ public class LockController {
     public Object infoJson(){
         Map<String, Object> map = new HashMap<>();
 
-        map.put("lockMap", LockHandler.REENTRANT_LOCK_MAP);
-        map.put("conditionMap", LockHandler.CONDITION_MAP);
+        map.put("lockMap", LockHandler.LOCK_HANDLER_MAP);
 
         return ResponseBuilder.buildSuccess(map);
     }
