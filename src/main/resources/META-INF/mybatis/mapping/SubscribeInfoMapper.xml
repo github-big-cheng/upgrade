@@ -197,6 +197,12 @@
       <if test="subscribeTime != null">
         AND SUBSCRIBE_TIME = #{subscribeTime,jdbcType=VARCHAR}
       </if>
+      <if test="codes != null">
+        AND ID IN
+        <foreach item="item" index="index" collection="codes.split(',')"  open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
     </trim>
   </select>
 
