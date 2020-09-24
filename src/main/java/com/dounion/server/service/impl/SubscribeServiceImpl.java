@@ -74,6 +74,7 @@ public class SubscribeServiceImpl implements SubscribeService {
                 record.setId(temp.getId());
                 record.setAppType(appType);
                 record.setVersionNo(versionNos[inx]);
+                record.setSubscribeTime(time);
                 subscribeInfoMapper.updateByPrimaryKeySelective(record);
             } else {
                 temp = new SubscribeInfo();
