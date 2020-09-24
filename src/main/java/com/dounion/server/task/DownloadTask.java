@@ -71,7 +71,7 @@ public class DownloadTask extends BaseTask {
         if(file.length() != versionInfo.getFileSize()){
             logger.error("【{}】 file size check failed, expect 【{}】, but 【{}】",
                     this, versionInfo.getFileSize(), file.length());
-            throw new BusinessException(StringHelper.parse1("【{}】文件MD5值校验失败", downloadUrl));
+            throw new BusinessException(StringHelper.parse1("【{}】文件大小校验失败", downloadUrl));
         }
         // 检查文件MD5值
         String fileMd5 = FileHelper.getFileMD5(file);

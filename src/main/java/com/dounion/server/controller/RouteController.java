@@ -7,6 +7,7 @@ import com.dounion.server.core.route.RouteHandler;
 import com.dounion.server.entity.DownloadRouteRecord;
 import com.dounion.server.eum.ResponseTypeEnum;
 import com.dounion.server.service.DownloadRouteRecordService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -34,12 +35,18 @@ public class RouteController {
 
     @RequestMapping("/list.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object listJson(){
+    public Object listJson(String type){
+
         Map<String, Object> result = new HashMap<>();
         result.put("local", RouteHandler.LOCAL_COUNTER_MAP);
         result.put("routeInfo", RouteHandler.ROUTE_INFO_MAP);
         result.put("routeQueue", RouteHandler.ROUTE_QUEUE_MAP);
         result.put("downloadProgress", RouteHandler.DOWNLOAD_PROGRESS_MAP);
+
+        if(StringUtils.isNotBlank(type)){
+            return ResponseBuilder.buildSuccess(result.get(type));
+        }
+
         return ResponseBuilder.buildSuccess(result);
     }
 
