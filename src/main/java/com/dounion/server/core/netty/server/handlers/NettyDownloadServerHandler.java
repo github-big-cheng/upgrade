@@ -207,6 +207,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
                 @Override
                 public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
+                    request.uri();
                     if (total < 0) { // total unknown
                         logger.debug(future.channel() + " Transfer progress: " + progress);
                     } else {

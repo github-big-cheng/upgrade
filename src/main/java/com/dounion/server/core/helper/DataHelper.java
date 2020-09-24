@@ -61,12 +61,23 @@ public class DataHelper {
      * @param o2
      * @return
      */
-    public static BigDecimal divide(Object o1, Object o2){
+    public static BigDecimal divide(Object o1, Object o2, int roundingMode){
         BigDecimal b2 = getBigDecimal(o2);
         if(b2.equals(BigDecimal.ZERO)){
             return BigDecimal.ZERO;
         }
-        return getBigDecimal(o1).divide(b2, BigDecimal.ROUND_HALF_UP, 2);
+        return getBigDecimal(o1).divide(b2, BigDecimal.ROUND_HALF_UP, roundingMode);
+    }
+
+
+    /**
+     * return o1/o2
+     * @param o1
+     * @param o2
+     * @return
+     */
+    public static BigDecimal divide(Object o1, Object o2){
+        return divide(o1, o2, 2);
     }
 
 

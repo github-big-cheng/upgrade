@@ -3,6 +3,7 @@ package com.dounion.server.core.route;
 
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.helper.ConfigurationHelper;
+import com.dounion.server.core.helper.DataHelper;
 import com.dounion.server.entity.DownloadRouteRecord;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -304,5 +306,115 @@ public class RouteHandler {
             }
         }
 
+    }
+
+
+    // ================================================ for download progress ==========================================
+
+    static class DownloadProgress {
+
+        public DownloadProgress(String name, long fileSize) {
+            this(name, fileSize, null, null);
+        }
+
+        public DownloadProgress(String name, long fileSize, String local, String remote) {
+            this.name = name;
+            this.fileSize = fileSize;
+            this.local = local;
+            this.remote = remote;
+            this.start = System.currentTimeMillis();
+        }
+
+        private String name; // 下载名称
+        private String local; // 本地对象
+        private String remote; // 下载对象
+        private long downloadSize; // 已下载大小
+        private long fileSize; // 文件大小
+        private long start; // 开始时间
+        private long end; // 结束时间
+
+        /**
+         * 下载进度
+         * @return
+         */
+        public BigDecimal getProgress(){
+            return DataHelper.percent(this.fileSize, this.downloadSize);
+        }
+
+        /**
+         * 下载速率 Kb/s
+         * @return
+         */
+        public BigDecimal getSpeed(){
+            long currentTime = (System.currentTimeMillis() - this.start) / 1000;
+            return DataHelper.divide(this.downloadSize/1024, currentTime);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getLocal() {
+            return local;
+        }
+
+        public void setLocal(String local) {
+            this.local = local;
+        }
+
+        public String getRemote() {
+            return remote;
+        }
+
+        public long getDownloadSize() {
+            return downloadSize;
+        }
+
+        public void setDownloadSize(long downloadSize) {
+            this.downloadSize = downloadSize;
+        }
+
+        public long getFileSize() {
+            return fileSize;
+        }
+
+        public void setFileSize(long fileSize) {
+            this.fileSize = fileSize;
+        }
+
+        public void setRemote(String remote) {
+            this.remote = remote;
+        }
+
+        public long getStart() {
+            return start;
+        }
+
+        public void setStart(long start) {
+            this.start = start;
+        }
+
+        public long getEnd() {
+            return end;
+        }
+
+        public void setEnd(long end) {
+            this.end = end;
+        }
+    }
+
+    /**
+     * 下载进度集合
+     *      key:path
+     *      value:Channel
+     */
+    public final static ConcurrentHashMap<String, DownloadProgress> DOWNLOAD_PROGRESS_MAP = new ConcurrentHashMap<>();
+
+    public static void progressRegister(String path, long fileSize, String local, String remote){
+        DownloadProgress progress = new DownloadProgress(path, fileSize, local, remote);
     }
 }

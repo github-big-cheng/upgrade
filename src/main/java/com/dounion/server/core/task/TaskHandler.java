@@ -111,8 +111,10 @@ public class TaskHandler implements Runnable {
         task.setCallback(new BaseTask.Callback() {
             @Override
             public void doSomething() {
-            // 任务结束，移除对应的任务
-            THREAD_LOCAL_MAP.remove(taskF.getTaskId());
+                if(!taskF.isLoop() || taskF.isInterrupted() || !taskF.isActive()) {
+                    // 任务结束，移除对应的任务
+                    THREAD_LOCAL_MAP.remove(taskF.getTaskId());
+                }
             }
         });
 

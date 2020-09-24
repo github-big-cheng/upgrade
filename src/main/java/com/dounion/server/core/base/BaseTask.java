@@ -155,6 +155,7 @@ public abstract class BaseTask implements Callable<Integer> {
                 .append(", taskName=").append(this.getTaskName())
                 .append(", progress=").append(this.getProgress())
                 .append(", isLoop=").append(this.isLoop())
+                .append(", interrupt=").append(this.isInterrupted())
                 .append(", loopDelay=").append(this.getLoopDelay())
                 // there are some issue about HashMap in JDK 1.7, open it in a better Java Version
 //                .append(", params=").append(this.params)
@@ -185,7 +186,7 @@ public abstract class BaseTask implements Callable<Integer> {
      * 当前任务是否被要求中断
      * @return
      */
-    protected boolean isInterrupted(){
+    public boolean isInterrupted(){
         return interrupt;
     }
 
@@ -232,8 +233,13 @@ public abstract class BaseTask implements Callable<Integer> {
             return null;
         } finally {
             // 间隔定时任务 循环执行
+            logger.trace("can be loop ? isInterrupted:{}, isLoop:{}", this.isInterrupted(), this.isLoop());
             if(!this.isInterrupted() && this.isLoop()){
-                Thread.sleep(this.getLoopDelay());
+                try {
+                    Thread.sleep(this.getLoopDelay());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 this.call();
             }
 
