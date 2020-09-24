@@ -60,8 +60,6 @@ public class NettyServer {
                 @Override
                 public void operationComplete(Future<? super Void> future) throws Exception {
 
-
-
                     logger.info("######################################################################");
                     logger.info("#********************************************************************#");
                     logger.info("#  Open your web browser and navigate to http://{}:{}/list  #", localIp, port);
