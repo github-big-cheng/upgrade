@@ -35,17 +35,15 @@ echo "操作的文件名：【$3】"
 
 
 # 停应用 按应用名称查询进程号
-echo "$progress_name"
-if [ "$PID" = 0 ]; then
-	PID=$(ps -ef | grep "$progress_name" | grep -v grep | grep 'java' | awk '{print $2}')	
-	if [ -z "$PID" ]; then
-		for p in $PID
+echo "progress_name to grep is $progress_name"
+PID=$(ps -ef | grep "$progress_name" | grep -v grep | grep 'java' | awk '{print $2}')	
+if [ -z "$PID" ]; then
+	for p in $PID
 		do
 			kill -9 "$p"
                 	echo "killed progress by ps, pid is 【$p】"
-		done
-		sleep 3
-        fi
+	done
+	sleep 3
 fi
 
 

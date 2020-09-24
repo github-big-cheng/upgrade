@@ -7,5 +7,6 @@ if [ -n "$pid" ]; then
 	do
 		echo "upgrade is running, killed $p"
 		kill -9 "$p"		
+		sleep 2
 	done
 fi
