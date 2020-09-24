@@ -412,9 +412,58 @@ public class RouteHandler {
      *      key:path
      *      value:Channel
      */
-    public final static ConcurrentHashMap<String, DownloadProgress> DOWNLOAD_PROGRESS_MAP = new ConcurrentHashMap<>();
+    public final static ConcurrentHashMap<String, ConcurrentHashMap<String, DownloadProgress>>
+            DOWNLOAD_PROGRESS_MAP = new ConcurrentHashMap<>();
 
+
+    /**
+     * 下载进度注册
+     * @param path
+     * @param fileSize
+     * @param local
+     * @param remote
+     */
     public static void progressRegister(String path, long fileSize, String local, String remote){
-        DownloadProgress progress = new DownloadProgress(path, fileSize, local, remote);
+        if(!DOWNLOAD_PROGRESS_MAP.contains(path)){
+            DOWNLOAD_PROGRESS_MAP.putIfAbsent(path, new ConcurrentHashMap<String, DownloadProgress>());
+        }
+
+        if(!DOWNLOAD_PROGRESS_MAP.get(path).contains(remote)){
+            DOWNLOAD_PROGRESS_MAP.get(path).putIfAbsent(remote, new DownloadProgress(path, fileSize, local, remote));
+        }
+    }
+
+
+    /**
+     * 更新下载进度
+     * @param path
+     * @param remote
+     * @param downloadSize 已下载文件大小
+     */
+    public static void progressRefresh(String path, String remote, long downloadSize){
+        ConcurrentHashMap<String, DownloadProgress> map = DOWNLOAD_PROGRESS_MAP.get(path);
+        if(CollectionUtils.isEmpty(map)){
+            return;
+        }
+
+        DownloadProgress progress = map.get(remote);
+        if(progress == null){
+            return;
+        }
+        progress.setDownloadSize(downloadSize);
+    }
+
+
+    /**
+     * 下载进度注销
+     * @param path
+     * @param remote
+     */
+    public static void progressCancel(String path, String remote){
+        ConcurrentHashMap<String, DownloadProgress> map = DOWNLOAD_PROGRESS_MAP.get(path);
+        if(CollectionUtils.isEmpty(map)){
+            return;
+        }
+        map.remove(remote);
     }
 }

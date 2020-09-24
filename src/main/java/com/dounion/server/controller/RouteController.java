@@ -39,6 +39,7 @@ public class RouteController {
         result.put("local", RouteHandler.LOCAL_COUNTER_MAP);
         result.put("routeInfo", RouteHandler.ROUTE_INFO_MAP);
         result.put("routeQueue", RouteHandler.ROUTE_QUEUE_MAP);
+        result.put("downloadProgress", RouteHandler.DOWNLOAD_PROGRESS_MAP);
         return ResponseBuilder.buildSuccess(result);
     }
 

@@ -185,6 +185,9 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
 
             // download count++
             RouteHandler.countDown(request.uri());
+            // download progress
+            RouteHandler.progressRegister(request.uri(), fileLength,
+                    ctx.channel().localAddress().toString(), ctx.channel().remoteAddress().toString());
 
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
             HttpUtil.setContentLength(response, fileLength);
@@ -207,10 +210,12 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
                 @Override
                 public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
-                    request.uri();
+                    String remote = future.channel().remoteAddress().toString();
                     if (total < 0) { // total unknown
                         logger.debug(future.channel() + " Transfer progress: " + progress);
+                        RouteHandler.progressCancel(request.uri(), remote);
                     } else {
+                        RouteHandler.progressRefresh(request.uri(), remote, progress);
                         logger.trace(future.channel() + " Transfer progress: " + progress + " / " + total);
                     }
                 }
