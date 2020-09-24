@@ -31,7 +31,7 @@ public class RouteTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "路由后台任务";
+        return Constant.TASK_ROUTE_NAME;
     }
 
     @Override
