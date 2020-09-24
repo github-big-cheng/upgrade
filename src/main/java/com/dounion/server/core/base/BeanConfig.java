@@ -92,7 +92,7 @@ public class BeanConfig {
         Properties properties = new Properties();
         properties.setProperty("offsetAsPageNum","true");
         properties.setProperty("rowBoundsWithCount","true");
-        properties.setProperty("reasonable","true");
+        properties.setProperty("reasonable","false"); // 参数合理化 没必要不需开启
         properties.setProperty("helperDialect","SQLite");    //配置数据库的方言
         PageInterceptor pageHelper = new PageInterceptor();
         pageHelper.setProperties(properties);

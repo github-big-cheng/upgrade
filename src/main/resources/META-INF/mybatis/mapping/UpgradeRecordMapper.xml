@@ -456,6 +456,7 @@
           AND A.PUBLISH_TYPE = #{publishType}
           </if>
           AND NOT (IFNULL(C.NOTIFY_COUNT, 0) >=#{maxCount} OR IFNULL(C.NOTIFY_STATUS, 0) = 1)
+        ORDER BY A.ID, A.APP_TYPE, B.SUBSCRIBE_TIME
   </select>
 
 

@@ -93,8 +93,10 @@ public class VersionController {
             query.setAppType(record.getAppType());
             List<VersionInfo> list = versionInfoService.list(query);
             if(!CollectionUtils.isEmpty(list) &&
-                    list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){
-                logger.info("接收发布成功，但版本过低已忽略");
+                    StringUtils.isNotBlank(list.get(0).getFilePath()) && // 文件路径不为空
+                    list.get(0).getVersionNo().compareTo(record.getVersionNo()) >= 0){ // 版本号比较
+                logger.info("接收发布成功，但版本过低已忽略，local version is {}, remote version is{}",
+                        list.get(0).getVersionNo(), record.getVersionNo());
                 return ResponseBuilder.buildSuccess("接收发布成功，但版本过低已忽略");
             }
         }
