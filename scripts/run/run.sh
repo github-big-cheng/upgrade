@@ -2,6 +2,7 @@
 
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo "$DIR"
 
 # 检查是否有残留进程
 cd "$DIR"
