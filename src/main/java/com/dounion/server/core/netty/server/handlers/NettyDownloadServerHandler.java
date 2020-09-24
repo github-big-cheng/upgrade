@@ -169,7 +169,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             String newUrl = RouteHandler.getNewUrl(request.uri());
             logger.debug("new url by RouteHandler is :{}", newUrl);
             if(StringUtils.isNotBlank(newUrl)){
-                logger.debug("Remote {} send redirect to {}", ctx.channel(), newUrl);
+                logger.info("Remote {} send redirect to {}", ctx.channel().remoteAddress().toString(), newUrl);
                 this.sendRedirect(ctx, newUrl);
                 return;
             }
