@@ -76,6 +76,12 @@ public class PublishAutoTask extends BaseTask {
 
             UpgradeRecord record = null;
             for(Map<String, Object> item : list){
+
+                if(this.isInterrupted()) {
+                    logger.warn("task 【{}】 is interrupted by remote...", this);
+                    break;
+                }
+
                 try {
                     record = new UpgradeRecord();
 
@@ -157,7 +163,7 @@ public class PublishAutoTask extends BaseTask {
 
             pageNum++;
 
-        } while (!CollectionUtils.isEmpty(list));
+        } while (!CollectionUtils.isEmpty(list) || this.isInterrupted());
 
     }
 }

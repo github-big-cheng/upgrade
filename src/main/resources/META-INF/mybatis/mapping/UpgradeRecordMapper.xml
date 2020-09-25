@@ -267,6 +267,9 @@
       <if test="upgradeTime != null" >
         UPGRADE_TIME = #{upgradeTime,jdbcType=VARCHAR},
       </if>
+      <if test="notifyCountStr != null" >
+        NOTIFY_COUNT = NOTIFY_COUNT + 1,
+      </if>
     </set>
     where ID = #{id,jdbcType=INTEGER}
   </update>

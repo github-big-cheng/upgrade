@@ -100,5 +100,12 @@ public class DeployTask extends BaseTask {
         super.setProgressComplete(); // progress 100%
 
         logger.trace("It has running to here!~~~~~~~~~~~~");
+
+
+        // upgrade 主程序重新启动
+        if(AppTypeEnum.UPGRADE.equals(appInfo.getAppTypeEnum())){
+            logger.trace("Main function restart!~~~~~~~~~~~~");
+            Main.main(null);
+        }
     }
 }

@@ -225,6 +225,7 @@ public class NettyClient implements Closeable {
                 timeout = MAX_DOWNLOAD_TIME;
             }
             timeout = Math.max(timeout, MAX_DOWNLOAD_TIME);
+            logger.trace("file download : timeout is {} s", timeout/1000);
             NettyResponse<String> response = new NettyResponse<>(timeout);
             channel.attr(NETTY_CLIENT_RESPONSE).set(response);
 

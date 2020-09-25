@@ -71,19 +71,18 @@ fi
 cd "$2"
 unzip "$2"/"$3".zip 
 
-sleep 3
+sleep 2
 
 # 检查是否解压成功
 if [ ! -d "$bak_dir" ]; then
 	echo "unzip failed"
 	exit 5
 fi
+
 #启应用
-param1=""
-if [ "$progress_name" = "upgrade" ]; then
-	param1="1"
+if [ ! "$progress_name" = "upgrade" ]; then
+	echo "nohup sh $bak_dir/$shell_name  &"
+nohup sh "$bak_dir"/"$shell_name"  &
 fi
-echo "nohup sh $bak_dir/$shell_name $param1  &"
-nohup sh "$bak_dir"/"$shell_name" "$param1"  &
 
 

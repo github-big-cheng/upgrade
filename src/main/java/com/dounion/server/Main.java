@@ -7,6 +7,7 @@ import com.dounion.server.core.deploy.DeployHandler;
 import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.request.MappingConfigHandler;
+import com.dounion.server.core.task.LockHandler;
 import com.dounion.server.core.task.TaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,13 @@ public class Main {
                     e.printStackTrace();
                 }
             }
+
+            // all has down, shut down locks
+            LockHandler.shutDown();
+            // all has down, shut down executors
+            TaskHandler.shutdown();
+
+            System.exit(0);
         }
     }
 

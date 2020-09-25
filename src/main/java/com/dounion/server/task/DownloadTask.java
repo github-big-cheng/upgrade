@@ -6,6 +6,7 @@ import com.dounion.server.core.exception.BusinessException;
 import com.dounion.server.core.helper.FileHelper;
 import com.dounion.server.core.netty.client.NettyClient;
 import com.dounion.server.core.route.RouteHandler;
+import com.dounion.server.core.task.LockHandler;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.VersionInfo;
@@ -59,8 +60,20 @@ public class DownloadTask extends BaseTask {
         // 设置最大等待时间
         Long timeout = versionInfo.getFileSize() / RouteHandler.DOWNLOAD_SPEED_RATIO;
         logger.trace("download task : time out is {} ms", timeout);
-        String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl, timeout);
-        logger.debug("filePath is 【{}】", filePath);
+
+        boolean flag = LockHandler.tryLock(this.getTaskName() + downloadUrl);
+        if(!flag){
+            throw new BusinessException("DownloadTask {} is running", downloadUrl);
+        }
+        String filePath;
+        try {
+            filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl, timeout);
+            logger.debug("filePath is 【{}】", filePath);
+        } finally {
+            if(flag){
+                LockHandler.unlock(this.getTaskName() + downloadUrl);
+            }
+        }
 
         // 检查文件是否下载成功
         if(StringUtils.isBlank(filePath)){

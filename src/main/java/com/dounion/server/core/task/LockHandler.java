@@ -36,6 +36,16 @@ public class LockHandler {
         this.lock.lock();
     }
 
+    public boolean tryLock(){
+        lockedCount.incrementAndGet();
+        boolean flag = this.lock.tryLock();
+        if(!flag){
+            // 未锁上,还原
+            lockedCount.decrementAndGet();
+        }
+        return flag;
+    }
+
     public void unlock(){
         lockedCount.decrementAndGet(); // 计数器自减
         this.lock.unlock();
@@ -84,6 +94,14 @@ public class LockHandler {
     }
 
     /**
+     * 上锁
+     * @param key
+     */
+    public static boolean tryLock(String key){
+        return getHandler(key).tryLock();
+    }
+
+    /**
      * 解锁
      * @param key
      */
@@ -104,5 +122,18 @@ public class LockHandler {
         LOCK_HANDLER_MAP.remove(key);
     }
 
+
+    /**
+     * 关闭锁资源
+     */
+    public static void shutDown() {
+        LockHandler handler;
+        for (String key : LOCK_HANDLER_MAP.keySet()) {
+            handler = LOCK_HANDLER_MAP.get(key);
+            while(handler.lock.isLocked()){
+                handler.unlock();
+            }
+        }
+    }
 
 }
