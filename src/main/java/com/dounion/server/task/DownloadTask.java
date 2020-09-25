@@ -4,8 +4,8 @@ import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.exception.BusinessException;
 import com.dounion.server.core.helper.FileHelper;
-import com.dounion.server.core.helper.StringHelper;
 import com.dounion.server.core.netty.client.NettyClient;
+import com.dounion.server.core.route.RouteHandler;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.entity.VersionInfo;
@@ -54,31 +54,35 @@ public class DownloadTask extends BaseTask {
             throw new BusinessException("【versionId:" + id + "】 not found, please check it");
         }
 
+        // 下载地址
         String downloadUrl = Constant.URL_DOWNLOAD + versionInfo.getFileName();
-        String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl);
+        // 设置最大等待时间
+        Long timeout = versionInfo.getFileSize() / RouteHandler.DOWNLOAD_SPEED_RATIO;
+        logger.trace("download task : time out is {} ms", timeout);
+        String filePath = NettyClient.getMasterInstance().fileDownload(downloadUrl, timeout);
         logger.debug("filePath is 【{}】", filePath);
 
         // 检查文件是否下载成功
         if(StringUtils.isBlank(filePath)){
-            throw new BusinessException(StringHelper.parse1("【{}】下载失败", downloadUrl));
+            throw new BusinessException("【{}】下载失败", downloadUrl);
         }
         File file = new File(filePath);
         // 检查文件是否下载成功
         if(!file.exists()){
-            throw new BusinessException(StringHelper.parse1("【{}】下载失败", downloadUrl));
+            throw new BusinessException("【{}】下载失败", downloadUrl);
         }
         // 文件大小检查
         if(file.length() != versionInfo.getFileSize()){
             logger.error("【{}】 file size check failed, expect 【{}】, but 【{}】",
                     this, versionInfo.getFileSize(), file.length());
-            throw new BusinessException(StringHelper.parse1("【{}】文件大小校验失败", downloadUrl));
+            throw new BusinessException("【{}】文件大小校验失败", downloadUrl);
         }
         // 检查文件MD5值
         String fileMd5 = FileHelper.getFileMD5(file);
         if(!StringUtils.equals(fileMd5, versionInfo.getFileMd5())){
             logger.error("【{}】 MD5 check failed, expect 【{}】, but 【{}】",
                     this, versionInfo.getFileMd5(), fileMd5);
-            throw new BusinessException(StringHelper.parse1("【{}】文件MD5值校验失败", downloadUrl));
+            throw new BusinessException("【{}】文件MD5值校验失败", downloadUrl);
         }
 
         // 更新文件路径

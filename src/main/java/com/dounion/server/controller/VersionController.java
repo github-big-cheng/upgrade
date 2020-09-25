@@ -91,6 +91,7 @@ public class VersionController {
             // 远程发布检查 检查数据库中保存的版本号
             VersionInfo query = new VersionInfo();
             query.setAppType(record.getAppType());
+            query.setStatus("1");
             List<VersionInfo> list = versionInfoService.list(query);
             if(!CollectionUtils.isEmpty(list) &&
                     StringUtils.isNotBlank(list.get(0).getFilePath()) && // 文件路径不为空
@@ -122,8 +123,10 @@ public class VersionController {
         // 非强制更新
         if(StringUtils.equals(record.getIsForceUpdate(), "1") || // 强制更新
                 !StringUtils.equals(serviceInfo.getIgnoreMode(), "1")){ // 非忽略模式
-            // 本地部署
-            tasks.add(Constant.TASK_DEPLOY);
+            if(StringUtils.equals(record.getPublishType(), "2")){ // 非手动发布
+                // 本地部署
+                tasks.add(Constant.TASK_DEPLOY);
+            }
         }
 
         // 自动发布 - 调度任务:发布通知

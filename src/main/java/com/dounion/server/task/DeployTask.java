@@ -1,5 +1,6 @@
 package com.dounion.server.task;
 
+import com.dounion.server.Main;
 import com.dounion.server.core.base.AppInfo;
 import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
@@ -32,6 +33,11 @@ public class DeployTask extends BaseTask {
     @Override
     public String getTaskName() {
         return "部署后台任务";
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 
     @Override
@@ -80,8 +86,9 @@ public class DeployTask extends BaseTask {
 
         // upgrade 主程序退出
         if(AppTypeEnum.UPGRADE.equals(appInfo.getAppTypeEnum())){
+            Main.setLastThread(Thread.currentThread());
             NettyServer.close(); // 解除端口占用
-            Thread.currentThread().join();
+            logger.trace("NettyServer closed...");
         }
 
         super.setProgressNeelyComplete(); // progress 95%
@@ -92,5 +99,6 @@ public class DeployTask extends BaseTask {
 
         super.setProgressComplete(); // progress 100%
 
+        logger.trace("It has running to here!~~~~~~~~~~~~");
     }
 }

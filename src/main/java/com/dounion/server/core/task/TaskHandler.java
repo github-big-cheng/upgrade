@@ -446,4 +446,10 @@ public class TaskHandler implements Runnable {
         return task.wakeUp();
     }
 
+    /**
+     * 关闭线程池
+     */
+    public static void shutdown(){
+        EXECUTOR_SERVICE.shutdownNow();
+    }
 }

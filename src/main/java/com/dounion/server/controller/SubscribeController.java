@@ -93,10 +93,10 @@ public class SubscribeController {
      */
     @RequestMapping("/cancel.json")
     @ResponseType(ResponseTypeEnum.JSON)
-    public Object cancelJson(String code){
-        Assert.notNull(code, "code must not be null");
+    public Object cancelJson(int id){
+        Assert.notNull(id, "id must not be null");
         SubscribeInfo record = new SubscribeInfo();
-        record.setCode(code);
+        record.setId(id);
         subscribeService.deleteBySelective(record);
         return ResponseBuilder.buildSuccess();
     }

@@ -1,6 +1,7 @@
 package com.dounion.server.core.base;
 
 import com.dounion.server.core.helper.DateHelper;
+import com.dounion.server.core.task.LockHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,6 +143,10 @@ public abstract class BaseTask implements Callable<Integer> {
         return false;
     }
 
+    public boolean isSingleton() {
+        return false;
+    }
+
     public long getLoopDelay() {
         return 60 * 60 * 1000l; // 默认一个小时;
     }
@@ -209,6 +214,10 @@ public abstract class BaseTask implements Callable<Integer> {
             return taskId;
         }
 
+        // 是否单例执行 -- 加锁
+        if(this.isSingleton()) {
+            LockHandler.lock(this.getTaskName());
+        }
         try {
             // 调用实现类的执行方法
             this.execute();
@@ -232,6 +241,12 @@ public abstract class BaseTask implements Callable<Integer> {
             logger.error("【{}】执行异常:{}", this, e);
             return null;
         } finally {
+
+            // 是否单例执行 -- 释放锁
+            if(this.isSingleton()) {
+                LockHandler.unlock(this.getTaskName());
+            }
+
             // 间隔定时任务 循环执行
             logger.trace("can be loop ? isInterrupted:{}, isLoop:{}", this.isInterrupted(), this.isLoop());
             if(!this.isInterrupted() && this.isLoop()){

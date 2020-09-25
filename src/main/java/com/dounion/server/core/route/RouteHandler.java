@@ -36,15 +36,18 @@ public class RouteHandler {
     /**
      * 最大同时下载数
      */
-    final static Integer MAX_COUNT = ConfigurationHelper.getInt(Constant.CONF_DOWNLOAD_MAX_COUNT, -1);
+    final static Integer MAX_COUNT =
+            ConfigurationHelper.getInt(Constant.CONF_DOWNLOAD_MAX_COUNT, -1);
     /**
      * 注册路由最大活动时间
      */
-    final static Long MAX_ROUTE_TIME = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_ROUTE_TIME, -1);
+    final static Long MAX_ROUTE_TIME =
+            ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_ROUTE_TIME, -1);
     /**
      * 下载速率系数
      */
-    final static Long DOWNLOAD_SPEED_RATIO = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_SPEED_RATIO, 0);
+    public final static Long DOWNLOAD_SPEED_RATIO =
+            ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_SPEED_RATIO, 0);
 
 
     /**

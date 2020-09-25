@@ -16,6 +16,13 @@ public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
 
+
+    private static Thread LAST_THREAD = null;
+
+    public static void setLastThread(Thread thread) {
+        LAST_THREAD = thread;
+    }
+
     public static void main(String[] args) {
 
         try {
@@ -42,22 +49,22 @@ public class Main {
             // 自动发布任务 -- 60秒后
             TaskHandler.callTask(Constant.TASK_PUBLISH_AUTO, 60 * 1000);
 
-
             // 启动服务端
             NettyServer.startUp();
             // Netty has blocked here, no code should exists after this line
 
+
         } catch (Exception e) {
             logger.error("server start up failed... {}", e);
         } finally {
-            logger.info("upgrade server will exit in 10 seconds later...");
-            try {
-                // some other progress is running, waiting 10 seconds for them
-                Thread.sleep(10 * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(LAST_THREAD != null){
+                logger.info("some task is running, upgrade server will exit after it over...");
+                try {
+                    LAST_THREAD.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            System.exit(0);
         }
     }
 

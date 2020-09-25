@@ -38,6 +38,10 @@ public class NettyClient implements Closeable {
 
     private final static Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
+    // 设置响应处理 文件放宽等待时间 默认20分钟
+    public final static Long MAX_DOWNLOAD_TIME =
+            ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_WAIT, 20 * 60 * 1000l);
+
     // 工作组
     final static EventLoopGroup WORKER_GROUP = new NioEventLoopGroup(2);
     public final static AttributeKey NETTY_CLIENT_REQUEST_TYPE = AttributeKey.newInstance("NETTY_CLIENT_REQUEST_TYPE");
@@ -180,8 +184,21 @@ public class NettyClient implements Closeable {
      * @return
      */
     public String fileDownload(String url) {
-        return fileDownload(url, 0, 3);
+        return fileDownload(url, null);
     }
+
+
+    /**
+     * 文件下载
+     *      默认重定向3次
+     * @param url
+     * @param timeout
+     * @return
+     */
+    public String fileDownload(String url, Long timeout) {
+        return fileDownload(url, 0, 2, timeout);
+    }
+
 
 
     /**
@@ -189,9 +206,10 @@ public class NettyClient implements Closeable {
      * @param url
      * @param inx 当前重定向次数
      * @param maxRedirectCount
+     * @param timeout 等待超时时间 与配置文件最大等待时间取最大值
      * @return
      */
-    public String fileDownload(String url, int inx, int maxRedirectCount) {
+    public String fileDownload(String url, int inx, int maxRedirectCount, Long timeout) {
 
         try {
             logger.debug("【{}】 fileDownload execute...url:【{}】", this, url);
@@ -202,9 +220,12 @@ public class NettyClient implements Closeable {
             // 设置请求对象
             FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, url);
             channel.attr(NETTY_CLIENT_REQUEST).set(request);
-            // 设置响应处理 文件放宽等待时间 默认20分钟
-            Long maxDownloadTime = ConfigurationHelper.getLong(Constant.CONF_DOWNLOAD_MAX_WAIT, 20 * 60 * 1000l);
-            NettyResponse<String> response = new NettyResponse<>(maxDownloadTime);
+            // 设置响应处理对象
+            if(timeout == null){
+                timeout = MAX_DOWNLOAD_TIME;
+            }
+            timeout = Math.max(timeout, MAX_DOWNLOAD_TIME);
+            NettyResponse<String> response = new NettyResponse<>(timeout);
             channel.attr(NETTY_CLIENT_RESPONSE).set(response);
 
             String fileName = response.get();
@@ -219,7 +240,7 @@ public class NettyClient implements Closeable {
                 // 重定向处理, 这里的fileName是url
                 NettyClient client = NettyClient.getInstance(fileName);
                 logger.debug("do redirect, client is:{}", client);
-                fileName = client.fileDownload(url, inx++, maxRedirectCount);
+                fileName = client.fileDownload(url, inx++, maxRedirectCount, timeout);
             }
 
             return fileName;
