@@ -81,6 +81,7 @@ public class DeployTask extends BaseTask {
         // upgrade 主程序退出
         if(AppTypeEnum.UPGRADE.equals(appInfo.getAppTypeEnum())){
             NettyServer.close(); // 解除端口占用
+            Thread.currentThread().join();
         }
 
         super.setProgressNeelyComplete(); // progress 95%

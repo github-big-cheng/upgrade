@@ -52,7 +52,7 @@ public class Main {
         } finally {
             logger.info("upgrade server will exit in 10 seconds later...");
             try {
-                // some other progress is running, waiting 5 seconds for them
+                // some other progress is running, waiting 10 seconds for them
                 Thread.sleep(10 * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
