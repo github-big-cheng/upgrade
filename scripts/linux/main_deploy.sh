@@ -35,16 +35,18 @@ echo "操作的文件名：【$3】"
 
 
 # 停应用 按应用名称查询进程号
-echo "progress_name to grep is $progress_name"
-PID=$(ps -ef | grep "$progress_name" | grep -v grep | grep 'java' | awk '{print $2}')	
-echo "PID is $PID"
-if [ -n "$PID" ]; then
-	for p in $PID
+if [ ! "$progress_name" = "upgrade"  ]; then
+	echo "progress_name to grep is $progress_name"
+	PID=$(ps -ef | grep "$progress_name" | grep -v grep | grep 'java' | awk '{print $2}')	
+	echo "PID is $PID"
+	if [ -n "$PID" ]; then
+		for p in $PID
 		do
 			kill -9 "$p"
                 	echo "killed progress by ps, pid is 【$p】"
-	done
-	sleep 3
+			sleep 1
+		done
+	fi
 fi
 
 
@@ -77,7 +79,11 @@ if [ ! -d "$bak_dir" ]; then
 	exit 5
 fi
 #启应用
-echo "nohup sh $bak_dir/$shell_name &"
-nohup sh "$bak_dir"/"$shell_name" &
+param1=""
+if [ "$progress_name" = "upgrade" ]; then
+	param1="1"
+fi
+echo "nohup sh $bak_dir/$shell_name $param1  &"
+nohup sh "$bak_dir"/"$shell_name" "$param1"  &
 
 

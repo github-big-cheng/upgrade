@@ -6,11 +6,13 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.deploy.DeployHandler;
 import com.dounion.server.core.exception.BusinessException;
+import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.dao.VersionInfoMapper;
 import com.dounion.server.deploy.app.AbstractScript;
 import com.dounion.server.deploy.os.OperatingSystemFactory;
 import com.dounion.server.entity.VersionInfo;
+import com.dounion.server.eum.AppTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -76,6 +78,14 @@ public class DeployTask extends BaseTask {
         script.setParams(scriptParams);
         script.deploy();
 
+        // upgrade 主程序退出
+        if(AppTypeEnum.UPGRADE.equals(appInfo.getAppTypeEnum())){
+            NettyServer.close(); // 解除端口占用
+            Thread.sleep(1000);
+            logger.warn("upgrade deploy, System will exit");
+            System.exit(0); // 主程序退出
+        }
+
         super.setProgressNeelyComplete(); // progress 95%
 
         // 发布完成更新serviceInfo 信息
@@ -83,5 +93,6 @@ public class DeployTask extends BaseTask {
         serviceInfo.toFile();
 
         super.setProgressComplete(); // progress 100%
+
     }
 }

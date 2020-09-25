@@ -6,7 +6,9 @@ echo "$DIR"
 
 # 检查是否有残留进程
 cd "$DIR"
-sh stop.sh
+if [ -z "$1" ]; then
+	sh stop.sh
+fi
 
 # 脚本赋权
 if [ ! -x "$DIR" ]; then

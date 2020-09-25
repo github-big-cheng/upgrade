@@ -427,11 +427,13 @@ public class TaskHandler implements Runnable {
     /**
      * 按名称唤醒sleep中的线程
      *  Thread.sleep方法需要被 try catch
+     *  <code>
      *      try {
      *          Thread.sleep(delay);
      *      } catch (InterruptedException e) {
      *          e.printStackTrace();
      *      }
+     *  </code>
      * @param taskName
      * @return
      */

@@ -80,6 +80,9 @@ public class NettyServer {
         } catch (Exception e) {
             logger.error("Netty Server error:{}", e);
         } finally {
+
+            logger.info("Netty server closing...");
+
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
@@ -87,10 +90,15 @@ public class NettyServer {
 
 
     public static void restart(){
+        close();
+        startUp();
+    }
+
+
+    public static void close(){
         if(nettyServer.future != null){
             nettyServer.future.channel().close();
         }
-        startUp();
     }
 
 }

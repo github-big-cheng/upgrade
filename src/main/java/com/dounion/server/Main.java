@@ -47,8 +47,13 @@ public class Main {
             NettyServer.startUp();
             // Netty has blocked here, no code should exists after this line
 
+            logger.info("upgrade server will exit in 5 seconds later...");
+            Thread.sleep(5 * 1000);
+
         } catch (Exception e) {
             logger.error("server start up failed... {}", e);
+        } finally {
+            System.exit(0);
         }
     }
 
