@@ -9,33 +9,41 @@ import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.request.MappingConfigHandler;
 import com.dounion.server.core.task.LockHandler;
 import com.dounion.server.core.task.TaskHandler;
+import com.dounion.server.deploy.os.OperatingSystem;
+import com.dounion.server.deploy.os.OperatingSystemFactory;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.Arrays;
 
 public class Main {
 
     private final static Logger logger = LoggerFactory.getLogger(Main.class);
 
+    private static boolean RESTART = false;
 
-    private static Thread LAST_THREAD = null;
-
-    public static void setLastThread(Thread thread) {
-        LAST_THREAD = thread;
+    public static void setRestart(boolean flag){
+        RESTART = flag;
     }
 
     public static void main(String[] args) {
 
+        logger.trace("new version 1 of upgrade");
+        logger.trace("args : {}", Arrays.toString(args));
+
         try {
             AnnotationConfigApplicationContext context =
                     new AnnotationConfigApplicationContext(BeanConfig.class);
-
             // 初始化Spring容器
             SpringApp.init(context);
             // 初始化路由表
             MappingConfigHandler.initialization();
             // 初始化部署任务处理器
             DeployHandler.initialization();
+            // 初始化后台任务管理器
+            TaskHandler.initialization();
 
 
             // 运行指定后台任务
@@ -54,27 +62,50 @@ public class Main {
             NettyServer.startUp();
             // Netty has blocked here, no code should exists after this line
 
+            if(RESTART){
+                logger.trace("do restart...");
+                OperatingSystem system = OperatingSystemFactory.build();
+                String[] cmd = (String[]) ArrayUtils.addAll(system.getDefaultEnvironmentCmd(), new String[]{"sh run.sh 1"});
+                DeployHandler.execute(Constant.PATH_WORK, cmd);
+            }
 
         } catch (Exception e) {
             logger.error("server start up failed... {}", e);
         } finally {
-            if(LAST_THREAD != null){
-                logger.info("some task is running, upgrade server will exit after it over...");
-                try {
-                    LAST_THREAD.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            close();
 
-            // all has down, shut down locks
-            LockHandler.shutDown();
-            // all has down, shut down executors
-            TaskHandler.shutdown();
-
+            logger.trace("do exit...");
             System.exit(0);
         }
+
     }
 
+
+    /**
+     * 服务关闭
+     */
+    public static void close(){
+        // all has down, shut down netty server
+        logger.trace("NettyServer.close() running...");
+        NettyServer.close();
+        // all has down, shut down executors
+        logger.trace("TaskHandler.shutdown() running...");
+        TaskHandler.shutdown();
+        // all has down, shut down locks
+        logger.trace("LockHandler.shutdown() running...");
+        LockHandler.shutdown();
+    }
+
+
+    /**
+     * 重启
+     */
+    public static void restart(){
+
+        logger.trace("NettyServer closed...");
+        NettyServer.close(); // 解除端口占用
+
+        RESTART = true;
+    }
 
 }

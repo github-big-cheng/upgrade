@@ -31,8 +31,7 @@ public class TaskHandler implements Runnable {
     // 任务处理队列
     private static BlockingQueue<BaseTask> TASK_QUEUE = new LinkedBlockingQueue<>();
     // 线程池
-    public static ExecutorService EXECUTOR_SERVICE =
-            Executors.newFixedThreadPool(ConfigurationHelper.getInt(Constant.CONF_TASK_MAX_THREAD_COUNT, 5));
+    public static ExecutorService EXECUTOR_SERVICE;
     // 任务ID生成器
     private static AtomicInteger TASK_ID = new AtomicInteger(0);
     // 任务控制集合
@@ -41,7 +40,14 @@ public class TaskHandler implements Runnable {
     public final static ConcurrentHashMap<String, BaseTask> LOOP_TASK_MAP = new ConcurrentHashMap<>();
 
 
-    static {
+    /**
+     * 初始化
+     */
+    public static void initialization() {
+        final int threads = ConfigurationHelper.getInt(Constant.CONF_TASK_MAX_THREAD_COUNT, 5);
+        EXECUTOR_SERVICE =
+                Executors.newFixedThreadPool(threads);
+
         // 创建后台任务处理器
         EXECUTOR_SERVICE.submit(new TaskHandler());
     }

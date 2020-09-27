@@ -7,7 +7,8 @@ import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.deploy.DeployHandler;
 import com.dounion.server.core.exception.BusinessException;
-import com.dounion.server.core.netty.server.NettyServer;
+import com.dounion.server.core.helper.DateHelper;
+import com.dounion.server.core.task.LockHandler;
 import com.dounion.server.core.task.annotation.Task;
 import com.dounion.server.dao.VersionInfoMapper;
 import com.dounion.server.deploy.app.AbstractScript;
@@ -16,6 +17,8 @@ import com.dounion.server.entity.VersionInfo;
 import com.dounion.server.eum.AppTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+
+import java.util.Calendar;
 
 /**
  * 部署后台任务
@@ -33,11 +36,6 @@ public class DeployTask extends BaseTask {
     @Override
     public String getTaskName() {
         return "部署后台任务";
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     @Override
@@ -74,38 +72,39 @@ public class DeployTask extends BaseTask {
             return;
         }
 
-        // deploy
-        AbstractScript.ScriptParams scriptParams = new AbstractScript.ScriptParams();
-        scriptParams.setAppInfo(appInfo);
-        scriptParams.setVersionInfo(versionInfo);
+        LockHandler.lock(this.getTaskName(), DateHelper.get(Calendar.MILLISECOND));
+        logger.trace("Deploy task.. do lock");
 
-        AbstractScript script = DeployHandler.getDeploy(appInfo.getDeployTypeEnum());
-        script.setOs(OperatingSystemFactory.build());
-        script.setParams(scriptParams);
-        script.deploy();
+        try {
+            // deploy
+            AbstractScript.ScriptParams scriptParams = new AbstractScript.ScriptParams();
+            scriptParams.setAppInfo(appInfo);
+            scriptParams.setVersionInfo(versionInfo);
 
-        // upgrade 主程序退出
-        if(AppTypeEnum.UPGRADE.equals(appInfo.getAppTypeEnum())){
-            Main.setLastThread(Thread.currentThread());
-            NettyServer.close(); // 解除端口占用
-            logger.trace("NettyServer closed...");
+            AbstractScript script = DeployHandler.getDeploy(appInfo.getDeployTypeEnum());
+            script.setOs(OperatingSystemFactory.build());
+            script.setParams(scriptParams);
+            script.deploy();
+
+            super.setProgressNeelyComplete(); // progress 95%
+
+            // 发布完成更新serviceInfo 信息
+            appInfo.setVersionNo(versionInfo.getVersionNo());
+            serviceInfo.toFile();
+
+            super.setProgressComplete(); // progress 100%
+
+            logger.trace("It has running to here!~~~~~~~~~~~~");
+
+        } finally {
+            logger.trace("Deploy task.. do unlock");
+            LockHandler.unlock(this.getTaskName());
         }
-
-        super.setProgressNeelyComplete(); // progress 95%
-
-        // 发布完成更新serviceInfo 信息
-        appInfo.setVersionNo(versionInfo.getVersionNo());
-        serviceInfo.toFile();
-
-        super.setProgressComplete(); // progress 100%
-
-        logger.trace("It has running to here!~~~~~~~~~~~~");
-
 
         // upgrade 主程序重新启动
         if(AppTypeEnum.UPGRADE.equals(appInfo.getAppTypeEnum())){
             logger.trace("Main function restart!~~~~~~~~~~~~");
-            Main.main(null);
+            Main.restart();
         }
     }
 }

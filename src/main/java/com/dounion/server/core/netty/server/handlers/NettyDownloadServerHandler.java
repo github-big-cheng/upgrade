@@ -206,6 +206,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
                     ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
             // Write the end marker.
             lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            logger.trace("sending last http content...");
 
             sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
                 @Override

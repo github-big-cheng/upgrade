@@ -49,11 +49,14 @@ public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
 
         // 判断是否处理
         if (!isMatch(ctx)) {
+            logger.trace("file client not match...");
             ctx.fireChannelRead(msg);
             return;
         }
 
         try {
+            logger.trace("file client working...");
+
             if (msg instanceof HttpResponse) {
                 this.response = (HttpResponse) msg;
             }
@@ -73,6 +76,7 @@ public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
             if (msg instanceof HttpContent) {
                 HttpContent chunk = (HttpContent) msg;
                 if (chunk instanceof LastHttpContent) {
+                    logger.trace("receiving last http content...");
                     reading = false;
                 }
 
@@ -90,6 +94,7 @@ public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
                 }
             }
 
+            logger.trace("file client... reading...{}", reading);
             if (!reading) {
                 logger.trace("file download response is :{}", response);
                 if (downloadFile != null && downloadFile.exists()) {

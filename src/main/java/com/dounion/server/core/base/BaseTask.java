@@ -216,6 +216,7 @@ public abstract class BaseTask implements Callable<Integer> {
 
         // 是否单例执行 -- 加锁
         if(this.isSingleton()) {
+            logger.trace("It's singleton ! Do lock.. {}", this.getTaskName());
             LockHandler.lock(this.getTaskName());
         }
         try {
@@ -244,8 +245,11 @@ public abstract class BaseTask implements Callable<Integer> {
 
             // 是否单例执行 -- 释放锁
             if(this.isSingleton()) {
+                logger.trace("It's singleton! Do unlock...{}", this.getTaskName());
                 LockHandler.unlock(this.getTaskName());
             }
+
+            logger.info("task 【{}】 end", this);
 
             // 间隔定时任务 循环执行
             logger.trace("can be loop ? isInterrupted:{}, isLoop:{}", this.isInterrupted(), this.isLoop());
@@ -253,12 +257,11 @@ public abstract class BaseTask implements Callable<Integer> {
                 try {
                     Thread.sleep(this.getLoopDelay());
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    // ignore it, It's fine
                 }
                 this.call();
             }
 
-            logger.info("task 【{}】 end", this);
         }
 
         return this.taskId;

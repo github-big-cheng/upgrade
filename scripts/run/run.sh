@@ -17,4 +17,4 @@ fi
 
 JAVA_OPTS="-Xms6m"
 # 启动
-nohup java -jar "$JAVA_OPTS" upgrade.jar &
+nohup java -jar "$JAVA_OPTS" upgrade.jar "$1"  &

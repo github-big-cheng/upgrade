@@ -45,26 +45,26 @@ public enum AppTypeEnum {
     MY_SQL("40100-4001", "mysql", "mysql", DeployTypeEnum.MYSQL),
 
     // 配置文件相关
-    PROPERTIES_APP("40100-5101", "app", "framework.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_PUSH("40100-5102", "push", "config_push.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_APP_SERVER("40100-5103", "appServer", "config_appServer.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_BIZ_SERVICE("40100-5104", "bizService", "config_dograin_service.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_DO_SMS_SERVER("40100-5106", "dosmsserver", "config_dosmsserver.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_FILE("40100-5107", "file", "config_file.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_REMIND("40100-5108", "remind", "config_doremind.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_DO_REMIND("40100-5109", "doremind", "config_doremind.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_GTS("40100-5110", "gts", "config_dograin_gts.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_DO_OA("40100-5111", "dooa", "config_dograin_oa.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_DO_HR("40100-5112", "dohr", "config_dograin_hr.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_NBS("40100-5113", "nbs", "config_dograin_nbs.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_APP("40100-5101", "app", "framework.properties", DeployTypeEnum.PROPERTIES, APP),
+    PROPERTIES_PUSH("40100-5102", "push", "config_push.properties", DeployTypeEnum.PROPERTIES, PUSH),
+    PROPERTIES_APP_SERVER("40100-5103", "appServer", "config_appServer.properties", DeployTypeEnum.PROPERTIES, APP_SERVER),
+    PROPERTIES_BIZ_SERVICE("40100-5104", "bizService", "config_dograin_service.properties", DeployTypeEnum.PROPERTIES, BIZ_SERVICE),
+    PROPERTIES_DO_SMS_SERVER("40100-5106", "dosmsserver", "config_dosmsserver.properties", DeployTypeEnum.PROPERTIES, DO_SMS_SERVER),
+    PROPERTIES_FILE("40100-5107", "file", "config_file.properties", DeployTypeEnum.PROPERTIES, FILE),
+    PROPERTIES_REMIND("40100-5108", "remind", "config_doremind.properties", DeployTypeEnum.PROPERTIES, REMIND),
+    PROPERTIES_DO_REMIND("40100-5109", "doremind", "config_doremind.properties", DeployTypeEnum.PROPERTIES, DO_REMIND),
+    PROPERTIES_GTS("40100-5110", "gts", "config_dograin_gts.properties", DeployTypeEnum.PROPERTIES, GTS),
+    PROPERTIES_DO_OA("40100-5111", "dooa", "config_dograin_oa.properties", DeployTypeEnum.PROPERTIES, DO_OA),
+    PROPERTIES_DO_HR("40100-5112", "dohr", "config_dograin_hr.properties", DeployTypeEnum.PROPERTIES, DO_HR),
+    PROPERTIES_NBS("40100-5113", "nbs", "config_dograin_nbs.properties", DeployTypeEnum.PROPERTIES, NBS),
 
-    PROPERTIES_DO_SMART_MASTER("40100-5201", "dosmart-master", "config_master.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_DO_SMART_TASK("40100-5202", "dosmart-task", "config_task.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_DO_SMART_LOG("40100-5203", "dosmart-log", "config_log.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_DO_SMART_CONTROLLER("40100-5204", "dosmart-controller", "config_controller.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_GTS_CONTROLLER("40100-5205", "gtsController", "application-dev.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_PRINT("40100-5206", "print", "system.properties", DeployTypeEnum.PROPERTIES),
-    PROPERTIES_UPGRADE("40100-5207", "upgrade", "config_upgrade.properties", DeployTypeEnum.PROPERTIES),
+    PROPERTIES_DO_SMART_MASTER("40100-5201", "dosmart-master", "config_master.properties", DeployTypeEnum.PROPERTIES, DO_SMART_MASTER),
+    PROPERTIES_DO_SMART_TASK("40100-5202", "dosmart-task", "config_task.properties", DeployTypeEnum.PROPERTIES, DO_SMART_TASK),
+    PROPERTIES_DO_SMART_LOG("40100-5203", "dosmart-log", "config_log.properties", DeployTypeEnum.PROPERTIES, DO_SMART_LOG),
+    PROPERTIES_DO_SMART_CONTROLLER("40100-5204", "dosmart-controller", "config_controller.properties", DeployTypeEnum.PROPERTIES, DO_SMART_CONTROLLER),
+    PROPERTIES_GTS_CONTROLLER("40100-5205", "gtsController", "application-dev.properties", DeployTypeEnum.PROPERTIES, GTS_CONTROLLER),
+    PROPERTIES_PRINT("40100-5206", "print", "system.properties", DeployTypeEnum.PROPERTIES, PRINT),
+    PROPERTIES_UPGRADE("40100-5207", "upgrade", "config_upgrade.properties", DeployTypeEnum.PROPERTIES, UPGRADE),
     ;
 
 
@@ -75,10 +75,19 @@ public enum AppTypeEnum {
         this.deployType = deployType;
     }
 
+    AppTypeEnum(String code, String appName, String fileName, DeployTypeEnum deployType, AppTypeEnum parent) {
+        this.code = code;
+        this.appName = appName;
+        this.fileName = fileName;
+        this.deployType = deployType;
+        this.parent = parent;
+    }
+
     private String code;
     private String appName;
     private String fileName;
     private DeployTypeEnum deployType;
+    private AppTypeEnum parent;
     private static Map<String, AppTypeEnum> map;
 
     public String getCode() {
@@ -111,6 +120,14 @@ public enum AppTypeEnum {
 
     public void setDeployType(DeployTypeEnum deployType) {
         this.deployType = deployType;
+    }
+
+    public AppTypeEnum getParent() {
+        return parent;
+    }
+
+    public void setParent(AppTypeEnum parent) {
+        this.parent = parent;
     }
 
     @Override

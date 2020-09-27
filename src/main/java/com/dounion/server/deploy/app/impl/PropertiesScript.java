@@ -82,7 +82,7 @@ public class PropertiesScript extends RestartScript{
         }
 
         // 调用父类重启脚本
-        // TODO appInfo对应不上，待完善
+        // TODO 待测试
 //        super.deploy();
     }
 

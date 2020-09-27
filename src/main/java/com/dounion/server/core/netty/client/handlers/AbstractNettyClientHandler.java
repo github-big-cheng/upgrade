@@ -33,7 +33,7 @@ public abstract class AbstractNettyClientHandler<V> extends SimpleChannelInbound
         // 初始化响应
         this.nettyResponse =
                 (NettyResponse<V>) ctx.channel().attr(NettyClient.NETTY_CLIENT_RESPONSE).get();
-        logger.debug("nettyResponse: {}", this.nettyResponse);
+        logger.trace("nettyResponse: {}", this.nettyResponse);
 
         // 初始化请求对象
         this.request = (HttpRequest) ctx.channel().attr(NettyClient.NETTY_CLIENT_REQUEST).get();
@@ -41,6 +41,7 @@ public abstract class AbstractNettyClientHandler<V> extends SimpleChannelInbound
             this.nettyResponse.setError(new SystemException("request init failed..."));
             return;
         }
+        logger.trace("ctx.writeAndFlush:.......{}", this.request);
         ctx.writeAndFlush(this.request);
     }
 

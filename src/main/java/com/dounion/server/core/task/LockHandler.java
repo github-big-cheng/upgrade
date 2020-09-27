@@ -1,5 +1,8 @@
 package com.dounion.server.core.task;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -7,16 +10,21 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LockHandler {
 
+
+    private final static Logger logger = LoggerFactory.getLogger(LockHandler.class);
+
     private LockHandler(){
         this(false);
     }
 
     private LockHandler(boolean fair){
+        this.lockPoint = 0;
         this.lock = new ReentrantLock(fair);
     }
 
     final private AtomicInteger lockedCount = new AtomicInteger(0);
     private ReentrantLock lock;
+    private int lockPoint;
 
     private ConcurrentHashMap<String, Condition> conditionMap = new ConcurrentHashMap<>();
 
@@ -34,6 +42,11 @@ public class LockHandler {
     public void lock(){
         lockedCount.incrementAndGet(); // 计数器自增
         this.lock.lock();
+    }
+
+    public void lock(int lockPoint){
+        this.lockPoint = lockPoint;
+        this.lock();
     }
 
     public boolean tryLock(){
@@ -92,6 +105,13 @@ public class LockHandler {
     public static void lock(String key){
         getHandler(key).lock();
     }
+    /**
+     * 上锁
+     * @param key
+     */
+    public static void lock(String key, int lockPoint){
+        getHandler(key).lock(lockPoint);
+    }
 
     /**
      * 上锁
@@ -126,14 +146,16 @@ public class LockHandler {
     /**
      * 关闭锁资源
      */
-    public static void shutDown() {
+    public static void shutdown() {
         LockHandler handler;
         for (String key : LOCK_HANDLER_MAP.keySet()) {
             handler = LOCK_HANDLER_MAP.get(key);
             while(handler.lock.isLocked()){
+                logger.trace("handler:...{}", handler);
                 handler.unlock();
             }
         }
+        logger.trace("after shut down...{}", LOCK_HANDLER_MAP);
     }
 
 }

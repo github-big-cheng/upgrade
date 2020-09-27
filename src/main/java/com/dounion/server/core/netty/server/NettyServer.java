@@ -38,6 +38,8 @@ public class NettyServer {
 
     public static void startUp(){
 
+        logger.trace("NettyServer starting...");
+
         ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
         Assert.notNull(serviceInfo, "serviceInfo didn't init");
         Assert.notNull(serviceInfo.getPort(), "port must be define");
