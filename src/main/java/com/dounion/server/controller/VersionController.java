@@ -137,8 +137,13 @@ public class VersionController {
         // 检查是否需要后台任务
         logger.trace("tasks is :{}", tasks);
         if(!CollectionUtils.isEmpty(tasks)){
-            // 调用任务链
-            TaskHandler.callTaskChain(taskParams, tasks.toArray(new String[tasks.size()]));
+            if(tasks.size() == 1){
+                // 单任务
+                TaskHandler.callTask(tasks.get(0), taskParams);
+            } else {
+                // 调用任务链
+                TaskHandler.callTaskChain(taskParams, tasks.toArray(new String[tasks.size()]));
+            }
         }
 
         return ResponseBuilder.buildSuccess();
