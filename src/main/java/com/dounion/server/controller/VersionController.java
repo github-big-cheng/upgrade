@@ -113,6 +113,7 @@ public class VersionController {
         // 后台任务-任务链
         ConcurrentHashMap<String, Object> taskParams = new ConcurrentHashMap<>();
         taskParams.put("versionId", versionId);
+        taskParams.put("lockKey", record.getAppType());
 
         List<String> tasks = new ArrayList<>();
         if(isRemotePublish){

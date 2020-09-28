@@ -125,6 +125,10 @@ public interface Constant {
      */
     String TASK_CHAIN_DELAY = "TASK_chainTaskDelay";
     /**
+     * 任务链-锁对象
+     */
+    String TASK_CHAIN_LOCK_KEY = "TASK_chainTaskLockKey";
+    /**
      * 订阅后台任务
      */
     String TASK_SUBSCRIBE = "subscribeTask";
