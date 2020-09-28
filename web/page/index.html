@@ -59,7 +59,7 @@
 		<td>{%= versionNo %}</td>
 		<td>{%= workPath %}</td>
 		<td>
-			{%if $data.appType.indexOf('40100-5')!=0&&$data.appType!='40100-4001' %}
+			{%if $data.deployTypeEnum=='TOMCAT' || $data.deployTypeEnum=='MAIN' %}
 			<a class="app-restart-btn" data-id="{%= appType%}">重启</a></td>
 			{%/if%}
 	</tr>
