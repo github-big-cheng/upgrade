@@ -42,8 +42,6 @@ public class Main {
             MappingConfigHandler.initialization();
             // 初始化部署任务处理器
             DeployHandler.initialization();
-            // 初始化后台任务管理器
-            TaskHandler.initialization();
 
 
             // 运行指定后台任务

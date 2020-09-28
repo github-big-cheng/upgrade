@@ -108,6 +108,6 @@ public class DownloadTask extends BaseTask {
         super.setProgressComplete(); // progress 100%
 
         // 调用路由注册服务
-        TaskHandler.wakeUp(Constant.TASK_ROUTE_NAME);
+        TaskHandler.wakeUp(Constant.TASK_ROUTE);
     }
 }
