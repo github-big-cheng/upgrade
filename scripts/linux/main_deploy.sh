@@ -81,8 +81,9 @@ fi
 
 #启应用
 if [ ! "$progress_name" = "upgrade" ]; then
+	cd "$bak_dir"
 	echo "nohup sh $bak_dir/$shell_name  &"
-nohup sh "$bak_dir"/"$shell_name"  &
+	nohup sh "$bak_dir"/"$shell_name"  &
 fi
 
 

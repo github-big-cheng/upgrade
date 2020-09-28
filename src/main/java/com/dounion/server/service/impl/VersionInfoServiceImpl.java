@@ -7,6 +7,7 @@ import com.dounion.server.service.VersionInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -37,6 +38,16 @@ public class VersionInfoServiceImpl implements VersionInfoService {
     @Transactional
     @Override
     public int updateVersion(VersionInfo record) {
+
+        // 查询当前版本是否已同步
+        VersionInfo query = new VersionInfo();
+        query.setAppType(record.getAppType());
+        query.setVersionNo(record.getVersionNo());
+        query.setStatus("1");
+        List<VersionInfo> versionInfos = versionInfoMapper.selectListBySelective(query);
+        if(!CollectionUtils.isEmpty(versionInfos)){
+            return versionInfos.get(0).getId();
+        }
 
         // 删除已有版本信息
         VersionInfo delete = new VersionInfo();

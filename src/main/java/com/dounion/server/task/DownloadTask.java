@@ -61,8 +61,8 @@ public class DownloadTask extends BaseTask {
         Long timeout = versionInfo.getFileSize() / RouteHandler.DOWNLOAD_SPEED_RATIO;
         logger.trace("download task : time out is {} ms", timeout);
 
-        // try to lock in 10 seconds
-        boolean flag = LockHandler.tryLock(this.getTaskName() + downloadUrl, 10 * 1000l);
+        // try to lock
+        boolean flag = LockHandler.tryLock(this.getTaskName() + downloadUrl);
         if(!flag){
             throw new BusinessException("DownloadTask {} is running", downloadUrl);
         }
