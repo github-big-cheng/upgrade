@@ -1,12 +1,11 @@
 package com.dounion.server.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dounion.server.Main;
 import com.dounion.server.core.base.AppInfo;
-import com.dounion.server.core.base.BaseTask;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.SpringApp;
-import com.dounion.server.core.netty.server.NettyServer;
 import com.dounion.server.core.request.MappingConfigHandler;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
@@ -14,9 +13,7 @@ import com.dounion.server.core.request.annotation.ResponseType;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.deploy.app.AbstractScript;
 import com.dounion.server.deploy.app.impl.RestartScript;
-import com.dounion.server.deploy.os.OperatingSystem;
 import com.dounion.server.deploy.os.OperatingSystemFactory;
-import com.dounion.server.deploy.os.impl.WindowsOperatingSystem;
 import com.dounion.server.eum.ResponseTypeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -154,37 +151,19 @@ public class IndexController {
     @RequestMapping(value = "/restart.json")
     public Object restart() {
 
-        String url = "http://" + serviceInfo.getLocalIp() + ":" + serviceInfo.getPort() + Constant.URL_INDEX;
+        final String url = "http://" + serviceInfo.getLocalIp() + ":" + serviceInfo.getPort() + Constant.URL_INDEX;
 
-        TaskHandler.callTask(new BaseTask() {
+        new Thread(){
             @Override
-            public String getTaskName() {
-                return "重启后台服务";
-            }
-
-            @Override
-            protected void execute() throws Exception {
-
-                OperatingSystem operatingSystem = OperatingSystemFactory.build();
-                if(operatingSystem instanceof WindowsOperatingSystem){
-                    // windows 暂不支持进程重启
-                    NettyServer.restart();
-                } else {
-                    AbstractScript script = new AbstractScript() {
-                        @Override
-                        protected String[] command() {
-                            return new String[]{
-                                    this.os.getScriptCallMethod() +
-                                            "run" + this.os.getScriptSuffix(),
-                                    "" + serviceInfo.getRunningPort()
-                            };
-                        }
-                    };
-                    script.setOs(operatingSystem);
-                    script.deploy();
+            public void run() {
+                try {
+                    Thread.sleep(3000l);
+                    Main.restart();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        }, 5000l);
+        }.start();
 
         return ResponseBuilder.buildSuccess("重启后台任务已提交，预计5秒后重启", url);
     }
