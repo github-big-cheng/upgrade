@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -52,6 +53,21 @@ public class LockHandler {
     public boolean tryLock(){
         lockedCount.incrementAndGet();
         boolean flag = this.lock.tryLock();
+        if(!flag){
+            // 未锁上,还原
+            lockedCount.decrementAndGet();
+        }
+        return flag;
+    }
+
+    public boolean tryLock(long milliseconds){
+        lockedCount.incrementAndGet();
+        boolean flag = false;
+        try {
+            flag = this.lock.tryLock(milliseconds, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if(!flag){
             // 未锁上,还原
             lockedCount.decrementAndGet();
@@ -130,6 +146,16 @@ public class LockHandler {
      */
     public static boolean tryLock(String key){
         return getHandler(key).tryLock();
+    }
+
+
+    /**
+     * 上锁
+     * @param key
+     * @param milliseconds
+     */
+    public static boolean tryLock(String key, long milliseconds){
+        return getHandler(key).tryLock(milliseconds);
     }
 
     /**

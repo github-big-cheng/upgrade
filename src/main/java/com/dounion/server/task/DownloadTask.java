@@ -29,7 +29,7 @@ public class DownloadTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "资源下载后台任务";
+        return Constant.TASK_DOWNLOAD;
     }
 
     @Override
@@ -61,7 +61,8 @@ public class DownloadTask extends BaseTask {
         Long timeout = versionInfo.getFileSize() / RouteHandler.DOWNLOAD_SPEED_RATIO;
         logger.trace("download task : time out is {} ms", timeout);
 
-        boolean flag = LockHandler.tryLock(this.getTaskName() + downloadUrl);
+        // try to lock in 10 seconds
+        boolean flag = LockHandler.tryLock(this.getTaskName() + downloadUrl, 10 * 1000l);
         if(!flag){
             throw new BusinessException("DownloadTask {} is running", downloadUrl);
         }

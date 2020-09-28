@@ -33,7 +33,7 @@ public class PublishManualTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "手动发布后台任务";
+        return Constant.TASK_PUBLISH_MANUAL;
     }
 
     @Override

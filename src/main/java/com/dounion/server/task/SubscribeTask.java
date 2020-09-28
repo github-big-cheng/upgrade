@@ -14,7 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.dounion.server.core.base.Constant.URL_SUBSCRIBE;
 
@@ -26,7 +28,7 @@ public class SubscribeTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "服务订阅后台任务";
+        return Constant.TASK_SUBSCRIBE;
     }
 
     @Autowired

@@ -223,13 +223,8 @@ public abstract class BaseTask implements Callable<Integer> {
             // 调用实现类的执行方法
             this.execute();
 
-            // 快要哇
+            // 完成
             this.setProgressNeelyComplete();
-
-            // 调用回调方法
-            if(this.callback != null){
-                this.callback.doSomething();
-            }
 
             // 设置完成
             this.setProgressComplete();
@@ -242,6 +237,10 @@ public abstract class BaseTask implements Callable<Integer> {
             logger.error("【{}】执行异常:{}", this, e);
             return null;
         } finally {
+            // 调用回调方法
+            if(this.callback != null){
+                this.callback.doSomething();
+            }
 
             // 是否单例执行 -- 释放锁
             if(this.isSingleton()) {

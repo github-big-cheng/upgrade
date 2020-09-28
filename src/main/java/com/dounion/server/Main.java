@@ -62,9 +62,12 @@ public class Main {
             NettyServer.startUp();
             // Netty has blocked here, no code should exists after this line
 
+            // when NettyServer channel closed, check is it restart
             if(RESTART){
+                // call shell to restart
                 logger.trace("do restart...");
                 OperatingSystem system = OperatingSystemFactory.build();
+                // run.sh with parameter will not shell stop.sh, this thread will exit at finally System.exit(0)
                 String[] cmd = (String[]) ArrayUtils.addAll(system.getDefaultEnvironmentCmd(), new String[]{"sh run.sh 1"});
                 DeployHandler.execute(Constant.PATH_WORK, cmd);
             }

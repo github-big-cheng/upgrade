@@ -9,7 +9,6 @@ import com.dounion.server.core.task.annotation.Task;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 /**
@@ -22,7 +21,7 @@ public class ChainTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "任务链后台任务";
+        return Constant.TASK_CHAIN;
     }
 
 
@@ -42,7 +41,6 @@ public class ChainTask extends BaseTask {
         this.setProgressJustStart(); // progress
 
         int i = 0;
-        ConcurrentHashMap<String, Object> temp;
         for (BaseTask task : tasks) {
 
             if(this.isInterrupted()){

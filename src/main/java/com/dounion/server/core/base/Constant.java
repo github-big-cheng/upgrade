@@ -152,10 +152,6 @@ public interface Constant {
      * 路由后台任务
      */
     String TASK_ROUTE = "routeTask";
-    /**
-     * 路由后台任务-名称
-     */
-    String TASK_ROUTE_NAME = "路由后台任务";
 
 
 

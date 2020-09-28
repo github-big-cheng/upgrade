@@ -35,7 +35,7 @@ public class DeployTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "部署后台任务";
+        return Constant.TASK_CHAIN;
     }
 
     @Override

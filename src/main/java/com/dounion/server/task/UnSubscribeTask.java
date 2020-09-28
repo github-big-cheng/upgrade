@@ -21,7 +21,7 @@ public class UnSubscribeTask extends BaseTask {
 
     @Override
     public String getTaskName() {
-        return "取消订阅后台任务";
+        return Constant.TASK_UN_SUBSCRIBE;
     }
 
     @Autowired
