@@ -129,9 +129,11 @@ public class NettyFileClientHandler extends AbstractNettyClientHandler<String> {
             if (!downloadFile.getParentFile().exists()) {
                 downloadFile.getParentFile().mkdirs();
             }
-            if (!downloadFile.exists()) {
-                downloadFile.createNewFile();
+            if(downloadFile.exists()){
+                downloadFile.delete();
             }
+
+            downloadFile.createNewFile();
             fos = new FileOutputStream(downloadFile);
         }
     }

@@ -32,7 +32,7 @@
 		<level value="INFO"/>
 	</root>
 	<category name="com.dounion.server">
-		<level value="INFO"/>
+		<level value="TRACE"/>
 		<appender-ref ref="CONSOLE"/>
 		<appender-ref ref="FILE"/>
 	</category>

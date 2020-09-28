@@ -68,6 +68,17 @@ public class LockHandler {
         return lockedCount.intValue() == 0;
     }
 
+    public AtomicInteger getLockedCount() {
+        return lockedCount;
+    }
+
+    public int getLockPoint() {
+        return lockPoint;
+    }
+
+    public void setLockPoint(int lockPoint) {
+        this.lockPoint = lockPoint;
+    }
 
     public final static ConcurrentHashMap<String, LockHandler> LOCK_HANDLER_MAP = new ConcurrentHashMap<>();
 

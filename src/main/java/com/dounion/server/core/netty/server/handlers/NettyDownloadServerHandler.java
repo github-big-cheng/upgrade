@@ -28,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.MimetypesFileTypeMap;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -174,7 +171,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
                 return;
             }
 
-            RandomAccessFile raf;
+            final RandomAccessFile raf;
             try {
                 raf = new RandomAccessFile(file, "r");
             } catch (FileNotFoundException ignore) {
@@ -204,9 +201,6 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
             ChannelFuture lastContentFuture;
             sendFileFuture =
                     ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
-            // Write the end marker.
-            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-            logger.trace("sending last http content...");
 
             sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
                 @Override
@@ -222,6 +216,13 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
 
                 @Override
                 public void operationComplete(ChannelProgressiveFuture future) {
+
+                    try {
+                        raf.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     String remote = future.channel().remoteAddress().toString();
 
                     logger.debug(future.channel() + " Transfer complete.");
@@ -230,6 +231,10 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
                     RouteHandler.progressCancel(request.uri(), remote);
                 }
             });
+
+            // Write the end marker.
+            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            logger.trace("sending last http content...");
 
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         } catch (Exception e) {
@@ -241,7 +246,7 @@ public class NettyDownloadServerHandler extends SimpleChannelInboundHandler<Http
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        logger.error("Netty server download handler error:{}", cause);
         if (ctx.channel().isActive()) {
             sendError(ctx, INTERNAL_SERVER_ERROR);
         }

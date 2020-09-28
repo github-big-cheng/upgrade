@@ -31,16 +31,25 @@ public class TestMain {
 //        transactionTest();
 //        pageTest();
 //        taskTest();
-        chainTaskTest();
+//        chainTaskTest();
 //        taskWakeUpTest();
 //        nettyClientTest();
 
         // 下载内存测试
 //        downloadMemoryTest();
 
+        download();
+
         while(true) {
 
         }
+    }
+
+
+    public static void download(){
+        NettyClient client = NettyClient.getInstance("http://120.77.63.203:8001/download/");
+        String file = client.fileDownload("/download/upgrade.zip");
+        System.out.println(file);
     }
 
 
