@@ -28,7 +28,7 @@ public enum AppTypeEnum {
     DO_SMART_MASTER("40100-2001", "dosmart-master", "dosmart-master.zip", DeployTypeEnum.MAIN),
     DO_SMART_TASK("40100-2002", "dosmart-task", "dosmart-task.zip", DeployTypeEnum.MAIN),
     DO_SMART_LOG("40100-2003", "dosmart-log", "dosmart-log.zip", DeployTypeEnum.MAIN),
-    DO_SMART_CONTROLLER("40100-2004", "dosmart-controller", "dosmart-controller-1.0.0.zip", DeployTypeEnum.MAIN),
+    DO_SMART_CONTROLLER("40100-2004", "dosmart-controller-1.0.0", "dosmart-controller-1.0.0.zip", DeployTypeEnum.MAIN),
     GTS_CONTROLLER("40100-2005", "gtsController", "gtsController.rar", DeployTypeEnum.MAIN),
     PRINT("40100-2006", "print", "print.zip", DeployTypeEnum.MAIN),
     UPGRADE("40100-2007", "upgrade", "upgrade.zip", DeployTypeEnum.MAIN),

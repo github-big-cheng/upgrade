@@ -60,8 +60,9 @@
 		<td>{%= workPath %}</td>
 		<td>
 			{%if $data.deployTypeEnum=='TOMCAT' || $data.deployTypeEnum=='MAIN' %}
-			<a class="app-restart-btn" data-id="{%= appType%}">重启</a></td>
+			<a class="app-restart-btn" data-id="{%= appType%}">重启</a>
 			{%/if%}
+		</td>
 	</tr>
 </script>
 

@@ -66,7 +66,7 @@ public class Main {
                 logger.trace("do restart...");
                 OperatingSystem system = OperatingSystemFactory.build();
                 // run.sh with parameter will not shell stop.sh, this thread will exit at finally System.exit(0)
-                String[] cmd = (String[]) ArrayUtils.addAll(system.getDefaultEnvironmentCmd(), new String[]{"sh run.sh 1"});
+                String[] cmd = (String[]) ArrayUtils.addAll(system.getDefaultEnvironmentCmd(), new String[]{"sh run"+system.getScriptSuffix()+" 1"});
                 DeployHandler.execute(Constant.PATH_WORK, cmd);
             }
 
