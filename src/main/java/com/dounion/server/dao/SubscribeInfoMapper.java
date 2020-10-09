@@ -18,7 +18,7 @@ public class SubscribeInfoMapper extends BaseDao<SubscribeInfo> {
 
 
     public int deleteBySelective(SubscribeInfo record) {
-        if(record==null || record.getId()==null || record.getCode()==null){
+        if(record==null ||(record.getId()==null && record.getCode()==null)){
             throw new BusinessException("selective is null, it's dangerous operation...");
         }
         return sql.delete(this.getNamespace() + ".deleteBySelective", record);
