@@ -1,9 +1,9 @@
 package com.dounion.server.dao;
 
 import com.dounion.server.core.base.BaseDao;
+import com.dounion.server.core.exception.BusinessException;
 import com.dounion.server.entity.SubscribeInfo;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,9 @@ public class SubscribeInfoMapper extends BaseDao<SubscribeInfo> {
 
 
     public int deleteBySelective(SubscribeInfo record) {
-        Assert.notNull(record.getCode(), "code is null,it's dangerous operation...");
+        if(record==null || record.getId()==null || record.getCode()==null){
+            throw new BusinessException("selective is null, it's dangerous operation...");
+        }
         return sql.delete(this.getNamespace() + ".deleteBySelective", record);
     }
 

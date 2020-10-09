@@ -18,6 +18,9 @@
                 库点代码：<input type="text" name="code" />
             </li>
             <li>
+                应用类型：<select id="appType" name="appType"></select>
+            </li>
+            <li>
                 <button id="query">查询</button>
             </li>
         </ul>
@@ -82,6 +85,10 @@
     </tr>
 </script>
 
+<script id="option_tmpl" type="jquery/template">
+    <option value="{%= value %}">{%= text %}</option>
+</script>
+
 <script>
 
     let dict = {};
@@ -90,6 +97,7 @@
 	    // 初始化字典
         CommonJS.dictQuery(null, function(data){
             dict = data;
+            CommonJS.callback(dict['appType'], 'appType', 'option_tmpl', 'appType');
         });
 
         $("#query").click();

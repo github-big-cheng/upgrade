@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Deploy(deployType = DeployTypeEnum.RESTART)
 public class RestartScript extends AbstractScript {
 
-    private AppInfo realAppInfo;
     @Autowired
     protected ServiceInfo serviceInfo;
+
 
     @Override
     protected String[] command() {
@@ -26,7 +26,7 @@ public class RestartScript extends AbstractScript {
             throw new BusinessException("RestartScript: please check params");
         }
 
-        realAppInfo = this.getRealAppInfo(params.getAppInfo());
+        AppInfo realAppInfo = getRealAppInfo(params.getAppInfo());
         logger.debug("real app info is {}", realAppInfo);
 
         // 非 tomcat / main 不支持重启
@@ -65,6 +65,7 @@ public class RestartScript extends AbstractScript {
 
     @Override
     public void deploy() {
+        AppInfo realAppInfo = getRealAppInfo(params.getAppInfo());
         if(AppTypeEnum.UPGRADE.equals(realAppInfo.getAppTypeEnum())){
             new Thread(){
                 @Override
