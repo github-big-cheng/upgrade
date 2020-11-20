@@ -15,6 +15,8 @@ public enum DeployTypeEnum {
     FILE("40700-30", "File"),
     MYSQL("40700-40", "MySql"),
     PROPERTIES("40700-50", "Properties"),
+    SPRING_BOOT("40700-60", "SpringBoot"),
+    STATIC_FILE("40700-70", "StaticFile"),
     ;
 
     DeployTypeEnum(String code, String desc) {

@@ -3,12 +3,14 @@ package com.dounion.server.controller;
 import com.dounion.server.core.base.Constant;
 import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.helper.FileHelper;
+import com.dounion.server.core.helper.StringHelper;
 import com.dounion.server.core.request.ResponseBuilder;
 import com.dounion.server.core.request.annotation.RequestMapping;
 import com.dounion.server.core.request.annotation.ResponseType;
 import com.dounion.server.core.route.RouteHandler;
 import com.dounion.server.core.task.TaskHandler;
 import com.dounion.server.entity.VersionInfo;
+import com.dounion.server.eum.AppTypeEnum;
 import com.dounion.server.eum.ResponseTypeEnum;
 import com.dounion.server.service.VersionInfoService;
 import org.apache.commons.lang.StringUtils;
@@ -80,6 +82,11 @@ public class VersionController {
             // 本地上传 检查文件
             if(file == null){
                 return ResponseBuilder.buildError("请上传文件");
+            }
+
+            AppTypeEnum appTypeEnum = AppTypeEnum.getMap().get(record.getAppType());
+            if(!StringUtils.equals(appTypeEnum.getFileName(), file.getName())){
+                return ResponseBuilder.buildError("文件名称与应用类型检查不通过");
             }
 
             // 初始化文件信息

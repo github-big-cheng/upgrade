@@ -65,6 +65,15 @@ public enum AppTypeEnum {
     PROPERTIES_GTS_CONTROLLER("40100-5205", "gtsController", "application-dev.properties", DeployTypeEnum.PROPERTIES, GTS_CONTROLLER),
     PROPERTIES_PRINT("40100-5206", "print", "system.properties", DeployTypeEnum.PROPERTIES, PRINT),
     PROPERTIES_UPGRADE("40100-5207", "upgrade", "config_upgrade.properties", DeployTypeEnum.PROPERTIES, UPGRADE),
+
+    // spring-boot
+    DOUNION_SSO("40100-6001", "sso_web", "sso_web.jar", DeployTypeEnum.SPRING_BOOT),
+    DOUNION_UCENTER("40100-6002", "ucenter_web", "ucenter_web.jar", DeployTypeEnum.SPRING_BOOT),
+    DOUNION_OA("40100-6003", "oa_web", "oa_web.jar", DeployTypeEnum.SPRING_BOOT),
+    DOUNION_ACTIVITI("40100-6004", "activiti_web", "activiti_web.jar", DeployTypeEnum.SPRING_BOOT),
+
+    // static-file
+    STATIC_OA("40100-7001", "static", "static.zip", DeployTypeEnum.STATIC_FILE),
     ;
 
 

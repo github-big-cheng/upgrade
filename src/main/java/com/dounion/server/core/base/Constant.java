@@ -78,7 +78,7 @@ public interface Constant {
      */
     String PATH_DOWNLOAD = ConfigurationHelper.getString("download_path") + File.separator;
     /**
-     * 下载路径
+     * 脚本路径
      */
     String PATH_SCRIPT = PATH_WORK + "scripts" + File.separator;
 

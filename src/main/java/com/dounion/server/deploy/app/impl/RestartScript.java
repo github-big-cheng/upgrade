@@ -31,7 +31,9 @@ public class RestartScript extends AbstractScript {
 
         // 非 tomcat / main 不支持重启
         if(!DeployTypeEnum.TOMCAT.equals(realAppInfo.getDeployTypeEnum()) &&
-                !DeployTypeEnum.MAIN.equals(realAppInfo.getDeployTypeEnum())){
+                !DeployTypeEnum.MAIN.equals(realAppInfo.getDeployTypeEnum()) &&
+                !DeployTypeEnum.SPRING_BOOT.equals(realAppInfo.getDeployTypeEnum())
+            ){
             throw new SystemException("deploy type 【{}】 restart operation is unsupported",
                     realAppInfo.getDeployTypeEnum().toString());
         }

@@ -28,9 +28,14 @@ if [ -z "$3" ]; then
         echo "please have a parameter of app type, such as Tomcat"
         exit 3
 fi
-if [[ ! "$3" = "Tomcat" ]]&&[[ ! "$3" = "Main"  ]]; then
-	echo "only 'Tomcat' or 'Main' is supported"
+if [[ ! "$3" = "Tomcat" ]]&&[[ ! "$3" = "Main"  ]]&&[[ ! "$3" = "SpringBoot"  ]]; then
+	echo "only 'Tomcat' or 'Main' or 'SpringBoot' is supported"
 	exit 4
+fi
+if [ "$3" = "SpringBoot"  ]; then
+        CALL_METHOD=""
+        SHELL_PATH="$1"
+        SHELL_NAME="run.sh"
 fi
 if [ "$3" = "Tomcat"  ]; then
 	CALL_METHOD=""
@@ -59,6 +64,10 @@ echo "$SHELL_PATH/$SHELL_NAME"
 if [ "$3" = "Tomcat" ]; then
 	echo "$SHELL_PATH/$SHELL_NAME"
 	/"$SHELL_PATH"/"$SHELL_NAME"
+fi
+if [ "$3" = "SpringBoot" ]; then
+        echo "$SHELL_NAME"
+        sh "$SHELL_NAME"
 fi
 if [ "$3" = "Main" ]; then
 	echo "sh $SHELL_NAME"
