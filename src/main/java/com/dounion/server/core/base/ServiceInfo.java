@@ -55,7 +55,7 @@ public class ServiceInfo {
     // 本地注册服务列表
     private List<AppInfo> localServices;
 
-
+    private String backUpPath;
 
     // 启动时保存的原端口--防止修改端口
     @JSONField(serialize = false, deserialize = false)
@@ -201,6 +201,14 @@ public class ServiceInfo {
         this.localServices = localServices;
     }
 
+
+    public String getBackUpPath() {
+        return backUpPath;
+    }
+
+    public void setBackUpPath(String backUpPath) {
+        this.backUpPath = backUpPath;
+    }
 
     public Integer getRunningPort() {
         return runningPort;

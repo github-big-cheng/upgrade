@@ -33,6 +33,13 @@ fi
 echo "操作的文件名：【$3】"
 
 
+bak_dir=$4
+if [ -z "$bak_dir" ]; then
+	bak_dir=/home/dounion/backup
+fi
+bak_dir="$4"/"$(date +%Y%m%d)"
+echo "文件备份路径：【$4】"
+
 
 # 停应用 按应用名称查询进程号
 if [ ! "$progress_name" = "upgrade"  ]; then
@@ -56,7 +63,7 @@ cd "$2"
 
 # 备份文件夹
 dt=$(date +%Y%m%d%H%M)
-cp -a "$3".jar  "$3".jar."$dt"
+cp -a "$3".jar  "$bak_dir"/"$3".jar."$dt"
 
 
 # 复制新包

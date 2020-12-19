@@ -33,6 +33,14 @@ fi
 echo "操作的文件名：【$3】"
 
 
+bak_dir=$4
+if [ -z "$bak_dir" ]; then
+	bak_dir=/home/dounion/backup
+	
+fi
+bak_dir="$bak_dir"/"$(date +%Y%m%d)"
+echo "备份路径：【$bak_dir】"
+
 
 # 停应用 按应用名称查询进程号
 if [ ! "$progress_name" = "upgrade"  ]; then
@@ -53,35 +61,35 @@ fi
 
 # 复制新包
 cp -a "$1"  "$2"/
+cd "$2"
 
 
 # 备份文件夹
-bak_dir="$2"/"$3"
 if [ -d "$bak_dir" ]; then
-  cd "$2"
   dt=$(date +%Y%m%d%H%M)
-  tar -cvf "$3.$dt.tar"  "$3"
+  tar -cvf "$bak_dir"/"$3.$dt.tar"  "$3"
   # 删除旧包
-  rm -rf "$bak_dir"
+  rm -rf "$2"/"$3"
 fi
 
 
 
 # 解压
-cd "$2"
 unzip "$2"/"$3".zip 
 
 sleep 2
 
 # 检查是否解压成功
-if [ ! -d "$bak_dir" ]; then
+if [ ! -d "$2/$3" ]; then
 	echo "unzip failed"
 	exit 5
 fi
+rm -rf "$2"/"$3".zip
+
 
 #启应用
 if [ ! "$progress_name" = "upgrade" ]; then
-	cd "$bak_dir"
+	cd "$2/$3"
 	echo "nohup sh $bak_dir/$shell_name  &"
 	nohup sh "$bak_dir"/"$shell_name"  &
 fi

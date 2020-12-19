@@ -28,6 +28,13 @@ fi
 echo "GREP_NAME is $GREP_NAME"
 
 
+bak_dir=$4
+if [ -z "$bak_dir"  ]; then
+        bak_dir=/home/dounion/tomcat/backup
+fi
+bak_dir="$bak_dir"/"$(date +%Y%m%d)"
+echo "备份路径：【$bak_dir】"
+
 
 # 停应用
 pid=$(ps -ef|grep "$GREP_NAME"|grep -v grep|grep '/bin/java'|awk '{print $2}')
@@ -43,22 +50,22 @@ sleep 3
 
 
 # 备份包
-bak_war="$2"/webapps/"$3"
+cd "$2"/webapps
+bak_war=$3
 if [ -f "$bak_war" ]; then
   dt=$(date +%Y%m%d%H%M)
-  bak_dir=/home/dounion/tomcat/backup/"$dt"
 
   if [ ! -e "$bak_dir" ]; then
     mkdir -p "$bak_dir"
   fi
 
-  mv "$bak_war" "$bak_dir"
+  mv "$bak_war" "$bak_dir"/"$bak_war"."$dt"
 fi
 
 
 
 # 部署
-rm -rf "${bak_war%%.*}"
+rm -rf "$3"
 # 新包移到webapps下
 cp -a "$1" "$2"/webapps/
 

@@ -27,6 +27,13 @@ fi
 echo "操作的文件名：【$3】"
 
 
+bak_dir=$4
+if [ -z "$bak_dir" ]; then
+	bak_dir=/home/dounion/backup
+fi
+bak_dir="$bak_dir"/"$(date +%Y%m%d)"
+echo "备份路径：【$4】"
+
 
 # 复制新包
 cp -a "$1"  "$2"/
@@ -37,12 +44,11 @@ cd "$2"
 
 
 # 备份文件夹
-bak_dir="$2"/"$3"
 if [ -d "$bak_dir" ]; then
   dt=$(date +%Y%m%d%H%M)
-  tar -cvf "$3.$dt.tar"  "$3"
+  tar -cvf "bak_dir"/"$3.$dt.tar"  "$3"
   # 删除旧包
-  rm -rf "$bak_dir"
+  rm -rf "$2"/"$3"
 fi
 
 

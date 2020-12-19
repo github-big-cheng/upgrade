@@ -32,6 +32,9 @@
   "publishPath-comment": "发布回调地址，未配置则默认 http://local_ip:port/version/add.json",
   "publishPath": "",
 
+  "backupPath-comment" : "原文件备份路径",
+  "backupPath" : "/home/dounion/backup/",
+
   "localServices-comment": "本地服务列表",
   "localServices": [
     {
@@ -47,37 +50,37 @@
       "workPath-comment3": "File文件需指向下载目录，如：/home/dounion/download",
       "workPath-comment4": "Mysql需录入用户名密码，username、password",
       "workPath-comment5": "Properties需指向文件所在目录，如：/home/dounion/server/conf、/home/dounion/tomcat/tomact-app/conf",
-      "workPath": "/home/dounion/tomcat/tomcat-app-push"
+      "workPath": "/home/dounion/tomcat/tomcat-app-push",
     },
     {
       "appType": "40100-1002",
       "versionNo": "1.0.0",
-      "workPath": "/home/dounion/tomcat/tomcat-app-push"
+      "workPath": "/home/dounion/tomcat/tomcat-app-push",
     },
     {
       "appType": "40100-1003",
       "versionNo": "1.0.0",
-      "workPath": "/home/dounion/tomcat/tomcat-appServer"
+      "workPath": "/home/dounion/tomcat/tomcat-appServer",
     },
     {
       "appType": "40100-1004",
       "versionNo": "1.0.0",
-      "workPath": "/home/dounion/tomcat/tomcat-bizService"
+      "workPath": "/home/dounion/tomcat/tomcat-bizService",
     },
     {
       "appType": "40100-1005",
       "versionNo": "1.0.0",
-      "workPath": "/home/dounion/tomcat/tomcat-dobpm-sms"
+      "workPath": "/home/dounion/tomcat/tomcat-dobpm-sms",
     },
     {
       "appType": "40100-1006",
       "versionNo": "1.0.0",
-      "workPath": "/home/dounion/tomcat/tomcat-dobpm-sms"
+      "workPath": "/home/dounion/tomcat/tomcat-dobpm-sms",
     },
     {
       "appType": "40100-1007",
       "versionNo": "1.0.0",
-      "workPath": "/home/dounion/tomcat/tomcat-file-doremind-idoc"
+      "workPath": "/home/dounion/tomcat/tomcat-file-doremind-idoc",
     },
     {
       "appType": "40100-1009",

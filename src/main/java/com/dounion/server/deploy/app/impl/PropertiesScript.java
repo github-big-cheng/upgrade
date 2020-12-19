@@ -1,9 +1,11 @@
 package com.dounion.server.deploy.app.impl;
 
+import com.dounion.server.core.base.ServiceInfo;
 import com.dounion.server.core.deploy.annotation.Deploy;
 import com.dounion.server.core.exception.BusinessException;
 import com.dounion.server.core.exception.SystemException;
 import com.dounion.server.core.helper.DateHelper;
+import com.dounion.server.core.helper.SpringApp;
 import com.dounion.server.eum.DeployTypeEnum;
 import org.apache.commons.lang.StringUtils;
 
@@ -20,7 +22,7 @@ import java.util.List;
 
 
 @Deploy(deployType = DeployTypeEnum.PROPERTIES)
-public class PropertiesScript extends RestartScript{
+public class PropertiesScript extends RestartScript {
 
     final static String CONVERT_CHAR = "Save:|"; // 保存/覆盖操作
     final static String APPEND_CHAR = "Append:|"; // 追加操作
@@ -30,13 +32,13 @@ public class PropertiesScript extends RestartScript{
     @Override
     public void deploy() {
 
-        if(params==null || params.getVersionInfo()==null || params.getAppInfo()==null){
+        if (params == null || params.getVersionInfo() == null || params.getAppInfo() == null) {
             throw new BusinessException("PropertiesScript: please check params");
         }
 
         // 解析上传的版本文件
         File versionFile = new File(params.getVersionInfo().getFilePath());
-        if(!versionFile.exists()){
+        if (!versionFile.exists()) {
             logger.error("PropertiesScript: version file 【{}】 isn't exists", params.getVersionInfo().getFilePath());
             return;
         }
@@ -46,9 +48,9 @@ public class PropertiesScript extends RestartScript{
         LinkedHashMap<String, Integer> originLine = new LinkedHashMap<>();
 
         String originFileName = params.getAppInfo().getWorkPath() +
-                        File.separator + params.getVersionInfo().getFileName();
+                File.separator + params.getVersionInfo().getFileName();
         File originFile = new File(originFileName);
-        if(originFile.exists()){
+        if (originFile.exists()) {
             // 检查原文件存在，解析
             this.fileParser(originFile, content, originLine);
         }
@@ -58,22 +60,33 @@ public class PropertiesScript extends RestartScript{
 
         // 文件备份
         String date = DateHelper.format(new Date(), "yyyyMMddHHmmss");
-        File backFile = new File(originFileName + "." + date);
-        originFile.renameTo(backFile);
+        ServiceInfo serviceInfo = SpringApp.getInstance().getBean(ServiceInfo.class);
+        String backFileName = serviceInfo.getBackUpPath();
+        // 未配置备份路径
+        if (StringUtils.isBlank(backFileName)) {
+            backFileName = params.getAppInfo().getWorkPath() + File.separator;
+        }
+        backFileName = backFileName + "." + date;
+        File backFile = new File(backFileName);
+        try {
+            Files.copy(originFile.toPath(), backFile.toPath());
+        } catch (IOException e) {
+            throw new BusinessException("PropertiesScript: backup failed");
+        }
 
         // 写入新文件
         File f = new File(originFileName);
         try {
             Files.write(
-                f.toPath(), // 文件路径
-                content, // 文件内容
-                charset // 编码
+                    f.toPath(), // 文件路径
+                    content, // 文件内容
+                    charset // 编码
             );
         } catch (IOException e) {
             logger.error("PropertiesScript: file write error:{}", e);
 
             // 还原操作
-            if(f.exists()){
+            if (f.exists()) {
                 f.delete();
             }
             backFile.renameTo(f);
@@ -88,21 +101,22 @@ public class PropertiesScript extends RestartScript{
 
     /**
      * 处理配置文件修改
+     *
      * @param versionFile 版本文件
-     * @param content 文件内容
-     * @param originLine 原文件map集合
+     * @param content     文件内容
+     * @param originLine  原文件map集合
      */
     private void propertiesMixed(File versionFile,
-                         List<String> content, LinkedHashMap<String, Integer> originLine) {
+                                 List<String> content, LinkedHashMap<String, Integer> originLine) {
 
-        if(content == null){
+        if (content == null) {
             content = new ArrayList<>();
         }
 
         // 遍历处理版本文件
         try (
                 BufferedReader reader =
-                     Files.newBufferedReader(versionFile.toPath(), charset)
+                        Files.newBufferedReader(versionFile.toPath(), charset)
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -162,35 +176,36 @@ public class PropertiesScript extends RestartScript{
 
     /**
      * 文件解析
+     *
      * @param file
      * @param content
      * @param map
      * @return
      */
-    private void fileParser(File file, List<String> content, LinkedHashMap<String, Integer> map){
+    private void fileParser(File file, List<String> content, LinkedHashMap<String, Integer> map) {
 
         try (
                 BufferedReader reader =
                         Files.newBufferedReader(file.toPath(), charset)
-        ){
+        ) {
             int lineNum = 0;
             String line;
-            while((line=reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
 
                 line = StringUtils.trim(line);
 
                 content.add(line);
 
                 // 非注释及空行
-                if(StringUtils.isNotBlank(line) &&
-                        !StringUtils.startsWith(line, "#")){
+                if (StringUtils.isNotBlank(line) &&
+                        !StringUtils.startsWith(line, "#")) {
                     String[] arr = StringUtils.split(line, "=", 2);
-                    if(arr.length == 2){
+                    if (arr.length == 2) {
                         map.put(arr[0].trim(), lineNum);
                     }
                 }
 
-                lineNum ++;
+                lineNum++;
             }
         } catch (IOException e) {
             logger.error("fileParser: 文件【{}】解析异常{}, e:{}", file.getName(), e);
